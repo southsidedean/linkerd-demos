@@ -261,7 +261,7 @@ We'll be using the **Buoyant Enterprise Linkerd** CLI for many of our operations
 First, download the **BEL** CLI:
 
 ```bash
-curl -sL https://enterprise.buoyant.io/install-preview | sh
+curl https://enterprise.buoyant.io/install | sh
 ```
 
 Add the CLI executables to your `$PATH`:
@@ -276,42 +276,9 @@ Let's give the CLI a quick check:
 linkerd version
 ```
 
-We should see the following:
-
-```bash
-Client version: preview-24.2.1
-Server version: unavailable
-```
-
 With the CLI installed and working, we can get on with running our pre-installation checks.
 
 #### Step 3: Run Pre-Installation Checks
-
-Before we run the pre-checks, we'll double-check our environment variables.
-
-Check the `API_CLIENT_ID` environment variable:
-
-```bash
-echo $API_CLIENT_ID
-```
-
-Confirm the `API_CLIENT_SECRET` environment variable:
-
-```bash
-echo $API_CLIENT_SECRET
-```
-
-Confirm the `BUOYANT_LICENSE` environment variable:
-
-```bash
-echo $BUOYANT_LICENSE
-```
-
-Confirm the `CLUSTER_NAME` environment variable:
-
-```bash
-echo $CLUSTER_NAME
-```
 
 Use the `linkerd check --pre` command to validate that your cluster is ready for installation:
 
@@ -319,41 +286,7 @@ Use the `linkerd check --pre` command to validate that your cluster is ready for
 linkerd check --pre
 ```
 
-We should see all green checks:
-
-```bash
-kubernetes-api
---------------
-√ can initialize the client
-√ can query the Kubernetes API
-
-kubernetes-version
-------------------
-√ is running the minimum Kubernetes API version
-
-pre-kubernetes-setup
---------------------
-√ control plane namespace does not already exist
-√ can create non-namespaced resources
-√ can create ServiceAccounts
-√ can create Services
-√ can create Deployments
-√ can create CronJobs
-√ can create ConfigMaps
-√ can create Secrets
-√ can read Secrets
-√ can read extension-apiserver-authentication configmap
-√ no clock skew detected
-
-linkerd-version
----------------
-√ can determine the latest version
-√ cli is up-to-date
-
-Status check results are √
-```
-
-With everything good and green, we can proceed with installing the **BEL operator**.
+We should see all green checks.  With everything good and green, we can proceed with installing the **BEL operator**.
 
 #### Step 4: Install BEL Operator Components
 
@@ -368,47 +301,32 @@ helm repo add linkerd-buoyant https://helm.buoyant.cloud
 helm repo update
 ```
 
-Now, we can install the **BEL operator** itself:
+Now, we can install the **BEL operator**, using Helm:
 
 ```bash
 helm install linkerd-buoyant \
   --create-namespace \
   --namespace linkerd-buoyant \
-  --set metadata.agentName=demo-cluster \
+  --set metadata.agentName=$CLUSTER_NAME \
   --set api.clientID=$API_CLIENT_ID \
   --set api.clientSecret=$API_CLIENT_SECRET \
 linkerd-buoyant/linkerd-buoyant
 ```
 
-You should see something like the following:
+If you'd like to deploy the **BEL operator** with **debug** enabled:
 
 ```bash
-NAME: linkerd-buoyant
-LAST DEPLOYED: Sat Feb  3 17:40:38 2024
-NAMESPACE: linkerd-buoyant
-STATUS: deployed
-REVISION: 1
-TEST SUITE: None
-NOTES:
-Thank you for installing linkerd-buoyant.
-
-Your release is named linkerd-buoyant.
-
-To help you manage linkerd-buoyant, you can install the CLI extension by
-running:
-
-  curl -sL https://buoyant.cloud/install | sh
-
-Alternatively, you can download the CLI directly via the linkerd-buoyant
-releases page:
-
-  https://github.com/BuoyantIO/linkerd-buoyant/releases
-
-To make sure everything works as expected, run the following:
-
-  linkerd-buoyant check
-
-Looking for more? Visit https://buoyant.io/linkerd
+helm install linkerd-buoyant \
+  --create-namespace \
+  --namespace linkerd-buoyant \
+  --set metadata.agentName=$CLUSTER_NAME \
+  --set api.clientID=$API_CLIENT_ID \
+  --set api.clientSecret=$API_CLIENT_SECRET \
+  --set metrics.debugMetrics=true \
+  --set agent.logLevel=debug \
+  --set metrics.logLevel=debug \
+  --reuse-values \
+linkerd-buoyant/linkerd-buoyant
 ```
 
 After the install, wait for the `buoyant-cloud-metrics` agent to be ready, then run the post-install operator health checks:
@@ -416,54 +334,6 @@ After the install, wait for the `buoyant-cloud-metrics` agent to be ready, then 
 ```bash
 kubectl rollout status daemonset/buoyant-cloud-metrics -n linkerd-buoyant
 linkerd buoyant check
-```
-
-```bash
-daemon set "buoyant-cloud-metrics" successfully rolled out
-linkerd-buoyant
----------------
-√ Linkerd health ok
-√ Linkerd vulnerability report ok
-√ Linkerd data plane upgrade assistance ok
-√ Linkerd trust anchor rotation assistance ok
-
-linkerd-buoyant-agent
----------------------
-√ linkerd-buoyant can determine the latest version
-√ linkerd-buoyant cli is up-to-date
-√ linkerd-buoyant Namespace exists
-√ linkerd-buoyant Namespace has correct labels
-√ agent-metadata ConfigMap exists
-√ buoyant-cloud-org-credentials Secret exists
-√ buoyant-cloud-org-credentials Secret has correct labels
-√ buoyant-cloud-agent ClusterRole exists
-√ buoyant-cloud-agent ClusterRoleBinding exists
-√ buoyant-cloud-agent ServiceAccount exists
-√ buoyant-cloud-agent Deployment exists
-√ buoyant-cloud-agent Deployment is running
-‼ buoyant-cloud-agent Deployment is injected
-    could not find proxy container for buoyant-cloud-agent-57d767d88b-bl65r pod
-    see https://linkerd.io/checks#l5d-buoyant for hints
-√ buoyant-cloud-agent Deployment is up-to-date
-√ buoyant-cloud-agent Deployment is running a single pod
-√ buoyant-cloud-metrics DaemonSet exists
-√ buoyant-cloud-metrics DaemonSet is running
-‼ buoyant-cloud-metrics DaemonSet is injected
-    could not find proxy container for buoyant-cloud-metrics-cmq8r pod
-    see https://linkerd.io/checks#l5d-buoyant for hints
-√ buoyant-cloud-metrics DaemonSet is up-to-date
-√ linkerd-control-plane-operator Deployment exists
-√ linkerd-control-plane-operator Deployment is running
-√ linkerd-control-plane-operator Deployment is up-to-date
-√ linkerd-control-plane-operator Deployment is running a single pod
-√ controlplanes.linkerd.buoyant.io CRD exists
-√ linkerd-data-plane-operator Deployment exists
-√ linkerd-data-plane-operator Deployment is running
-√ linkerd-data-plane-operator Deployment is up-to-date
-√ linkerd-data-plane-operator Deployment is running a single pod
-√ dataplanes.linkerd.buoyant.io CRD exists
-
-Status check results are √
 ```
 
 We may see a few warnings (!!), but we're good to proceed _as long as the overall status check results are good_.
@@ -501,30 +371,15 @@ Checking the secrets on our cluster:
 kubectl get secrets -A
 ```
 
-We should see our `linkerd-identity-secret` secret.
-
-```bash
-NAMESPACE         NAME                                          TYPE                 DATA   AGE
-kube-system       k3s-serving                                   kubernetes.io/tls    2      64m
-kube-system       k3d-demo-cluster-agent-1.node-password.k3s    Opaque               1      64m
-kube-system       k3d-demo-cluster-agent-0.node-password.k3s    Opaque               1      64m
-kube-system       k3d-demo-cluster-agent-2.node-password.k3s    Opaque               1      64m
-kube-system       k3d-demo-cluster-server-0.node-password.k3s   Opaque               1      64m
-linkerd-buoyant   buoyant-cloud-org-credentials                 Opaque               2      19m
-linkerd-buoyant   linkerd-control-plane-validator               kubernetes.io/tls    2      19m
-linkerd-buoyant   sh.helm.release.v1.linkerd-buoyant.v1         helm.sh/release.v1   1      19m
-linkerd           linkerd-identity-issuer                       kubernetes.io/tls    3      6s
-```
-
 Now that we have our `linkerd-identity-issuer` secret, we can proceed with creating the **ControlPlane CRD** configuration manifest.
 
 #### Step 6: Create a ControlPlane Manifest
 
 [Kubernetes Docs: Custom Resources](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/)
 
-We deploy the **BEL ControlPlane** and **DataPlane** using **Custom Resources**. We'll create a manifest for each that contains their configuration. We'll start with the **ControlPlane** first.
+We deploy the **BEL ControlPlane** and **DataPlane** using **Custom Resources**. We'll create a manifest for each that contains the object's configuration. We'll start with the **ControlPlane** first.
 
-This **CRD configuration** also enables **High Availability Zonal Load Balancing (HAZL)**, using the `- -experimental-endpoint-zone-weights` `experimentalArgs`. We're going to omit the `- -experimental-endpoint-zone-weights` in the `experimentalArgs` for now, by commenting it out with a `#` in the manifest.
+This **CRD configuration** also enables **High Availability Zonal Load Balancing (HAZL)**, using the `- -ext-endpoint-zone-weights` `experimentalArgs`. We're going to omit the `- -ext-endpoint-zone-weights` in the `experimentalArgs` for now, by commenting it out with a `#` in the manifest.
 
 Let's create the ControlPlane manifest:
 
@@ -537,26 +392,20 @@ metadata:
 spec:
   components:
     linkerd:
-      version: preview-24.2.1
+      version: enterprise-2.15.1-0
       license: $BUOYANT_LICENSE
       controlPlaneConfig:
         proxy:
           image:
-            version: preview-24.2.1-hazl
+            version: enterprise-2.15.1-0-hazl
         identityTrustAnchorsPEM: |
 $(sed 's/^/          /' < certs/ca.crt )
         identity:
           issuer:
             scheme: kubernetes.io/tls
         destinationController:
-          experimentalArgs:
-          # - -experimental-endpoint-zone-weights
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-            - matchExpressions:
-              - key: topology.kubernetes.io/zone
-                operator: DoesNotExist
+          additionalArgs:
+           # - -ext-endpoint-zone-weights
 EOF
 ```
 
@@ -566,35 +415,14 @@ Apply the ControlPlane CRD config to have the Linkerd BEL operator create the Co
 kubectl apply -f linkerd-control-plane-config.yaml
 ```
 
+To make adjustments to your **BEL ControlPlane** deployment _simply edit and re-apply the `linkerd-control-plane-config.yaml` manifest_.
+
 #### Step 7: Verify the ControlPlane Installation
 
 After the installation is complete, watch the deployment of the Control Plane using `kubectl`:
 
 ```bash
 watch -n 1 kubectl get pods -A -o wide --sort-by .metadata.namespace
-```
-
-Once the Control Plane is deployed, we should see something similar to:
-
-```bash
-Every 1.0s: kubectl get pods -A -o wide --sort-by .metadata.namespace                                                           trans-am.dean33.com: Mon Feb  5 16:37:42 2024
-
-NAMESPACE         NAME                                               READY   STATUS    RESTARTS   AGE     IP           NODE                        NOMINATED NODE   READINESS
- GATES
-kube-system       local-path-provisioner-957fdf8bc-6dkl7             1/1     Running   0          90m     10.42.3.3    k3d-demo-cluster-server-0   <none>           <none>
-kube-system       coredns-77ccd57875-8jtff                           1/1     Running   0          90m     10.42.0.2    k3d-demo-cluster-agent-0    <none>           <none>
-kube-system       metrics-server-648b5df564-dm9r8                    1/1     Running   0          90m     10.42.3.2    k3d-demo-cluster-server-0   <none>           <none>
-linkerd           linkerd-destination-7947d79867-rl2hg               3/4     Running   0          22s     10.42.3.9    k3d-demo-cluster-server-0   <none>           <none>
-linkerd           linkerd-proxy-injector-7fc465d98b-2bvtg            2/2     Running   0          22s     10.42.3.10   k3d-demo-cluster-server-0   <none>           <none>
-linkerd           linkerd-identity-66dcbc5d8c-fvh6w                  2/2     Running   0          22s     10.42.3.11   k3d-demo-cluster-server-0   <none>           <none>
-linkerd-buoyant   buoyant-cloud-metrics-tnlcg                        1/1     Running   0          5m11s   10.42.3.5    k3d-demo-cluster-server-0   <none>           <none>
-linkerd-buoyant   linkerd-data-plane-operator-74f8796dc8-88szz       1/1     Running   0          5m11s   10.42.3.6    k3d-demo-cluster-server-0   <none>           <none>
-linkerd-buoyant   buoyant-cloud-agent-57d767d88b-pfgvp               1/1     Running   0          5m11s   10.42.3.7    k3d-demo-cluster-server-0   <none>           <none>
-linkerd-buoyant   linkerd-control-plane-operator-5c765649f6-q5sgj    1/1     Running   0          5m11s   10.42.3.8    k3d-demo-cluster-server-0   <none>           <none>
-linkerd-buoyant   buoyant-cloud-metrics-vp65m                        1/1     Running   0          5m11s   10.42.1.3    k3d-demo-cluster-agent-1    <none>           <none>
-linkerd-buoyant   buoyant-cloud-metrics-sph88                        1/1     Running   0          5m11s   10.42.0.3    k3d-demo-cluster-agent-0    <none>           <none>
-linkerd-buoyant   buoyant-cloud-metrics-t95gj                        1/1     Running   0          5m11s   10.42.2.2    k3d-demo-cluster-agent-2    <none>           <none>
-linkerd-buoyant   linkerd-control-plane-validator-5d64f4bcd5-p688r   1/1     Running   0          5m11s   10.42.3.4    k3d-demo-cluster-server-0   <none>           <none
 ```
 
 **_Use `CTRL-C` to exit the watch command._**
@@ -605,139 +433,11 @@ Let's can verify the health and configuration of Linkerd by running the `linkerd
 linkerd check
 ```
 
-We should see something like the following:
-
-```bash
-kubernetes-api
---------------
-√ can initialize the client
-√ can query the Kubernetes API
-
-kubernetes-version
-------------------
-√ is running the minimum Kubernetes API version
-
-linkerd-existence
------------------
-√ 'linkerd-config' config map exists
-√ heartbeat ServiceAccount exist
-√ control plane replica sets are ready
-√ no unschedulable pods
-√ control plane pods are ready
-√ cluster networks contains all node podCIDRs
-√ cluster networks contains all pods
-√ cluster networks contains all services
-
-linkerd-config
---------------
-√ control plane Namespace exists
-√ control plane ClusterRoles exist
-√ control plane ClusterRoleBindings exist
-√ control plane ServiceAccounts exist
-√ control plane CustomResourceDefinitions exist
-√ control plane MutatingWebhookConfigurations exist
-√ control plane ValidatingWebhookConfigurations exist
-√ proxy-init container runs as root user if docker container runtime is used
-
-linkerd-identity
-----------------
-√ certificate config is valid
-√ trust anchors are using supported crypto algorithm
-√ trust anchors are within their validity period
-√ trust anchors are valid for at least 60 days
-√ issuer cert is using supported crypto algorithm
-√ issuer cert is within its validity period
-√ issuer cert is valid for at least 60 days
-√ issuer cert is issued by the trust anchor
-
-linkerd-webhooks-and-apisvc-tls
--------------------------------
-√ proxy-injector webhook has valid cert
-√ proxy-injector cert is valid for at least 60 days
-√ sp-validator webhook has valid cert
-√ sp-validator cert is valid for at least 60 days
-√ policy-validator webhook has valid cert
-√ policy-validator cert is valid for at least 60 days
-
-linkerd-version
----------------
-√ can determine the latest version
-√ cli is up-to-date
-
-control-plane-version
----------------------
-√ can retrieve the control plane version
-√ control plane is up-to-date
-√ control plane and cli versions match
-
-linkerd-control-plane-proxy
----------------------------
-√ control plane proxies are healthy
-‼ control plane proxies are up-to-date
-    some proxies are not running the current version:
-	* linkerd-identity-66dcbc5d8c-fvh6w (preview-24.2.1-hazl)
-	* linkerd-proxy-injector-7fc465d98b-2bvtg (preview-24.2.1-hazl)
-	* linkerd-destination-7947d79867-rl2hg (preview-24.2.1-hazl)
-    see https://linkerd.io/2/checks/#l5d-cp-proxy-version for hints
-‼ control plane proxies and cli versions match
-    linkerd-identity-66dcbc5d8c-fvh6w running preview-24.2.1-hazl but cli running preview-24.2.1
-    see https://linkerd.io/2/checks/#l5d-cp-proxy-cli-version for hints
-
-linkerd-extension-checks
-------------------------
-√ namespace configuration for extensions
-
-linkerd-buoyant
----------------
-√ Linkerd health ok
-√ Linkerd vulnerability report ok
-√ Linkerd data plane upgrade assistance ok
-√ Linkerd trust anchor rotation assistance ok
-
-linkerd-buoyant-agent
----------------------
-√ linkerd-buoyant can determine the latest version
-√ linkerd-buoyant cli is up-to-date
-√ linkerd-buoyant Namespace exists
-√ linkerd-buoyant Namespace has correct labels
-√ agent-metadata ConfigMap exists
-√ buoyant-cloud-org-credentials Secret exists
-√ buoyant-cloud-org-credentials Secret has correct labels
-√ buoyant-cloud-agent ClusterRole exists
-√ buoyant-cloud-agent ClusterRoleBinding exists
-√ buoyant-cloud-agent ServiceAccount exists
-√ buoyant-cloud-agent Deployment exists
-√ buoyant-cloud-agent Deployment is running
-‼ buoyant-cloud-agent Deployment is injected
-    could not find proxy container for buoyant-cloud-agent-57d767d88b-pfgvp pod
-    see https://linkerd.io/checks#l5d-buoyant for hints
-√ buoyant-cloud-agent Deployment is up-to-date
-√ buoyant-cloud-agent Deployment is running a single pod
-√ buoyant-cloud-metrics DaemonSet exists
-√ buoyant-cloud-metrics DaemonSet is running
-‼ buoyant-cloud-metrics DaemonSet is injected
-    could not find proxy container for buoyant-cloud-metrics-t95gj pod
-    see https://linkerd.io/checks#l5d-buoyant for hints
-√ buoyant-cloud-metrics DaemonSet is up-to-date
-√ linkerd-control-plane-operator Deployment exists
-√ linkerd-control-plane-operator Deployment is running
-√ linkerd-control-plane-operator Deployment is up-to-date
-√ linkerd-control-plane-operator Deployment is running a single pod
-√ controlplanes.linkerd.buoyant.io CRD exists
-√ linkerd-data-plane-operator Deployment exists
-√ linkerd-data-plane-operator Deployment is running
-√ linkerd-data-plane-operator Deployment is up-to-date
-√ linkerd-data-plane-operator Deployment is running a single pod
-√ dataplanes.linkerd.buoyant.io CRD exists
-
-Status check results are √
-```
-
 Again, we may see a few warnings (!!), but we're good to proceed _as long as the overall status is good_.
 
 #### Step 8: Create the DataPlane Objects for `linkerd-buoyant`
 
-Now, we can deploy the **DataPlane**. Let's create the **DataPlane** manifest:
+Now, we can deploy the **DataPlane** for the `linkerd-buoyant` namespace. Let's create the **DataPlane** manifest:
 
 ```bash
 cat <<EOF > linkerd-data-plane-config.yaml
@@ -759,8 +459,6 @@ Apply the **DataPlane CRD configuration** manifest to have the **BEL operator** 
 kubectl apply -f linkerd-data-plane-config.yaml
 ```
 
-To make adjustments to your **BEL ControlPlane** deployment _simply edit and re-apply the `linkerd-control-plane-config.yaml` manifest_.
-
 #### Step 9: Monitor Buoyant Cloud Metrics Rollout and Check Proxies
 
 Now that both our **BEL ControlPlane** and **DataPlane** have been deployed, we'll check the status of our `buoyant-cloud-metrics` daemonset rollout:
@@ -775,261 +473,26 @@ Once the rollout is complete, we'll use `linkerd check --proxy` command to check
 linkerd check --proxy -n linkerd-buoyant
 ```
 
-We should see something like the following:
-
-```bash
-kubernetes-api
---------------
-√ can initialize the client
-√ can query the Kubernetes API
-
-kubernetes-version
-------------------
-√ is running the minimum Kubernetes API version
-
-linkerd-existence
------------------
-√ 'linkerd-config' config map exists
-√ heartbeat ServiceAccount exist
-√ control plane replica sets are ready
-√ no unschedulable pods
-√ control plane pods are ready
-√ cluster networks contains all node podCIDRs
-√ cluster networks contains all pods
-√ cluster networks contains all services
-
-linkerd-config
---------------
-√ control plane Namespace exists
-√ control plane ClusterRoles exist
-√ control plane ClusterRoleBindings exist
-√ control plane ServiceAccounts exist
-√ control plane CustomResourceDefinitions exist
-√ control plane MutatingWebhookConfigurations exist
-√ control plane ValidatingWebhookConfigurations exist
-√ proxy-init container runs as root user if docker container runtime is used
-
-linkerd-identity
-----------------
-√ certificate config is valid
-√ trust anchors are using supported crypto algorithm
-√ trust anchors are within their validity period
-√ trust anchors are valid for at least 60 days
-√ issuer cert is using supported crypto algorithm
-√ issuer cert is within its validity period
-√ issuer cert is valid for at least 60 days
-√ issuer cert is issued by the trust anchor
-
-linkerd-webhooks-and-apisvc-tls
--------------------------------
-√ proxy-injector webhook has valid cert
-√ proxy-injector cert is valid for at least 60 days
-√ sp-validator webhook has valid cert
-√ sp-validator cert is valid for at least 60 days
-√ policy-validator webhook has valid cert
-√ policy-validator cert is valid for at least 60 days
-
-linkerd-identity-data-plane
----------------------------
-√ data plane proxies certificate match CA
-
-linkerd-version
----------------
-√ can determine the latest version
-√ cli is up-to-date
-
-linkerd-control-plane-proxy
----------------------------
-√ control plane proxies are healthy
-‼ control plane proxies are up-to-date
-    some proxies are not running the current version:
-	* linkerd-identity-66dcbc5d8c-fvh6w (preview-24.2.1-hazl)
-	* linkerd-proxy-injector-7fc465d98b-2bvtg (preview-24.2.1-hazl)
-	* linkerd-destination-7947d79867-rl2hg (preview-24.2.1-hazl)
-    see https://linkerd.io/2/checks/#l5d-cp-proxy-version for hints
-‼ control plane proxies and cli versions match
-    linkerd-identity-66dcbc5d8c-fvh6w running preview-24.2.1-hazl but cli running preview-24.2.1
-    see https://linkerd.io/2/checks/#l5d-cp-proxy-cli-version for hints
-
-linkerd-data-plane
-------------------
-√ data plane namespace exists
-√ data plane proxies are ready
-‼ data plane is up-to-date
-    some proxies are not running the current version:
-	* buoyant-cloud-metrics-td9rq (preview-24.2.1-hazl)
-	* buoyant-cloud-metrics-59psz (preview-24.2.1-hazl)
-	* buoyant-cloud-metrics-6tzgt (preview-24.2.1-hazl)
-	* buoyant-cloud-metrics-22ppw (preview-24.2.1-hazl)
-	* buoyant-cloud-agent-7f97666465-s4krd (preview-24.2.1-hazl)
-    see https://linkerd.io/2/checks/#l5d-data-plane-version for hints
-‼ data plane and cli versions match
-    buoyant-cloud-metrics-td9rq running preview-24.2.1-hazl but cli running preview-24.2.1
-    see https://linkerd.io/2/checks/#l5d-data-plane-cli-version for hints
-√ data plane pod labels are configured correctly
-√ data plane service labels are configured correctly
-√ data plane service annotations are configured correctly
-√ opaque ports are properly annotated
-
-linkerd-buoyant
----------------
-√ Linkerd health ok
-√ Linkerd vulnerability report ok
-√ Linkerd data plane upgrade assistance ok
-√ Linkerd trust anchor rotation assistance ok
-
-linkerd-buoyant-agent
----------------------
-√ linkerd-buoyant can determine the latest version
-√ linkerd-buoyant cli is up-to-date
-√ linkerd-buoyant Namespace exists
-√ linkerd-buoyant Namespace has correct labels
-√ agent-metadata ConfigMap exists
-√ buoyant-cloud-org-credentials Secret exists
-√ buoyant-cloud-org-credentials Secret has correct labels
-√ buoyant-cloud-agent ClusterRole exists
-√ buoyant-cloud-agent ClusterRoleBinding exists
-√ buoyant-cloud-agent ServiceAccount exists
-√ buoyant-cloud-agent Deployment exists
-√ buoyant-cloud-agent Deployment is running
-√ buoyant-cloud-agent Deployment is injected
-√ buoyant-cloud-agent Deployment is up-to-date
-√ buoyant-cloud-agent Deployment is running a single pod
-√ buoyant-cloud-metrics DaemonSet exists
-√ buoyant-cloud-metrics DaemonSet is running
-√ buoyant-cloud-metrics DaemonSet is injected
-√ buoyant-cloud-metrics DaemonSet is up-to-date
-√ linkerd-control-plane-operator Deployment exists
-√ linkerd-control-plane-operator Deployment is running
-√ linkerd-control-plane-operator Deployment is up-to-date
-√ linkerd-control-plane-operator Deployment is running a single pod
-√ controlplanes.linkerd.buoyant.io CRD exists
-√ linkerd-data-plane-operator Deployment exists
-√ linkerd-data-plane-operator Deployment is running
-√ linkerd-data-plane-operator Deployment is up-to-date
-√ linkerd-data-plane-operator Deployment is running a single pod
-√ dataplanes.linkerd.buoyant.io CRD exists
-
-Status check results are √
-```
-
 Again, we may see a few warnings (!!), _but we're good to proceed as long as the overall status is good_.
 
 We've successfully installed **Buoyant Enterprise for Linkerd**, and can now use **BEL** to manage and secure our Kubernetes applications.
 
-### Summary: Deploy a Kubernetes Cluster With BEL
-
-<<Summarize Deploy a Kubernetes Cluster With BEL>>
-
-## Demo 2: Examine the Status of Our Cluster Using Buoyant Cloud
-
-### What is Buoyant Cloud?
-
-[Buoyant Cloud](https://buoyant.io/cloud)
-
-Earlier, when you signed up for a **Buoyant Enterprise for Linkerd** trial license, you were granted access to **Buoyant Cloud** for a short-term trial. You should already be logged in to **Buoyant Cloud**.
-
-<<What is Buoyant Cloud?>>
-
-### Our Cluster: A View Using Buoyant Cloud
-
-After installing **Buoyant Enterprise for Linkerd** in our cluster, we should see our **Buoyant Cloud** **_Overview_** page populated now.
-
-![Buoyant Cloud: Overview - With Cluster](images/buoyant-cloud-overview-with-cluster.png)
-
-<<Explain what we're seeing here>>
-
-![Buoyant Cloud: Cluster - Initial State](images/buoyant-cloud-cluster-initial.png)
-
-<<Explain what we're seeing here>>
-
-![Buoyant Cloud: Cluster - Initial State](images/buoyant-cloud-cluster-configure.png)
-
-<<Explain what we're seeing here>>
-
-![Buoyant Cloud: Cluster - Rename Cluster](images/buoyant-cloud-cluster-rename.png)
-
-<<Explain what we're seeing here>>
-
-![Buoyant Cloud: Cluster - Demo Cluster](images/buoyant-cloud-cluster-demo.png)
-
-<<Explain what we're seeing here>>
-
-![Buoyant Cloud: Control Plane](images/buoyant-cloud-control-plane.png)
-
-<<Explain what we're seeing here>>
-
-![Buoyant Cloud: Data Plane](images/buoyant-cloud-data-plane.png)
-
-<<Explain what we're seeing here>>
-
-![Buoyant Cloud: Traffic](images/buoyant-cloud-traffic.png)
-
-<<Explain what we're seeing here>>
-
-![Buoyant Cloud: Topology](images/buoyant-cloud-topology.png)
-
-<<Explain what we're seeing here>>
-
-![Buoyant Cloud: Metrics](images/buoyant-cloud-metrics.png)
-
-<<Explain what we're seeing here>>
-
-![Buoyant Cloud: Workloads](images/buoyant-cloud-workloads.png)
-
-<<Explain what we're seeing here>>
-
-![Buoyant Cloud: Resources - Managed Control Plane](images/buoyant-cloud-resources-managed-cp.png)
-
-<<Explain what we're seeing here>>
-
-![Buoyant Cloud: Resources - Managed Data Plane](images/buoyant-cloud-resources-managed-dp.png)
-
-<<Explain what we're seeing here>>
-
-![Buoyant Cloud: Alerting](images/buoyant-cloud-alerting.png)
-
-<<Explain what we're seeing here>>
-
-![Buoyant Cloud: Settings](images/buoyant-cloud-settings.png)
-
-<<Explain what we're seeing here>>
-
-### Buoyant Cloud: Summary
-
-<<Summary for Buoyant Cloud>>
-
-We'll be seeing more of Buoyant Cloud when in the **High Availability Zonal Load Balancing (HAZL)** demonstration.
-
-## Demo 3: Observe the Effects of High Availability Zonal Load Balancing (HAZL)
+## Demo 2: Observe the Effects of High Availability Zonal Load Balancing (HAZL)
 
 ### Deploy the Orders Application
 
 Now that **BEL** is fully deployed, we're going to need some traffic to observe.
 
-Deploy the **Orders** application, from the `colorz` directory:
+Deploy the **Orders** application, from the `orders` directory:
 
 ```bash
-kubectl apply -k colorz
-```
-
-We should see something like this:
-
-```bash
-namespace/colorz created
-configmap/brush-config created
-configmap/paint-config created
-service/paint created
-deployment.apps/blue created
-deployment.apps/brush created
-deployment.apps/green created
-deployment.apps/red created
+kubectl apply -k orders
 ```
 
 We can check the status of the **Orders** application by watching the rollout:
 
 ```bash
-watch -n 1 kubectl get pods -n colorz -o wide --sort-by .metadata.namespace
+watch -n 1 kubectl get pods -n orders -o wide --sort-by .metadata.namespace
 ```
 
 **_Use `CTRL-C` to exit the watch command._**
@@ -1037,55 +500,25 @@ watch -n 1 kubectl get pods -n colorz -o wide --sort-by .metadata.namespace
 If you don't have the `watch` command on your system, just run:
 
 ```bash
-kubectl get pods -n colorz -o wide --sort-by .metadata.namespace
+kubectl get pods -n orders -o wide --sort-by .metadata.namespace
 ```
-
-We should see something like the following.
-
-```bash
-Every 1.0s: kubectl get pods -n colorz -o wide --sort-by .metadata.namespace                                                    trans-am.dean33.com: Mon Feb  5 20:36:24 2024
-
-NAME                     READY   STATUS    RESTARTS   AGE   IP          NODE                       NOMINATED NODE   READINESS GATES
-brush-849b995c88-4r2ws   2/2     Running   0          31s   10.42.1.5   k3d-demo-cluster-agent-1   <none>           <none>
-blue-98d6fb5c9-k22kh     2/2     Running   0          31s   10.42.2.5   k3d-demo-cluster-agent-2   <none>           <none>
-green-d99b94756-frmbf    2/2     Running   0          31s   10.42.1.6   k3d-demo-cluster-agent-1   <none>           <none>
-red-5ccfc666d5-j2l62     2/2     Running   0          31s   10.42.0.5   k3d-demo-cluster-agent-0   <none>           <none>
-```
-
-Note that the `brush` and the `green` pod are on the same node, `k3d-demo-cluster-agent-1`, in this particular deployment. Pay attention to the distribution of pods in your particular deployment, and note which one is running on the same node as the `brush`.
 
 With the **Orders** application deployed, we now have some traffic to work with.
 
 ### Monitor Traffic Without HAZL
 
-Let's take a look at traffic flow _without **HAZL** enabled_ in **Buoyant Cloud**. This will give us a more visual representation of our baseline traffic. Head over to **Buoyant Cloud**, and
-
-![Buoyant Cloud: Topology](images/Orders-topology-all.png)
-
-<<Explain what we're seeing here>>
-
-![Buoyant Cloud: Topology](images/Orders-topology-ns.png)
-
-<<Explain what we're seeing here>>
-
-![Buoyant Cloud: Topology](images/Orders-topology-rps.png)
-
-<<Explain what we're seeing here>>
-
-![Buoyant Cloud: Topology](images/Orders-no-hazl.png)
-
-<<Explain what we're seeing here>>
+Let's take a look at traffic flow _without **HAZL** enabled_ in **Buoyant Cloud**. This will give us a more visual representation of our baseline traffic. Head over to **Buoyant Cloud**, and take a look at the contents of the `orders` namespace.
 
 ### Enable High Availability Zonal Load Balancing (HAZL)
 
 Let's take a look at how quick and easy we can enable **High Availability Zonal Load Balancing (HAZL)**.
 
-Remember, to make adjustments to your **BEL** deployment _simply edit and re-apply the previously-created `linkerd-control-plane-config.yaml` manifest_. We're going to **enable** the `- -experimental-endpoint-zone-weights` in the `experimentalArgs` for now, by uncommenting it in the manifest:
+Remember, to make adjustments to your **BEL** deployment _simply edit and re-apply the previously-created `linkerd-control-plane-config.yaml` manifest_. We're going to **enable** the `- -ext-endpoint-zone-weights` in the `experimentalArgs` for now, by uncommenting it in the manifest:
 
 Edit the `linkerd-control-plane-config.yaml` file:
 
 ```bash
-vim linkerd-control-plane-config.yaml
+vi linkerd-control-plane-config.yaml
 ```
 
 Apply the ControlPlane CRD config to have the Linkerd BEL operator update the Linkerd control plane configuration, and enable HAZL:
@@ -1109,11 +542,11 @@ Let's take a look at what traffic looks like with **HAZL** enabled, using **Buoy
 <<Instructions on how to turn up requests>>
 
 ```bash
-kubectl get cm -n colorz
+kubectl get cm -n orders
 ```
 
 ```bash
-kubectl edit -n colorz cm brush-config
+kubectl edit -n orders cm brush-config
 ```
 
 We're going to change the value of `requestsPerSecond: 50` to `requestsPerSecond: 300`.
@@ -1128,17 +561,17 @@ data:
   config.yml: |
     requestsPerSecond: 300
     reportIntervalSeconds: 10
-    uri: http://paint.colorz.svc.cluster.local
+    uri: http://paint.orders.svc.cluster.local
 kind: ConfigMap
 metadata:
   annotations:
     kubectl.kubernetes.io/last-applied-configuration: |
-      {"apiVersion":"v1","data":{"config.yml":"requestsPerSecond: 50\nreportIntervalSeconds: 10\nuri: http://paint.colorz.svc.cluster.local\n"},"kind":"ConfigMap","metadata":{"annotations":{},"labels":{"app":"brush"},"name":"brush-config","namespace":"colorz"}}
+      {"apiVersion":"v1","data":{"config.yml":"requestsPerSecond: 50\nreportIntervalSeconds: 10\nuri: http://paint.orders.svc.cluster.local\n"},"kind":"ConfigMap","metadata":{"annotations":{},"labels":{"app":"brush"},"name":"brush-config","namespace":"orders"}}
   creationTimestamp: "2024-02-06T02:35:53Z"
   labels:
     app: brush
   name: brush-config
-  namespace: colorz
+  namespace: orders
   resourceVersion: "21137"
   uid: 8007b421-163c-4650-9ca6-a99f38e3d2c8
 ```
@@ -1158,7 +591,7 @@ Let's take a look at what the increased traffic looks like in **Buoyant Cloud**.
 <<Instructions on how to turn down requests>>
 
 ```bash
-kubectl edit -n colorz cm brush-config
+kubectl edit -n orders cm brush-config
 ```
 
 We're going to change the value of `requestsPerSecond: 300` to `requestsPerSecond: 50`.
@@ -1173,17 +606,17 @@ data:
   config.yml: |
     requestsPerSecond: 50
     reportIntervalSeconds: 10
-    uri: http://paint.colorz.svc.cluster.local
+    uri: http://paint.orders.svc.cluster.local
 kind: ConfigMap
 metadata:
   annotations:
     kubectl.kubernetes.io/last-applied-configuration: |
-      {"apiVersion":"v1","data":{"config.yml":"requestsPerSecond: 50\nreportIntervalSeconds: 10\nuri: http://paint.colorz.svc.cluster.local\n"},"kind":"ConfigMap","metadata":{"annotations":{},"labels":{"app":"brush"},"name":"brush-config","namespace":"colorz"}}
+      {"apiVersion":"v1","data":{"config.yml":"requestsPerSecond: 50\nreportIntervalSeconds: 10\nuri: http://paint.orders.svc.cluster.local\n"},"kind":"ConfigMap","metadata":{"annotations":{},"labels":{"app":"brush"},"name":"brush-config","namespace":"orders"}}
   creationTimestamp: "2024-02-06T02:35:53Z"
   labels:
     app: brush
   name: brush-config
-  namespace: colorz
+  namespace: orders
   resourceVersion: "21137"
   uid: 8007b421-163c-4650-9ca6-a99f38e3d2c8
 ```
@@ -1231,7 +664,7 @@ metadata:
   annotations:
     buoyant.io/created-by: linkerd policy generate
   name: blue-8080
-  namespace: colorz
+  namespace: orders
 spec:
   podSelector:
     matchLabels:
@@ -1245,7 +678,7 @@ metadata:
   annotations:
     buoyant.io/created-by: linkerd policy generate
   name: blue-8080
-  namespace: colorz
+  namespace: orders
 spec:
   identityRefs:
   - group: ""
@@ -1258,7 +691,7 @@ metadata:
   annotations:
     buoyant.io/created-by: linkerd policy generate
   name: blue-8080
-  namespace: colorz
+  namespace: orders
 spec:
   requiredAuthenticationRefs:
   - group: policy.linkerd.io
@@ -1275,7 +708,7 @@ metadata:
   annotations:
     buoyant.io/created-by: linkerd policy generate
   name: blue-8080-allow
-  namespace: colorz
+  namespace: orders
 spec:
   networks:
   - cidr: 0.0.0.0/0
@@ -1286,7 +719,7 @@ metadata:
   annotations:
     buoyant.io/created-by: linkerd policy generate
   name: blue-8080-allow
-  namespace: colorz
+  namespace: orders
 spec:
   requiredAuthenticationRefs:
   - group: policy.linkerd.io
@@ -1303,7 +736,7 @@ metadata:
   annotations:
     buoyant.io/created-by: linkerd policy generate
   name: green-8080
-  namespace: colorz
+  namespace: orders
 spec:
   podSelector:
     matchLabels:
@@ -1317,7 +750,7 @@ metadata:
   annotations:
     buoyant.io/created-by: linkerd policy generate
   name: green-8080
-  namespace: colorz
+  namespace: orders
 spec:
   identityRefs:
   - group: ""
@@ -1330,7 +763,7 @@ metadata:
   annotations:
     buoyant.io/created-by: linkerd policy generate
   name: green-8080
-  namespace: colorz
+  namespace: orders
 spec:
   requiredAuthenticationRefs:
   - group: policy.linkerd.io
@@ -1347,7 +780,7 @@ metadata:
   annotations:
     buoyant.io/created-by: linkerd policy generate
   name: green-8080-allow
-  namespace: colorz
+  namespace: orders
 spec:
   networks:
   - cidr: 0.0.0.0/0
@@ -1358,7 +791,7 @@ metadata:
   annotations:
     buoyant.io/created-by: linkerd policy generate
   name: green-8080-allow
-  namespace: colorz
+  namespace: orders
 spec:
   requiredAuthenticationRefs:
   - group: policy.linkerd.io
@@ -1375,7 +808,7 @@ metadata:
   annotations:
     buoyant.io/created-by: linkerd policy generate
   name: red-8080
-  namespace: colorz
+  namespace: orders
 spec:
   podSelector:
     matchLabels:
@@ -1389,7 +822,7 @@ metadata:
   annotations:
     buoyant.io/created-by: linkerd policy generate
   name: red-8080
-  namespace: colorz
+  namespace: orders
 spec:
   identityRefs:
   - group: ""
@@ -1402,7 +835,7 @@ metadata:
   annotations:
     buoyant.io/created-by: linkerd policy generate
   name: red-8080
-  namespace: colorz
+  namespace: orders
 spec:
   requiredAuthenticationRefs:
   - group: policy.linkerd.io
@@ -1419,7 +852,7 @@ metadata:
   annotations:
     buoyant.io/created-by: linkerd policy generate
   name: red-8080-allow
-  namespace: colorz
+  namespace: orders
 spec:
   networks:
   - cidr: 0.0.0.0/0
@@ -1430,7 +863,7 @@ metadata:
   annotations:
     buoyant.io/created-by: linkerd policy generate
   name: red-8080-allow
-  namespace: colorz
+  namespace: orders
 spec:
   requiredAuthenticationRefs:
   - group: policy.linkerd.io
