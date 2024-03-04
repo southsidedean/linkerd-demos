@@ -1,45 +1,14 @@
-# Eliminating Cross-Zone Kubernetes Traffic With High Availability Zonal Load Balancing (HAZL)
+# Demonstration: Orders Application With High Availability Zonal Load Balancing (HAZL)
 
-## eliminate-cross-zone-traffic-hazl
+## demo-orders
 
 ### Tom Dean | Buoyant
 
-### Last edit: 2/20/2024
+### Last edit: 3/4/2024
 
 ## Introduction
 
-In this _hands-on demonstration_, we will deploy **Buoyant Enterprise for Linkerd** and demonstrate how to enable **High Availability Zonal Load Balancing (HAZL)**. We'll then take a look at how **HAZL** works to keep network traffic _in-zone_ where possible, and compare **HAZL** to **Topology Aware Routing**.
-
-### Buoyant Enterprise for Linkerd (BEL)
-
-[Buoyant Enterprise for Linkerd](https://buoyant.io/enterprise-linkerd)
-
-**Buoyant Enterprise for Linkerd** is an enterprise-grade service mesh for Kubernetes. It makes Kubernetes applications **reliable**, **secure**, and **cost-effective** _without requiring any changes to application code_. Buoyant Enterprise for Linkerd contains all the features of open-source Linkerd, the world's fastest, lightest service mesh, plus _additional_ enterprise-only features such as:
-
-- High Availability Zonal Load Balancing (HAZL)
-- Security Policy Generation
-- FIPS-140-2/3 Compliance
-- Lifecycle Automation
-- Enterprise-Hardened Images
-- Software Bills of Materials (SBOMs)
-- Strict SLAs Around CVE Remediation
-
-We're going to try out **HAZL** in this demo.
-
-### High Availability Zonal Load Balancing (HAZL)
-
-**High Availability Zonal Load Balancing (HAZL)** is a dynamic request-level load balancer in **Buoyant Enterprise for Linkerd** that balances **HTTP** and **gRPC** traffic in environments with **multiple availability zones**. For Kubernetes clusters deployed across multiple zones, **HAZL** can **dramatically reduce cloud spend by minimizing cross-zone traffic**.
-
-Unlike other zone-aware options that use **Topology Hints** (including **Istio** and open source **Linkerd**), **HAZL** _never sacrifices reliability to achieve this cost reduction_.
-
-In **multi-zone** environments, **HAZL** can:
-
-- **Cut cloud spend** by eliminating cross-zone traffic both within and across cluster boundaries;
-- **Improve system reliability** by distributing traffic to additional zones as the system comes under stress;
-- **Prevent failures before they happen** by quickly reacting to increases in latency before the system begins to fail.
-- **Preserve zone affinity for cross-cluster calls**, allowing for cost reduction in multi-cluster environments.
-
-Like **Linkerd** itself, **HAZL** is designed to _"just work"_. It works without operator involvement, can be applied to any Kubernetes service that speaks **HTTP** / **gRPC** regardless of the number of endpoints or distribution of workloads and traffic load across zones, and in the majority of cases _requires no tuning or configuration_.
+In this _hands-on demonstration_, we will deploy **Buoyant Enterprise for Linkerd** and demonstrate how to enable **High Availability Zonal Load Balancing (HAZL)**. We'll then take a look at how **HAZL** works to keep network traffic _in-zone_ where possible.
 
 ### How High Availability Zonal Load Balancing (HAZL) Works
 
@@ -79,20 +48,18 @@ In this _hands-on demonstration_, we will deploy **Buoyant Enterprise for Linker
 
 **In this demonstration, we're going to do the following:**
 
-- Deploy two `k3d` Kubernetes clusters
-  - One for HAZL
-  - One for Topology Aware Routing
+- Deploy a `k3d` Kubernetes cluster
 - Deploy **Buoyant Enterprise for Linkerd** with **HAZL** disabled on the cluster
-- Deploy the **Colorwheel** application to the clusters, to generate multi-zonal traffic
-  - Monitor traffic from the **Colorwheel** application, with **HAZL** disabled
+- Deploy the **Orders** application to the clusters, to generate multi-zonal traffic
+  - Monitor traffic from the **Orders** application, with **HAZL** disabled
 - Enable **High Availability Zonal Load Balancing (HAZL)**
-  - Monitor traffic from the **Colorwheel** application, with **HAZL** enabled
+  - Monitor traffic from the **Orders** application, with **HAZL** enabled
   - Observe the effect on cross-az traffic
-- Increase the number of requests in the **Colorwheel** application
-  - Monitor the increased traffic from the **Colorwheel** application
+- Increase the number of requests in the **Orders** application
+  - Monitor the increased traffic from the **Orders** application
   - Observe the effect on cross-az traffic
-- Decrease the number of requests in the **Colorwheel** application
-  - Monitor the decreased traffic from the **Colorwheel** application
+- Decrease the number of requests in the **Orders** application
+  - Monitor the decreased traffic from the **Orders** application
   - Observe the effect on cross-az traffic
 
 Feel free to follow along with _your own instance_ if you'd like, using the resources and instructions provided in this repository.
@@ -110,52 +77,15 @@ Feel free to follow along with _your own instance_ if you'd like, using the reso
 
 All prerequisites must be _installed_ and _working properly_ before proceeding. The instructions in the provided links will get you there. A trial license for Buoyant Enterprise for Linkerd can be obtained from the link above. Instructions on obtaining the demo assets from GitHub are below.
 
-### Demo: Included Scripts
+### The Orders Application
 
-There are three `bel-demo-*` shell scripts provided with the repository, if you'd like to use CLI automation to work through the demonstration.
-
-```bash
-Contents of service-mesh-academy/deploying-bel-with-hazl:
-
-.
-├── README.md
-├── bel-demo-full-repo.sh
-├── bel-demo-install.sh
-├── bel-demo-hazl-policy.sh
-├── certs
-├── cluster
-├── colorz
-└── demo-magic.sh
-```
-
-**Available Scripts:**
-
-- `bel-demo-full-repo.sh`
-  - Walks through the full repository, all steps demonstrated
-- `bel-demo-install.sh`
-  - Deploys the k3d cluster for you, walks through **BEL** install, **HAZL** and **policy** demonstration steps
-- `bel-demo-hazl-policy.sh`
-  - Deploys the k3d cluster and **BEL** without **HAZL** for you, walks through **HAZL** and **policy** demonstration steps
-
-These scripts leverage the `demo-magic.sh` script. There's no need to call `demo-magic.sh` directly.
-
-To execute a script, using the `full-repo` script as an example, use:
-
-```bash
-./bel-demo-full-repo.sh
-```
-
-For more information, look at the scripts.
-
-### The Colorwheel Application
-
-This repository includes the **Colorwheel** application, which generates traffic across multiple availability zones in our Kubernetes cluster, allowing us to observe the effect that **High Availability Zonal Load Balancing (HAZL)** has on traffic.
+This repository includes the **Orders** application, which generates traffic across multiple availability zones in our Kubernetes cluster, allowing us to observe the effect that **High Availability Zonal Load Balancing (HAZL)** has on traffic.
 
 ## Demo 1: Deploy a Kubernetes Cluster With Buoyant Enterprise for Linkerd, With HAZL Disabled
 
 First, we'll deploy a Kubernetes cluster using `k3d` and deploy Buoyant Enterprise for Linkerd (BEL).
 
-### Task 1: Clone the `deploying-bel-with-hazl` Assets
+### Task 1: Clone the `demo-orders` Assets
 
 [GitHub: Deploying Buoyant Enterprise for Linkerd with High Availability Zonal Load Balancing (HAZL)](https://github.com/BuoyantIO/service-mesh-academy/tree/main/deploying-bel-with-hazl)
 
@@ -1177,11 +1107,11 @@ We'll be seeing more of Buoyant Cloud when in the **High Availability Zonal Load
 
 ## Demo 3: Observe the Effects of High Availability Zonal Load Balancing (HAZL)
 
-### Deploy the Colorwheel Application
+### Deploy the Orders Application
 
 Now that **BEL** is fully deployed, we're going to need some traffic to observe.
 
-Deploy the **Colorwheel** application, from the `colorz` directory:
+Deploy the **Orders** application, from the `colorz` directory:
 
 ```bash
 kubectl apply -k colorz
@@ -1200,7 +1130,7 @@ deployment.apps/green created
 deployment.apps/red created
 ```
 
-We can check the status of the **Colorwheel** application by watching the rollout:
+We can check the status of the **Orders** application by watching the rollout:
 
 ```bash
 watch -n 1 kubectl get pods -n colorz -o wide --sort-by .metadata.namespace
@@ -1228,25 +1158,25 @@ red-5ccfc666d5-j2l62     2/2     Running   0          31s   10.42.0.5   k3d-demo
 
 Note that the `brush` and the `green` pod are on the same node, `k3d-demo-cluster-agent-1`, in this particular deployment. Pay attention to the distribution of pods in your particular deployment, and note which one is running on the same node as the `brush`.
 
-With the **Colorwheel** application deployed, we now have some traffic to work with.
+With the **Orders** application deployed, we now have some traffic to work with.
 
 ### Monitor Traffic Without HAZL
 
 Let's take a look at traffic flow _without **HAZL** enabled_ in **Buoyant Cloud**. This will give us a more visual representation of our baseline traffic. Head over to **Buoyant Cloud**, and
 
-![Buoyant Cloud: Topology](images/colorwheel-topology-all.png)
+![Buoyant Cloud: Topology](images/Orders-topology-all.png)
 
 <<Explain what we're seeing here>>
 
-![Buoyant Cloud: Topology](images/colorwheel-topology-ns.png)
+![Buoyant Cloud: Topology](images/Orders-topology-ns.png)
 
 <<Explain what we're seeing here>>
 
-![Buoyant Cloud: Topology](images/colorwheel-topology-rps.png)
+![Buoyant Cloud: Topology](images/Orders-topology-rps.png)
 
 <<Explain what we're seeing here>>
 
-![Buoyant Cloud: Topology](images/colorwheel-no-hazl.png)
+![Buoyant Cloud: Topology](images/Orders-no-hazl.png)
 
 <<Explain what we're seeing here>>
 
@@ -1274,7 +1204,7 @@ Now, we can see the effect **HAZL** has on the traffic in our multi-az cluster.
 
 Let's take a look at what traffic looks like with **HAZL** enabled, using **Buoyant Cloud**. This will give us a more visual representation of the effect of **HAZL** on our traffic.
 
-![Buoyant Cloud: Topology](images/colorwheel-with-hazl.png)
+![Buoyant Cloud: Topology](images/Orders-with-hazl.png)
 
 <<Explain what we're seeing here>>
 
@@ -1323,7 +1253,7 @@ Once we save our change with `:wq`, the number of requests will go from 50 to 30
 
 Let's take a look at what the increased traffic looks like in **Buoyant Cloud**. This will give us a more visual representation of the effect of **HAZL** on our traffic.
 
-![Buoyant Cloud: Topology](images/colorwheel-increase-requests-hazl.png)
+![Buoyant Cloud: Topology](images/Orders-increase-requests-hazl.png)
 
 <<Explain what we're seeing here>>
 
@@ -1368,7 +1298,7 @@ Once we save our change with `:wq`, the number of requests will go from 300 to 5
 
 Let's take a look at what traffic looks like in **Buoyant Cloud**. This will give us a more visual representation of the effect of **HAZL** on our traffic.
 
-![Buoyant Cloud: Topology](images/colorwheel-decrease-requests-hazl.png)
+![Buoyant Cloud: Topology](images/Orders-decrease-requests-hazl.png)
 
 <<Explain what we're seeing here>>
 
@@ -1648,15 +1578,15 @@ Let's take a look at our new Security Policies in Buoyant Cloud.
 
 Let's take a look at the Security Policies we just created in **Buoyant Cloud**.
 
-![Buoyant Cloud: Resources: Security Policies](images/colorwheel-security-policies-1.png)
+![Buoyant Cloud: Resources: Security Policies](images/Orders-security-policies-1.png)
 
 <<Explain what we're seeing here>>
 
-![Buoyant Cloud: Resources: Security Policies](images/colorwheel-security-policies-2.png)
+![Buoyant Cloud: Resources: Security Policies](images/Orders-security-policies-2.png)
 
 <<Explain what we're seeing here>>
 
-![Buoyant Cloud: Resources: Security Policies](images/colorwheel-security-policies-3.png)
+![Buoyant Cloud: Resources: Security Policies](images/Orders-security-policies-3.png)
 
 <<Explain what we're seeing here>>
 

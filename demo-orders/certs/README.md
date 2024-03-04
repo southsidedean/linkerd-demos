@@ -1,1 +1,1 @@
-# Put your certificate files generated with step here
+# Put your certificate files generated with `step` here
