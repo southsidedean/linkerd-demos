@@ -87,20 +87,20 @@ First, we'll deploy a Kubernetes cluster using `k3d` and deploy Buoyant Enterpri
 
 ### Task 1: Clone the `demo-orders` Assets
 
-[GitHub: Deploying Buoyant Enterprise for Linkerd with High Availability Zonal Load Balancing (HAZL)](https://github.com/BuoyantIO/service-mesh-academy/tree/main/deploying-bel-with-hazl)
+[GitHub: Demonstration: Orders Application With High Availability Zonal Load Balancing (HAZL)](https://github.com/southsidedean/linkerd-demos/tree/main/demo-orders)
 
-To get the resources we will be using in this demonstration, you will need to clone a copy of the GitHub `BuoyantIO/service-mesh-academy` repository. We'll be using the materials in the `service-mesh-academy/deploying-bel-with-hazl` subdirectory.
+To get the resources we will be using in this demonstration, you will need to clone a copy of the GitHub `southsidedean/linkerd-demos` repository. We'll be using the materials in the `demo-orders` subdirectory.
 
-Clone the `BuoyantIO/service-mesh-academy` GitHub repository to your preferred working directory:
+Clone the `southsidedean/linkerd-demos` GitHub repository to your preferred working directory:
 
 ```bash
-git clone https://github.com/BuoyantIO/service-mesh-academy.git
+git clone https://github.com/southsidedean/linkerd-demos.git
 ```
 
-Change directory to the `deploying-bel-with-hazl` subdirectory in the `service-mesh-academy` repository:
+Change directory to the `demo-orders` subdirectory in the `linkerd-demos` repository:
 
 ```bash
-cd service-mesh-academy/deploying-bel-with-hazl
+cd linkerd-demos/demo-orders
 ```
 
 Taking a look at the contents of `service-mesh-academy/deploying-bel-with-hazl`:
@@ -109,127 +109,23 @@ Taking a look at the contents of `service-mesh-academy/deploying-bel-with-hazl`:
 ls -la
 ```
 
-You should see the following:
-
-```bash
-total 112
-drwxrwxr-x   9 user  staff    288 Feb  3 13:47 .
-drwxr-xr-x  23 user  staff    736 Feb  2 13:05 ..
--rw-r--r--   1 user  staff  21495 Feb  3 13:43 README.md
--rwxr-xr-x   1 user  staff   9367 Feb  2 13:37 bel-demo-full-repo.sh
--rwxr-xr-x   1 user  staff  12581 Feb  2 13:37 bel-demo-hazl-policy.sh
--rwxr-xr-x   1 user  staff  12581 Feb  2 13:37 bel-demo-install.sh
-drwxr-xr-x   3 user  staff     96 Feb  2 13:14 certs
-drwxr-xr-x   3 user  staff     96 Feb  2 13:14 cluster
-drwxr-xr-x   9 user  staff    288 Feb  2 13:14 colorz
--rwxr-xr-x   1 user  staff   3963 Feb  2 13:14 demo-magic.sh
-```
-
 With the assets in place, we can proceed to creating a cluster with `k3d`.
 
 ### Task 2: Deploy a Kubernetes Cluster Using `k3d`
 
 Before we can deploy **Buoyant Enterprise for Linkerd**, we're going to need a Kubernetes cluster. Fortunately, we can use `k3d` for that. There's a cluster configuration file in the `cluster` directory, that will create a cluster with one control plane and three worker nodes, in three different availability zones.
 
-We can use the following commands to have `k3d` create a cluster with 3 availability zones.
+Create the `demo-cluster-orders` cluster, using the configuration file in `cluster/demo-cluster-orders.yaml`:
 
-Check for existing `k3d` clusters:
+```bash
+k3d cluster create -c cluster/demo-cluster-orders.yaml --wait
+```
+
+Check for our `demo-cluster-orders` cluster:
 
 ```bash
 k3d cluster list
 ```
-
-If you'd like to _delete_ any existing clusters you might have, use:
-
-```bash
-k3d cluster delete <<cluster-name>>
-```
-
-Create the `demo-cluster` cluster, using the configuration file in `cluster/demo-cluster.yaml`:
-
-```bash
-k3d cluster create -c cluster/demo-cluster.yaml --wait
-```
-
-Output:
-
-```bash
-INFO[0000] Using config file cluster/demo-cluster.yaml (k3d.io/v1alpha5#simple)
-INFO[0000] Prep: Network
-INFO[0000] Created network 'multiaz'
-INFO[0000] Created image volume k3d-demo-cluster-images
-INFO[0000] Starting new tools node...
-INFO[0000] Starting Node 'k3d-demo-cluster-tools'
-INFO[0001] Creating node 'k3d-demo-cluster-server-0'
-INFO[0001] Creating node 'k3d-demo-cluster-agent-0'
-INFO[0001] Creating node 'k3d-demo-cluster-agent-1'
-INFO[0001] Creating node 'k3d-demo-cluster-agent-2'
-INFO[0001] Using the k3d-tools node to gather environment information
-INFO[0001] Starting new tools node...
-INFO[0001] Starting Node 'k3d-demo-cluster-tools'
-INFO[0002] Starting cluster 'demo-cluster'
-INFO[0002] Starting servers...
-INFO[0002] Starting Node 'k3d-demo-cluster-server-0'
-INFO[0005] Starting agents...
-INFO[0005] Starting Node 'k3d-demo-cluster-agent-1'
-INFO[0005] Starting Node 'k3d-demo-cluster-agent-0'
-INFO[0005] Starting Node 'k3d-demo-cluster-agent-2'
-INFO[0010] All helpers already running.
-INFO[0010] Injecting records for hostAliases (incl. host.k3d.internal) and for 5 network members into CoreDNS configmap...
-INFO[0012] Cluster 'demo-cluster' created successfully!
-INFO[0012] You can now use it like this:
-kubectl cluster-info
-```
-
-Check for our `demo-cluster` cluster:
-
-```bash
-k3d cluster list
-```
-
-Output:
-
-```bash
-NAME           SERVERS   AGENTS   LOADBALANCER
-demo-cluster   1/1       3/3      false
-```
-
-Checking out cluster using `kubectl`:
-
-_Nodes:_
-
-```bash
-kubectl get nodes
-```
-
-Output:
-
-```bash
-NAME                        STATUS   ROLES                  AGE    VERSION
-k3d-demo-cluster-agent-1    Ready    <none>                 101s   v1.27.5+k3s1
-k3d-demo-cluster-agent-2    Ready    <none>                 99s    v1.27.5+k3s1
-k3d-demo-cluster-server-0   Ready    control-plane,master   104s   v1.27.5+k3s1
-k3d-demo-cluster-agent-0    Ready    <none>                 100s   v1.27.5+k3s1
-```
-
-_Pods:_
-
-```bash
-watch -n 1 kubectl get pods -A -o wide --sort-by .metadata.namespace
-```
-
-Output:
-
-```bash
-Every 1.0s: kubectl get pods -A -o wide --sort-by .metadata.namespace                                                           trans-am.dean33.com: Mon Feb  5 15:09:10 2024
-
-NAMESPACE     NAME                                     READY   STATUS    RESTARTS   AGE     IP          NODE                        NOMINATED NODE   READINESS GATES
-kube-system   local-path-provisioner-957fdf8bc-6dkl7   1/1     Running   0          2m21s   10.42.3.3   k3d-demo-cluster-server-0   <none>           <none>
-kube-system   coredns-77ccd57875-8jtff                 1/1     Running   0          2m21s   10.42.0.2   k3d-demo-cluster-agent-0    <none>           <none>
-kube-system   metrics-server-648b5df564-dm9r8          1/1     Running   0          2m21s   10.42.3.2   k3d-demo-cluster-server-0   <none>           <none>
-```
-
-**_Use `CTRL-C` to exit the watch command._**
 
 Now that we have a Kubernetes cluster, we can proceed with deploying **Buoyant Enterprise for Linkerd**.
 
@@ -315,7 +211,7 @@ Next, we will walk through the process of installing **Buoyant Enterprise for Li
 
 #### Step 1: Obtain Buoyant Enterprise for Linkerd (BEL) Trial Credentials and Log In to Buoyant Cloud
 
-To get credentials for accessing **Buoyant Enterprise for Linkerd**, [sign up here](https://enterprise.buoyant.io/start_trial), and follow the instructions.
+If you require credentials for accessing **Buoyant Enterprise for Linkerd**, [sign up here](https://enterprise.buoyant.io/start_trial), and follow the instructions.
 
 You should end up with a set of credentials in environment variables like this:
 
@@ -325,13 +221,13 @@ export API_CLIENT_SECRET=[CLIENT_SECRET]
 export BUOYANT_LICENSE=[LICENSE]
 ```
 
-Add these to a file in the root of the `service-mesh-academy/deploying-bel-with-hazl` directory, named `settings.sh`, plus add a new line with the cluster name, `export CLUSTER_NAME=demo-cluster`, like this:
+Add these to a file in the root of the `linkerd-demos/demo-orders` directory, named `settings.sh`, plus add a new line with the cluster name, `export CLUSTER_NAME=demo-cluster-orders`, like this:
 
 ```bash
 export API_CLIENT_ID=[CLIENT_ID]
 export API_CLIENT_SECRET=[CLIENT_SECRET]
 export BUOYANT_LICENSE=[LICENSE]
-export CLUSTER_NAME=demo-cluster
+export CLUSTER_NAME=demo-cluster-orders
 ```
 
 Check the contents of the `settings.sh` file:
