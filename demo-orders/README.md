@@ -184,13 +184,13 @@ We should see:
 
 ```bash
 total 40
-drwxr-xr-x   7 user  staff  224 Feb  2 13:23 .
-drwxr-xr-x  10 user  staff  320 Feb  3 16:53 ..
--rw-r--r--   1 user  staff   53 Feb  2 13:18 README.md
--rw-------   1 user  staff  599 Feb  2 13:23 ca.crt
--rw-------   1 user  staff  227 Feb  2 13:23 ca.key
--rw-------   1 user  staff  648 Feb  2 13:23 issuer.crt
--rw-------   1 user  staff  227 Feb  2 13:23 issuer.key
+drwxr-xr-x  7 tdean  staff  224 Mar  4 18:30 .
+drwxr-xr-x  8 tdean  staff  256 Mar  4 18:09 ..
+-rw-r--r--  1 tdean  staff   55 Mar  4 17:45 README.md
+-rw-------  1 tdean  staff  599 Mar  4 18:29 ca.crt
+-rw-------  1 tdean  staff  227 Mar  4 18:29 ca.key
+-rw-------  1 tdean  staff  652 Mar  4 18:30 issuer.crt
+-rw-------  1 tdean  staff  227 Mar  4 18:30 issuer.key
 ```
 
 Change back to the parent directory:
@@ -321,9 +321,9 @@ helm install linkerd-buoyant \
   --set api.clientID=$API_CLIENT_ID \
   --set api.clientSecret=$API_CLIENT_SECRET \
   --set metrics.debugMetrics=true \
+  --reuse-values \
   --set agent.logLevel=debug \
   --set metrics.logLevel=debug \
-  --reuse-values \
 linkerd-buoyant/linkerd-buoyant
 ```
 
