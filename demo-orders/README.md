@@ -299,19 +299,7 @@ helm repo add linkerd-buoyant https://helm.buoyant.cloud
 helm repo update
 ```
 
-Now, we can install the **BEL operator**, using Helm:
-
-```bash
-helm install linkerd-buoyant \
-  --create-namespace \
-  --namespace linkerd-buoyant \
-  --set metadata.agentName=$CLUSTER_NAME \
-  --set api.clientID=$API_CLIENT_ID \
-  --set api.clientSecret=$API_CLIENT_SECRET \
-linkerd-buoyant/linkerd-buoyant
-```
-
-_If you'd like to deploy the **BEL operator** with **debug** enabled:_
+_In order to access the Grafana dashboard in Buoyant Cloud, you'll need to deploy the **BEL operator** with **debug** enabled:_
 
 ```bash
 helm install linkerd-buoyant \
@@ -500,11 +488,43 @@ If you don't have the `watch` command on your system, just run:
 kubectl get pods -n orders -o wide --sort-by .metadata.namespace
 ```
 
+### Create a DataPlane Object for the `orders` Namespace
+
+Let's create the **DataPlane** manifest for the `orders` namespace:
+
+```bash
+cat <<EOF > linkerd-data-plane-orders-config.yaml
+---
+apiVersion: linkerd.buoyant.io/v1alpha1
+kind: DataPlane
+metadata:
+  name: linkerd-orders
+  namespace: orders
+spec:
+  workloadSelector:
+    matchLabels: {}
+EOF
+```
+
+Apply the **DataPlane CRD configuration** manifest to have the **BEL operator** create the **DataPlane** object for the `orders` namespace:
+
+```bash
+kubectl apply -f linkerd-data-plane-orders-config.yaml
+```
+
 With the **Orders** application deployed, we now have some traffic to work with.
 
 ### Monitor Traffic Without HAZL
 
-Let's take a look at traffic flow _without **HAZL** enabled_ in **Buoyant Cloud**. This will give us a more visual representation of our baseline traffic. Head over to **Buoyant Cloud**, and take a look at the contents of the `orders` namespace.
+Let's take a look at traffic flow _without **HAZL** enabled_ in **Buoyant Cloud**. This will give us a more visual representation of our baseline traffic. Head over to **Buoyant Cloud**, and take a look at the contents of the `orders` namespace in the Topology tab.
+
+![Buoyant Cloud: Topology](images/orders-no-hazl-bcloud.png)
+
+Taking a look at the CAR Playground Grafana Dashboard:
+
+![Grafana: Dashboard](images/orders-no-hazl-grafana.png)
+
+We can see...
 
 ### Enable High Availability Zonal Load Balancing (HAZL)
 
@@ -530,7 +550,13 @@ Now, we can see the effect **HAZL** has on the traffic in our multi-az cluster.
 
 Let's take a look at what traffic looks like with **HAZL** enabled, using **Buoyant Cloud**. This will give us a more visual representation of the effect of **HAZL** on our traffic.
 
-![Buoyant Cloud: Topology](images/Orders-with-hazl.png)
+![Buoyant Cloud: Topology](images/orders-hazl-bcloud.png)
+
+Taking a look at the CAR Playground Grafana Dashboard:
+
+![Grafana: Dashboard](images/orders-hazl-grafana.png)
+
+We can see...
 
 <<Explain what we're seeing here>>
 
