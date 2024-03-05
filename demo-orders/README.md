@@ -554,7 +554,11 @@ Let's take a look at what traffic looks like with **HAZL** enabled, using **Buoy
 
 Taking a look at the CAR Playground Grafana Dashboard:
 
-![Grafana: Dashboard](images/orders-hazl-grafana.png)
+![Grafana: Dashboard](images/orders-hazl-grafana-1.png)
+
+We can see...
+
+![Grafana: Dashboard](images/orders-hazl-grafana-2.png)
 
 We can see...
 
