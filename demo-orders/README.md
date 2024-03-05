@@ -203,9 +203,7 @@ Now that we have **mTLS** root certificates, we can deploy **BEL**.
 
 ### Task 4: Deploy Buoyant Enterprise for Linkerd With HAZL Disabled
 
-[Installation: Buoyant Enterprise for Linkerd with Buoyant Cloud](https://docs.buoyant.io/buoyant-enterprise-linkerd/installation/managed-bel-cloud-install/)
-
-[Installation: Buoyant Enterprise for Linkerd Trial](https://docs.buoyant.io/buoyant-enterprise-linkerd/installation/trial/)
+[Installation: Buoyant Enterprise for Linkerd](https://docs.buoyant.io/buoyant-enterprise-linkerd/latest/installation/)
 
 Next, we will walk through the process of installing **Buoyant Enterprise for Linkerd**. We're going to start with **HAZL** disabled, and will enable **HAZL** during testing.
 
@@ -313,7 +311,7 @@ helm install linkerd-buoyant \
 linkerd-buoyant/linkerd-buoyant
 ```
 
-If you'd like to deploy the **BEL operator** with **debug** enabled:
+_If you'd like to deploy the **BEL operator** with **debug** enabled:_
 
 ```bash
 helm install linkerd-buoyant \
