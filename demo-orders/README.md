@@ -103,7 +103,7 @@ Change directory to the `demo-orders` subdirectory in the `linkerd-demos` reposi
 cd linkerd-demos/demo-orders
 ```
 
-Taking a look at the contents of `service-mesh-academy/deploying-bel-with-hazl`:
+Taking a look at the contents of `linkerd-demos/demo-orders`:
 
 ```bash
 ls -la
