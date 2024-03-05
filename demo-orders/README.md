@@ -321,7 +321,6 @@ helm install linkerd-buoyant \
   --set api.clientID=$API_CLIENT_ID \
   --set api.clientSecret=$API_CLIENT_SECRET \
   --set metrics.debugMetrics=true \
-  --reuse-values \
   --set agent.logLevel=debug \
   --set metrics.logLevel=debug \
 linkerd-buoyant/linkerd-buoyant
