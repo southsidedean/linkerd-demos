@@ -1,0 +1,9 @@
+---
+apiVersion: linkerd.buoyant.io/v1alpha1
+kind: DataPlane
+metadata:
+  name: linkerd-multicluster
+  namespace: linkerd-multicluster
+spec:
+  workloadSelector:
+    matchLabels: {}
