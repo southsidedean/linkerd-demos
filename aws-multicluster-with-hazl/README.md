@@ -1,14 +1,14 @@
-# Eliminating Cross-Zone Kubernetes Traffic With High Availability Zonal Load Balancing (HAZL)
+# AWS Multicluster With HAZL
 
-## eliminate-cross-zone-traffic-hazl
+## aws-multicluster-with-hazl
 
 ### Tom Dean | Buoyant
 
-### Last edit: 3/18/2024
+### Last edit: 3/26/2024
 
 ## Introduction
 
-In this _hands-on workshop_, we will deploy **Buoyant Enterprise for Linkerd** and demonstrate how to enable **High Availability Zonal Load Balancing (HAZL)**. We'll then take a look at how **HAZL** works to keep network traffic _in-zone_ where possible by exploring some different traffic, load and availability situations.
+In this _hands-on demo, we will deploy **Buoyant Enterprise for Linkerd** with Multicluster and demonstrate how to enable **High Availability Zonal Load Balancing (HAZL)**. We'll then take a look at how **HAZL** works to keep network traffic _in-zone_ where possible by exploring some different traffic, load and availability situations.
 
 ### Buoyant Enterprise for Linkerd (BEL)
 
@@ -82,13 +82,13 @@ These constraints have real-world implications. As one customer put it when tryi
 
 ### Workshop: Overview
 
-In this _hands-on workshop_, we will deploy **Buoyant Enterprise for Linkerd** on a `k3d` Kubernetes cluster and will demonstrate how to quickly enable **High Availability Zonal Load Balancing (HAZL)**. We'll then take a look at how **HAZL** works to keep network traffic _in-zone_ where possible.
+In this _hands-on workshop_, we will deploy **Buoyant Enterprise for Linkerd** on a two AWS EKS Kubernetes clusters in a single VPC, and will demonstrate how to quickly enable **High Availability Zonal Load Balancing (HAZL)**. We'll then take a look at how **HAZL** works to keep network traffic _in-zone_ where possible.
 
 **In this demonstration, we're going to do the following:**
 
-- Deploy a `k3d` Kubernetes cluster
-- Deploy **Buoyant Enterprise for Linkerd** with **HAZL** disabled on the cluster
-- Deploy the **Orders** application to the cluster, to generate multi-zonal traffic
+- Deploy a two AWS EKS Kubernetes clusters
+- Deploy **Buoyant Enterprise for Linkerd** with **HAZL** disabled on the clusters
+- Deploy the **Orders** application across the two clusters, to generate multi-zonal, multi-cluster traffic
   - Monitor traffic from the **Orders** application, with **HAZL** disabled
 - Enable **High Availability Zonal Load Balancing (HAZL)**
   - Monitor traffic from the **Orders** application, with **HAZL** enabled
@@ -133,43 +133,17 @@ All prerequisites must be _installed_ and _working properly_ before proceeding. 
 The top-level contents of the repository look like this:
 
 ```bash
-.
-├── README.md           <-- This README
-├── certs               <-- Directory for the TLS root certificates
-├── cluster             <-- The k3d cluster configuration files live here
-├── cluster_destroy.sh  <-- Script to destroy the cluster environment
-├── cluster_setup.sh    <-- Script to stand up the cluster, install Linkerd and Orders
-├── images              <-- Images for the README
-├── orders -> orders-hpa
-├── orders-hpa          <-- The Orders application, with Horizontal Pod Autoscaling
-└── orders-nohpa        <-- The Orders application, without Horizontal Pod Autoscaling
+
 ```
 
 #### Workshop: Automation
 
 The repository contains the following automation:
 
-- `cluster_setup.sh`
-  - Script to stand up the cluster, install Linkerd and Orders
-- `cluster_destroy.sh`
-  - Script to destroy the cluster environment
+- CF 1
+  - CloudFormation to stand up the clusters
 
 If you choose to use the `cluster_setup.sh` script, make sure you've created the `settings.sh` file and run `source settings.sh` to set your environment variables. For more information, see the **Obtain Buoyant Enterprise for Linkerd (BEL) Trial Credentials and Log In to Buoyant Cloud** instructions.
-
-#### Cluster Configurations
-
-This repository contains three `k3d` cluster configuration files:
-
-```bash
-.
-├── cluster
-│   ├── demo-cluster-orders-hazl-large.yaml
-│   ├── demo-cluster-orders-hazl-medium.yaml
-│   ├── demo-cluster-orders-hazl-small.yaml
-│   └── demo-cluster-orders-hazl.yaml -> demo-cluster-orders-hazl-small.yaml
-```
-
-By default, `demo-cluster-orders-hazl-small.yaml` is linked to `demo-cluster-orders-hazl.yaml`, so you can just use `demo-cluster-orders-hazl.yaml` if you want a small cluster. We will be using the small cluster in this workshop.
 
 #### The Orders Application
 

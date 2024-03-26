@@ -2,22 +2,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: warehouse-chicago
+  name: warehouse-oakland
   namespace: orders
   labels:
-    color: warehouse-chicago
+    color: warehouse-oakland
     app: fulfillment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      color: warehouse-chicago
+      color: warehouse-oakland
       app: fulfillment
   template:
     metadata:
       labels:
-        color: warehouse-chicago
+        color: warehouse-oakland
         app: fulfillment
+      annotations:
+        config.linkerd.io/proxy-cpu-request: "0.5"
     spec:
       containers:
       - name: colorz
@@ -29,7 +31,7 @@ spec:
           value: info
         args:
         - paint
-        - /colorwheel/paint/green.yml
+        - /colorwheel/paint/red.yml
         resources:
           requests:
             cpu: 10m # Overprovision
@@ -62,4 +64,4 @@ spec:
             - matchExpressions:
               - key: topology.kubernetes.io/zone
                 operator: In
-                values: [zone-central]
+                values: [us-east-2c]
