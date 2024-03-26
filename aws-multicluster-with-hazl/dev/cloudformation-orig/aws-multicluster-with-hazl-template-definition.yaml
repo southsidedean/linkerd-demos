@@ -1,0 +1,1703 @@
+---
+Metadata:
+  TemplateId: "arn:aws:cloudformation:us-east-2:594604573825:generatedTemplate/a3921d8a-633d-4faa-8eec-d51f5e91ee09"
+Resources:
+  EC2Volume00vol0973c8765b77f981300XupN3:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::Volume"
+    DeletionPolicy: "Delete"
+    Properties:
+      MultiAttachEnabled: false
+      SnapshotId: "snap-0b66bd435a5f14751"
+      VolumeType: "gp2"
+      Encrypted: false
+      Size: 20
+      AutoEnableIO: true
+      AvailabilityZone: "us-east-2c"
+      Iops: 100
+      Tags: []
+  IAMRole00AWSServiceRoleForAmazonEKS00vnySn:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::IAM::Role"
+    DeletionPolicy: "Delete"
+    Properties:
+      Path: "/aws-service-role/eks.amazonaws.com/"
+      ManagedPolicyArns:
+      - "arn:aws:iam::aws:policy/aws-service-role/AmazonEKSServiceRolePolicy"
+      MaxSessionDuration: 3600
+      RoleName: "AWSServiceRoleForAmazonEKS"
+      Description: "Allows Amazon EKS to call AWS services on your behalf."
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Action: "sts:AssumeRole"
+          Effect: "Allow"
+          Principal:
+            Service: "eks.amazonaws.com"
+  EC2VolumeAttachment00vol091f2ff43885a875600xRElQ:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::VolumeAttachment"
+    DeletionPolicy: "Delete"
+    Properties:
+      InstanceId: "i-0aaff355c8ccec3fc"
+      VolumeId: "vol-091f2ff43885a8756"
+      Device: "/dev/xvda"
+  IAMRole00alpebdevnode00k4BoI:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::IAM::Role"
+    DeletionPolicy: "Delete"
+    Properties:
+      Path: "/"
+      ManagedPolicyArns:
+      - "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
+      - "arn:aws:iam::594604573825:policy/alpeb-cilium-nodes"
+      - "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
+      - "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+      MaxSessionDuration: 3600
+      RoleName: "alpeb-dev-node"
+      Description: "Allows EC2 instances to call AWS services on your behalf."
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Action: "sts:AssumeRole"
+          Effect: "Allow"
+          Principal:
+            Service: "ec2.amazonaws.com"
+  EC2Volume00vol0d18a761a7a707e3d00LdOO1:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::Volume"
+    DeletionPolicy: "Delete"
+    Properties:
+      MultiAttachEnabled: false
+      SnapshotId: "snap-0b66bd435a5f14751"
+      VolumeType: "gp2"
+      Encrypted: false
+      Size: 20
+      AutoEnableIO: true
+      AvailabilityZone: "us-east-2b"
+      Iops: 100
+      Tags: []
+  EC2Subnet00subnet029eb0854caa6538a00soFoY:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::Subnet"
+    DeletionPolicy: "Delete"
+    Properties:
+      VpcId: "vpc-07ab00adfd6bb1f5d"
+      MapPublicIpOnLaunch: true
+      EnableDns64: false
+      AvailabilityZoneId: "use2-az3"
+      PrivateDnsNameOptionsOnLaunch:
+        EnableResourceNameDnsARecord: false
+        HostnameType: "ip-name"
+        EnableResourceNameDnsAAAARecord: false
+      CidrBlock: "10.0.3.0/24"
+      Ipv6Native: false
+      Tags:
+      - Value: "aws-multicluster-with-hazl-3"
+        Key: "Name"
+  EC2VPCDHCPOptionsAssociation00vpc07ab00adfd6bb1f5d003HC0T:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::VPCDHCPOptionsAssociation"
+    DeletionPolicy: "Delete"
+    Properties:
+      VpcId:
+        Ref: "EC2VPC00vpc07ab00adfd6bb1f5d000W0zb"
+      DhcpOptionsId:
+        Ref: "EC2DHCPOptions00dopt016789394cd7f746c00anOxF"
+  EC2VolumeAttachment00vol0d18a761a7a707e3d00CY3Em:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::VolumeAttachment"
+    DeletionPolicy: "Delete"
+    Properties:
+      InstanceId: "i-03e16954c06f7a855"
+      VolumeId: "vol-0d18a761a7a707e3d"
+      Device: "/dev/xvda"
+  EC2VolumeAttachment00vol02aa121919b5e6ae000Xv8Wo:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::VolumeAttachment"
+    DeletionPolicy: "Delete"
+    Properties:
+      InstanceId: "i-0ea930a9abd9b8d18"
+      VolumeId: "vol-02aa121919b5e6ae0"
+      Device: "/dev/xvda"
+  EKSCluster00awsmulticlusterwithhazl100LrUCE:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EKS::Cluster"
+    DeletionPolicy: "Delete"
+    Properties:
+      Logging:
+        ClusterLogging:
+          EnabledTypes: []
+      Version: "1.29"
+      AccessConfig:
+        AuthenticationMode: "API_AND_CONFIG_MAP"
+      EncryptionConfig: []
+      KubernetesNetworkConfig:
+        ServiceIpv4Cidr: "172.20.0.0/16"
+        IpFamily: "ipv4"
+      RoleArn:
+        Fn::GetAtt:
+        - "IAMRole00alpebdevclusterservice00MbBzx"
+        - "Arn"
+      ResourcesVpcConfig:
+        EndpointPublicAccess: false
+        PublicAccessCidrs: []
+        SecurityGroupIds:
+        - Ref: "EC2SecurityGroup00sg0e29dbd49c9c848ab00WpquO"
+        SubnetIds:
+        - Ref: "EC2Subnet00subnet029eb0854caa6538a00soFoY"
+        - Ref: "EC2Subnet00subnet0394ce2642689d2ee00FIXw1"
+        - Ref: "EC2Subnet00subnet063fb1e3b37017e0300jRckp"
+        EndpointPrivateAccess: true
+      Tags:
+      - Value: "aws-multicluster-with-hazl-1"
+        Key: "cluster-name"
+      Name: "aws-multicluster-with-hazl-1"
+  EKSNodegroup00awsmulticlusterwithhazl2awsmulticlusterwithhazlng200trV1l:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EKS::Nodegroup"
+    DeletionPolicy: "Delete"
+    Properties:
+      UpdateConfig:
+        MaxUnavailable: 1
+      ScalingConfig:
+        MinSize: 3
+        DesiredSize: 3
+        MaxSize: 3
+      Labels: {}
+      Taints: []
+      CapacityType: "ON_DEMAND"
+      ReleaseVersion: "1.29.0-20240315"
+      NodegroupName: "aws-multicluster-with-hazl-ng-2"
+      NodeRole:
+        Fn::GetAtt:
+        - "IAMRole00alpebdevnode00k4BoI"
+        - "Arn"
+      Subnets:
+      - Ref: "EC2Subnet00subnet0ec54908dbe9dc35100SXY5H"
+      - Ref: "EC2Subnet00subnet0bd46eaf1ebfe4289002chfk"
+      - Ref: "EC2Subnet00subnet0d7bf8f8e1e26e5b100EMqqZ"
+      AmiType: "AL2_x86_64"
+      Version: "1.29"
+      DiskSize: 20
+      ClusterName:
+        Ref: "EKSCluster00awsmulticlusterwithhazl200VjV7G"
+      InstanceTypes:
+      - "t3.medium"
+      Tags:
+        node-group-name: "aws-multicluster-with-hazl-ng-2"
+  EC2RouteTable00rtb08f8925207b3f79c500Kwjls:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::RouteTable"
+    DeletionPolicy: "Delete"
+    Properties:
+      VpcId:
+        Ref: "EC2VPC00vpc07ab00adfd6bb1f5d000W0zb"
+  EKSNodegroup00awsmulticlusterwithhazl1awsmulticlusterwithhazlng1001hpjB:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EKS::Nodegroup"
+    DeletionPolicy: "Delete"
+    Properties:
+      UpdateConfig:
+        MaxUnavailable: 1
+      ScalingConfig:
+        MinSize: 3
+        DesiredSize: 3
+        MaxSize: 3
+      Labels: {}
+      Taints: []
+      CapacityType: "ON_DEMAND"
+      ReleaseVersion: "1.29.0-20240315"
+      NodegroupName: "aws-multicluster-with-hazl-ng-1"
+      NodeRole:
+        Fn::GetAtt:
+        - "IAMRole00alpebdevnode00k4BoI"
+        - "Arn"
+      Subnets:
+      - Ref: "EC2Subnet00subnet029eb0854caa6538a00soFoY"
+      - Ref: "EC2Subnet00subnet0394ce2642689d2ee00FIXw1"
+      - Ref: "EC2Subnet00subnet063fb1e3b37017e0300jRckp"
+      AmiType: "AL2_x86_64"
+      Version: "1.29"
+      DiskSize: 20
+      ClusterName:
+        Ref: "EKSCluster00awsmulticlusterwithhazl100LrUCE"
+      InstanceTypes:
+      - "t3.medium"
+      Tags:
+        node-group-name: "aws-multicluster-with-hazl-ng-1"
+  EC2NetworkInterface00eni0d75115f8e24cde5300Pr0JP:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::NetworkInterface"
+    DeletionPolicy: "Delete"
+    Properties:
+      Description: ""
+      PrivateIpAddress: "10.0.2.232"
+      PrivateIpAddresses:
+      - PrivateIpAddress: "10.0.2.232"
+        Primary: true
+      - PrivateIpAddress: "10.0.2.192"
+        Primary: false
+      - PrivateIpAddress: "10.0.2.120"
+        Primary: false
+      - PrivateIpAddress: "10.0.2.200"
+        Primary: false
+      - PrivateIpAddress: "10.0.2.126"
+        Primary: false
+      - PrivateIpAddress: "10.0.2.95"
+        Primary: false
+      SecondaryPrivateIpAddressCount: 5
+      Ipv6PrefixCount: 0
+      Ipv4Prefixes: []
+      Ipv4PrefixCount: 0
+      GroupSet:
+      - "sg-00e940a1d11bc58cb"
+      Ipv6Prefixes: []
+      SubnetId:
+        Ref: "EC2Subnet00subnet0394ce2642689d2ee00FIXw1"
+      SourceDestCheck: true
+      InterfaceType: "interface"
+      Tags:
+      - Value: "i-0ea930a9abd9b8d18"
+        Key: "node.k8s.amazonaws.com/instance_id"
+      - Value: "aws-multicluster-with-hazl-1"
+        Key: "cluster.k8s.amazonaws.com/name"
+  EC2SubnetNetworkAclAssociation00aclassoc068bc60c367d9bdc600Pxn1W:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::SubnetNetworkAclAssociation"
+    DeletionPolicy: "Delete"
+    Properties:
+      NetworkAclId:
+        Ref: "EC2NetworkAcl00acl0601d92353fd805c300YZlOO"
+      SubnetId:
+        Ref: "EC2Subnet00subnet063fb1e3b37017e0300jRckp"
+  EC2SecurityGroup00sg07a1d176c03abf16600HB4hv:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::SecurityGroup"
+    DeletionPolicy: "Delete"
+    Properties:
+      GroupDescription: "EKS created security group applied to ENI that is attached\
+        \ to EKS Control Plane master nodes, as well as any managed workloads."
+      GroupName: "eks-cluster-sg-aws-multicluster-with-hazl-2-2096340827"
+      VpcId:
+        Ref: "EC2VPC00vpc07ab00adfd6bb1f5d000W0zb"
+      SecurityGroupIngress:
+      - SourceSecurityGroupId: "sg-07a1d176c03abf166"
+        IpProtocol: "-1"
+        SourceSecurityGroupOwnerId: "594604573825"
+      SecurityGroupEgress:
+      - CidrIp: "0.0.0.0/0"
+        IpProtocol: "-1"
+      Tags:
+      - Value: "owned"
+        Key: "kubernetes.io/cluster/aws-multicluster-with-hazl-2"
+      - Value: "eks-cluster-sg-aws-multicluster-with-hazl-2-2096340827"
+        Key: "Name"
+  EC2NetworkInterface00eni040b1d16d6844a36000xyHOG:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::NetworkInterface"
+    DeletionPolicy: "Delete"
+    Properties:
+      Description: ""
+      PrivateIpAddress: "10.0.5.155"
+      PrivateIpAddresses:
+      - PrivateIpAddress: "10.0.5.155"
+        Primary: true
+      - PrivateIpAddress: "10.0.5.146"
+        Primary: false
+      - PrivateIpAddress: "10.0.5.104"
+        Primary: false
+      - PrivateIpAddress: "10.0.5.62"
+        Primary: false
+      - PrivateIpAddress: "10.0.5.158"
+        Primary: false
+      - PrivateIpAddress: "10.0.5.111"
+        Primary: false
+      SecondaryPrivateIpAddressCount: 5
+      Ipv6PrefixCount: 0
+      Ipv4Prefixes: []
+      Ipv4PrefixCount: 0
+      GroupSet:
+      - "sg-07a1d176c03abf166"
+      Ipv6Prefixes: []
+      SubnetId:
+        Ref: "EC2Subnet00subnet0bd46eaf1ebfe4289002chfk"
+      SourceDestCheck: true
+      InterfaceType: "interface"
+      Tags:
+      - Value: "aws-multicluster-with-hazl-2"
+        Key: "cluster.k8s.amazonaws.com/name"
+      - Value: "i-03e16954c06f7a855"
+        Key: "node.k8s.amazonaws.com/instance_id"
+  IAMRole00AWSServiceRoleForAutoScaling00B7Hlx:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::IAM::Role"
+    DeletionPolicy: "Delete"
+    Properties:
+      Path: "/aws-service-role/autoscaling.amazonaws.com/"
+      ManagedPolicyArns:
+      - "arn:aws:iam::aws:policy/aws-service-role/AutoScalingServiceRolePolicy"
+      MaxSessionDuration: 3600
+      RoleName: "AWSServiceRoleForAutoScaling"
+      Description: "Default Service-Linked Role enables access to AWS Services and\
+        \ Resources used or managed by Auto Scaling"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Action: "sts:AssumeRole"
+          Effect: "Allow"
+          Principal:
+            Service: "autoscaling.amazonaws.com"
+  EC2SubnetNetworkAclAssociation00aclassoc049a8394677bafc7f00ERpJA:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::SubnetNetworkAclAssociation"
+    DeletionPolicy: "Delete"
+    Properties:
+      NetworkAclId:
+        Ref: "EC2NetworkAcl00acl0601d92353fd805c300YZlOO"
+      SubnetId:
+        Ref: "EC2Subnet00subnet0ec54908dbe9dc35100SXY5H"
+  EC2NetworkAcl00acl0601d92353fd805c300YZlOO:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::NetworkAcl"
+    DeletionPolicy: "Delete"
+    Properties:
+      VpcId:
+        Ref: "EC2VPC00vpc07ab00adfd6bb1f5d000W0zb"
+      Tags: []
+  EC2Volume00vol04975ed00c4dff0ed00ET7jg:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::Volume"
+    DeletionPolicy: "Delete"
+    Properties:
+      MultiAttachEnabled: false
+      SnapshotId: "snap-0b66bd435a5f14751"
+      VolumeType: "gp2"
+      Encrypted: false
+      Size: 20
+      AutoEnableIO: true
+      AvailabilityZone: "us-east-2a"
+      Iops: 100
+      Tags: []
+  EC2NetworkInterface00eni07146f57b5f42188300bWiNK:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::NetworkInterface"
+    DeletionPolicy: "Delete"
+    Properties:
+      Description: ""
+      PrivateIpAddress: "10.0.1.64"
+      PrivateIpAddresses:
+      - PrivateIpAddress: "10.0.1.64"
+        Primary: true
+      - PrivateIpAddress: "10.0.1.54"
+        Primary: false
+      - PrivateIpAddress: "10.0.1.40"
+        Primary: false
+      - PrivateIpAddress: "10.0.1.25"
+        Primary: false
+      - PrivateIpAddress: "10.0.1.218"
+        Primary: false
+      - PrivateIpAddress: "10.0.1.238"
+        Primary: false
+      SecondaryPrivateIpAddressCount: 5
+      Ipv6PrefixCount: 0
+      Ipv4Prefixes: []
+      Ipv4PrefixCount: 0
+      GroupSet:
+      - "sg-00e940a1d11bc58cb"
+      Ipv6Prefixes: []
+      SubnetId:
+        Ref: "EC2Subnet00subnet063fb1e3b37017e0300jRckp"
+      SourceDestCheck: true
+      InterfaceType: "interface"
+      Tags:
+      - Value: "aws-multicluster-with-hazl-1"
+        Key: "cluster.k8s.amazonaws.com/name"
+      - Value: "i-0aaff355c8ccec3fc"
+        Key: "node.k8s.amazonaws.com/instance_id"
+  EC2SubnetNetworkAclAssociation00aclassoc0a3853f75fe6e2c9800lOM0c:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::SubnetNetworkAclAssociation"
+    DeletionPolicy: "Delete"
+    Properties:
+      NetworkAclId:
+        Ref: "EC2NetworkAcl00acl0601d92353fd805c300YZlOO"
+      SubnetId:
+        Ref: "EC2Subnet00subnet0394ce2642689d2ee00FIXw1"
+  EC2NetworkInterface00eni03805324d2410c0ee00DNZY7:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::NetworkInterface"
+    DeletionPolicy: "Delete"
+    Properties:
+      Description: ""
+      PrivateIpAddress: "10.0.6.13"
+      PrivateIpAddresses:
+      - PrivateIpAddress: "10.0.6.13"
+        Primary: true
+      - PrivateIpAddress: "10.0.6.245"
+        Primary: false
+      - PrivateIpAddress: "10.0.6.24"
+        Primary: false
+      - PrivateIpAddress: "10.0.6.8"
+        Primary: false
+      - PrivateIpAddress: "10.0.6.121"
+        Primary: false
+      - PrivateIpAddress: "10.0.6.27"
+        Primary: false
+      SecondaryPrivateIpAddressCount: 5
+      Ipv6PrefixCount: 0
+      Ipv4Prefixes: []
+      Ipv4PrefixCount: 0
+      GroupSet:
+      - "sg-07a1d176c03abf166"
+      Ipv6Prefixes: []
+      SubnetId:
+        Ref: "EC2Subnet00subnet0d7bf8f8e1e26e5b100EMqqZ"
+      SourceDestCheck: true
+      InterfaceType: "interface"
+      Tags:
+      - Value: "aws-multicluster-with-hazl-2"
+        Key: "cluster.k8s.amazonaws.com/name"
+      - Value: "i-001c340a02d5af205"
+        Key: "node.k8s.amazonaws.com/instance_id"
+  EC2Volume00vol091f2ff43885a875600bqap3:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::Volume"
+    DeletionPolicy: "Delete"
+    Properties:
+      MultiAttachEnabled: false
+      SnapshotId: "snap-0b66bd435a5f14751"
+      VolumeType: "gp2"
+      Encrypted: false
+      Size: 20
+      AutoEnableIO: true
+      AvailabilityZone: "us-east-2a"
+      Iops: 100
+      Tags: []
+  EC2VPC00vpc07ab00adfd6bb1f5d000W0zb:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::VPC"
+    DeletionPolicy: "Delete"
+    Properties:
+      CidrBlock: "10.0.0.0/16"
+      EnableDnsSupport: true
+      InstanceTenancy: "default"
+      EnableDnsHostnames: false
+      Tags:
+      - Value: "aws-multicluster-with-hazl"
+        Key: "Name"
+  EC2NetworkInterface00eni05f9bf473f410fc1400L6jsx:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::NetworkInterface"
+    DeletionPolicy: "Delete"
+    Properties:
+      Description: "aws-K8S-i-0b7e6057337933907"
+      PrivateIpAddress: "10.0.4.164"
+      PrivateIpAddresses:
+      - PrivateIpAddress: "10.0.4.164"
+        Primary: true
+      - PrivateIpAddress: "10.0.4.152"
+        Primary: false
+      - PrivateIpAddress: "10.0.4.58"
+        Primary: false
+      - PrivateIpAddress: "10.0.4.188"
+        Primary: false
+      - PrivateIpAddress: "10.0.4.124"
+        Primary: false
+      - PrivateIpAddress: "10.0.4.93"
+        Primary: false
+      SecondaryPrivateIpAddressCount: 5
+      Ipv6PrefixCount: 0
+      Ipv4Prefixes: []
+      Ipv4PrefixCount: 0
+      GroupSet:
+      - "sg-07a1d176c03abf166"
+      Ipv6Prefixes: []
+      SubnetId:
+        Ref: "EC2Subnet00subnet0ec54908dbe9dc35100SXY5H"
+      SourceDestCheck: true
+      InterfaceType: "interface"
+      Tags:
+      - Value: "aws-multicluster-with-hazl-2"
+        Key: "cluster.k8s.amazonaws.com/name"
+      - Value: "i-0b7e6057337933907"
+        Key: "node.k8s.amazonaws.com/instance_id"
+      - Value: "2024-03-26T20:44:40Z"
+        Key: "node.k8s.amazonaws.com/createdAt"
+  EC2DHCPOptions00dopt016789394cd7f746c00anOxF:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::DHCPOptions"
+    DeletionPolicy: "Delete"
+    Properties:
+      DomainName: "us-east-2.compute.internal"
+      DomainNameServers:
+      - "AmazonProvidedDNS"
+      Tags: []
+  EC2Instance00i001c340a02d5af20500iomlj:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::Instance"
+    DeletionPolicy: "Delete"
+    Properties:
+      Tenancy: "default"
+      SecurityGroups:
+      - "eks-cluster-sg-aws-multicluster-with-hazl-2-2096340827"
+      PrivateIpAddress: "10.0.6.13"
+      UserData: "TUlNRS1WZXJzaW9uOiAxLjAKQ29udGVudC1UeXBlOiBtdWx0aXBhcnQvbWl4ZWQ7IGJvdW5kYXJ5PSIvLyIKCi0tLy8KQ29udGVudC1UeXBlOiB0ZXh0L3gtc2hlbGxzY3JpcHQ7IGNoYXJzZXQ9InVzLWFzY2lpIgojIS9iaW4vYmFzaApzZXQgLWV4CkI2NF9DTFVTVEVSX0NBPUxTMHRMUzFDUlVkSlRpQkRSVkpVU1VaSlEwRlVSUzB0TFMwdENrMUpTVVJDVkVORFFXVXlaMEYzU1VKQlowbEpRMmhUT0VwbmRtcHNNbXQzUkZGWlNrdHZXa2xvZG1OT1FWRkZURUpSUVhkR1ZFVlVUVUpGUjBFeFZVVUtRWGhOUzJFelZtbGFXRXAxV2xoU2JHTjZRV1ZHZHpCNVRrUkJlazFxV1hoUFZFbDNUWHBXWVVaM01IcE9SRUY2VFdwUmVFOVVTVEZOZWxaaFRVSlZlQXBGZWtGU1FtZE9Wa0pCVFZSRGJYUXhXVzFXZVdKdFZqQmFXRTEzWjJkRmFVMUJNRWREVTNGSFUwbGlNMFJSUlVKQlVWVkJRVFJKUWtSM1FYZG5aMFZMQ2tGdlNVSkJVVU56WnpCS01EZHVNMEZCVW5OSWVuVXpkRlZTUW1STlRYUkhjVlJZWW1ReE1GUm5VUzk1Y0ZRMlRWTmFPQ3RtUkRVdmJqWlhTemRESzA0S01raG9URVZRU0VWWlJXeEhXR05MY3k5NVVFODFUMlZSVGtObFdYVkpkMHhCVVVwUWJuTXhaMDgxZDBkRVpHNHJiRW81Ym5sb05YSlhUSGh5ZDFVeU5ncDNUMUprVWxWMlJtczRTbHBRVG1WaFdtaElNRlppUml0TlpuTTVXVFU1TjBGeFZGRkhiazB6Y0dab2NFaEhURlZzY1dkQ1prY3JiazFyVUd0SFJFMW1DamNyYlRSdFZGQTFUVEJ1YkdoV2VVTlpXakJXYUdNdlJXVnlhMUp5WlUxQ2VrbHFkRUowVGt0dlpWaHpORm8xUWtoMmVFMXNaMnBLUlZCWFlsRkliMklLY2xZNWJYbEhWalZpUkRkU09VRnFOV0Z6YzNCMmF6RnVTVlZYYTFWWVUzVllWbmRzTDBOVmVFdHVObGhTU2xOVU5XTmpVekZRWkZGSldtODJTV2MyS3dwelRHdFdhM2RHYlRSR1ZtOW5UMHBRVUVWT1kyVndOazFRTWxCS1FXZE5Ra0ZCUjJwWFZFSllUVUUwUjBFeFZXUkVkMFZDTDNkUlJVRjNTVU53UkVGUUNrSm5UbFpJVWsxQ1FXWTRSVUpVUVVSQlVVZ3ZUVUl3UjBFeFZXUkVaMUZYUWtKUlZFYzVaVmhsTVZoNE9VcFpia00xVmxBM2JUSnJPVlJqVW5KcVFWWUtRbWRPVmtoU1JVVkVha0ZOWjJkd2NtUlhTbXhqYlRWc1pFZFdlazFCTUVkRFUzRkhVMGxpTTBSUlJVSkRkMVZCUVRSSlFrRlJRbkV5ZVdodk5EZHBRZ3BIVEhobFNVbGlSV1psVHpGT2RGSkhMek5EUVc1UVZGTlZSRE5GWXprMFRUQTFaa0ZzY1dnclkwNWphbVJqYUhsRlpsUXlkR1JtVTJsVGNFSnhRbHBvQ2pNNFUwNW9UbloyYURCdWJXUlNhbEJ5VkZJeU5WZFVkR0oyU2pSbUt6VlNlVUpYUlN0WmFXMHJZM2x0ZUM4elozSmpNVFJoTVhaRWJXeGljMVZxVVVnS1EydG5WVkZ6VlROaGJGQkRNemxRVVVKeGFFZEZlR1pLZVdGQmFUSkZiRTlwYm1oTldWTmphbWwwVm1aamFXVXlXbWgwVEVneGRWcG1kSFpVVUc5UFp3cFRURm92ZUZKSVYwdGlWR2t3TWt4bFpYVm1RbVJFZEM5V0x6Y3hVblU0YTJSc2VtVm9PSE5pYVZVelFteDVSa2xrYm5KNmRGVm9RMWg0VVVnM0x6WjRDbGxhUjFObVFrTlhielpwVVZjeE1FbFZjVUYxYWt4TVZWVnBSRzlOWjJ4U1dHUlhTMjVLUlU5aFNDdDVia3RHYjNSUmRXVXhlRk4zYjB4MlVEaE9WVVVLU2pCclpHVkRjVkp5ZVdWNENpMHRMUzB0UlU1RUlFTkZVbFJKUmtsRFFWUkZMUzB0TFMwSwpBUElfU0VSVkVSX1VSTD1odHRwczovLzQzQTBFNDA4ODIyQUM4MEEzNTE0OUMwMkFCM0YyNjE3LmdyNy51cy1lYXN0LTIuZWtzLmFtYXpvbmF3cy5jb20KSzhTX0NMVVNURVJfRE5TX0lQPTE3Mi4yMC4wLjEwCi9ldGMvZWtzL2Jvb3RzdHJhcC5zaCBhd3MtbXVsdGljbHVzdGVyLXdpdGgtaGF6bC0yIC0ta3ViZWxldC1leHRyYS1hcmdzICctLW5vZGUtbGFiZWxzPWVrcy5hbWF6b25hd3MuY29tL25vZGVncm91cC1pbWFnZT1hbWktMGQ5ZWUwZDU5NjE0YjM3MWQsZWtzLmFtYXpvbmF3cy5jb20vY2FwYWNpdHlUeXBlPU9OX0RFTUFORCxla3MuYW1hem9uYXdzLmNvbS9ub2RlZ3JvdXA9YXdzLW11bHRpY2x1c3Rlci13aXRoLWhhemwtbmctMiAtLW1heC1wb2RzPTE3JyAtLWI2NC1jbHVzdGVyLWNhICRCNjRfQ0xVU1RFUl9DQSAtLWFwaXNlcnZlci1lbmRwb2ludCAkQVBJX1NFUlZFUl9VUkwgLS1kbnMtY2x1c3Rlci1pcCAkSzhTX0NMVVNURVJfRE5TX0lQIC0tdXNlLW1heC1wb2RzIGZhbHNlCgotLS8vLS0="
+      BlockDeviceMappings:
+      - Ebs:
+          SnapshotId: "snap-0b66bd435a5f14751"
+          VolumeType: "gp2"
+          Iops: 100
+          VolumeSize: 20
+          Encrypted: false
+          DeleteOnTermination: true
+        DeviceName: "/dev/xvda"
+      IamInstanceProfile:
+        Ref: "IAMInstanceProfile00eksd4c73e4044ece562ca73dee2eae21fc800gPfa6"
+      SubnetId:
+        Ref: "EC2Subnet00subnet0d7bf8f8e1e26e5b100EMqqZ"
+      EbsOptimized: false
+      Volumes:
+      - VolumeId: "vol-07897c30b222bda5f"
+        Device: "/dev/xvda"
+      LaunchTemplate:
+        Version: "1"
+        LaunchTemplateName: "eks-d4c73e40-44ec-e562-ca73-dee2eae21fc8"
+      NetworkInterfaces:
+      - PrivateIpAddresses:
+        - PrivateIpAddress: "10.0.6.13"
+          Primary: true
+        - PrivateIpAddress: "10.0.6.245"
+          Primary: false
+        - PrivateIpAddress: "10.0.6.24"
+          Primary: false
+        - PrivateIpAddress: "10.0.6.8"
+          Primary: false
+        - PrivateIpAddress: "10.0.6.121"
+          Primary: false
+        - PrivateIpAddress: "10.0.6.27"
+          Primary: false
+        SecondaryPrivateIpAddressCount: 5
+        DeviceIndex: "0"
+        GroupSet:
+        - Ref: "EC2SecurityGroup00sg07a1d176c03abf16600HB4hv"
+        Ipv6Addresses: []
+        SubnetId:
+          Ref: "EC2Subnet00subnet0d7bf8f8e1e26e5b100EMqqZ"
+        AssociatePublicIpAddress: true
+        NetworkInterfaceId:
+          Ref: "EC2NetworkInterface00eni03805324d2410c0ee00DNZY7"
+        DeleteOnTermination: true
+      ImageId: "ami-0d9ee0d59614b371d"
+      InstanceType: "t3.medium"
+      Monitoring: false
+      Tags:
+      - Value: "owned"
+        Key: "k8s.io/cluster-autoscaler/aws-multicluster-with-hazl-2"
+      - Value: "aws-multicluster-with-hazl-ng-2"
+        Key: "eks:nodegroup-name"
+      - Value: "true"
+        Key: "k8s.io/cluster-autoscaler/enabled"
+      - Value: "aws-multicluster-with-hazl-2"
+        Key: "eks:cluster-name"
+      - Value: "owned"
+        Key: "kubernetes.io/cluster/aws-multicluster-with-hazl-2"
+      InstanceInitiatedShutdownBehavior: "stop"
+      CpuOptions:
+        ThreadsPerCore: 2
+        CoreCount: 1
+      AvailabilityZone: "us-east-2c"
+      PrivateDnsNameOptions:
+        EnableResourceNameDnsARecord: false
+        HostnameType: "ip-name"
+        EnableResourceNameDnsAAAARecord: false
+      SecurityGroupIds:
+      - "sg-07a1d176c03abf166"
+      DisableApiTermination: false
+      SourceDestCheck: true
+      PlacementGroupName: ""
+      VpcId: "vpc-07ab00adfd6bb1f5d"
+      CreditSpecification:
+        CPUCredits: "unlimited"
+  IAMRole00AWSServiceRoleForAmazonEKSNodegroup00riSqn:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::IAM::Role"
+    DeletionPolicy: "Delete"
+    Properties:
+      Path: "/aws-service-role/eks-nodegroup.amazonaws.com/"
+      ManagedPolicyArns:
+      - "arn:aws:iam::aws:policy/aws-service-role/AWSServiceRoleForAmazonEKSNodegroup"
+      MaxSessionDuration: 3600
+      RoleName: "AWSServiceRoleForAmazonEKSNodegroup"
+      Description: "This policy allows Amazon EKS to create and manage Nodegroups"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Action: "sts:AssumeRole"
+          Effect: "Allow"
+          Principal:
+            Service: "eks-nodegroup.amazonaws.com"
+  EC2Volume00vol07897c30b222bda5f00aNZKH:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::Volume"
+    DeletionPolicy: "Delete"
+    Properties:
+      MultiAttachEnabled: false
+      SnapshotId: "snap-0b66bd435a5f14751"
+      VolumeType: "gp2"
+      Encrypted: false
+      Size: 20
+      AutoEnableIO: true
+      AvailabilityZone: "us-east-2c"
+      Iops: 100
+      Tags: []
+  EC2NetworkInterface00eni0a1a1f5d045fff8ba00h9S34:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::NetworkInterface"
+    DeletionPolicy: "Delete"
+    Properties:
+      Description: ""
+      PrivateIpAddress: "10.0.3.116"
+      PrivateIpAddresses:
+      - PrivateIpAddress: "10.0.3.116"
+        Primary: true
+      - PrivateIpAddress: "10.0.3.97"
+        Primary: false
+      - PrivateIpAddress: "10.0.3.18"
+        Primary: false
+      - PrivateIpAddress: "10.0.3.71"
+        Primary: false
+      - PrivateIpAddress: "10.0.3.58"
+        Primary: false
+      - PrivateIpAddress: "10.0.3.186"
+        Primary: false
+      SecondaryPrivateIpAddressCount: 5
+      Ipv6PrefixCount: 0
+      Ipv4Prefixes: []
+      Ipv4PrefixCount: 0
+      GroupSet:
+      - "sg-00e940a1d11bc58cb"
+      Ipv6Prefixes: []
+      SubnetId:
+        Ref: "EC2Subnet00subnet029eb0854caa6538a00soFoY"
+      SourceDestCheck: true
+      InterfaceType: "interface"
+      Tags:
+      - Value: "i-09f7e27ec8aacd811"
+        Key: "node.k8s.amazonaws.com/instance_id"
+      - Value: "aws-multicluster-with-hazl-1"
+        Key: "cluster.k8s.amazonaws.com/name"
+  EC2NetworkInterface00eni0948785e40b94c57400nfa6U:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::NetworkInterface"
+    DeletionPolicy: "Delete"
+    Properties:
+      Description: ""
+      PrivateIpAddress: "10.0.4.112"
+      PrivateIpAddresses:
+      - PrivateIpAddress: "10.0.4.112"
+        Primary: true
+      - PrivateIpAddress: "10.0.4.97"
+        Primary: false
+      - PrivateIpAddress: "10.0.4.245"
+        Primary: false
+      - PrivateIpAddress: "10.0.4.121"
+        Primary: false
+      - PrivateIpAddress: "10.0.4.252"
+        Primary: false
+      - PrivateIpAddress: "10.0.4.173"
+        Primary: false
+      SecondaryPrivateIpAddressCount: 5
+      Ipv6PrefixCount: 0
+      Ipv4Prefixes: []
+      Ipv4PrefixCount: 0
+      GroupSet:
+      - "sg-07a1d176c03abf166"
+      Ipv6Prefixes: []
+      SubnetId:
+        Ref: "EC2Subnet00subnet0ec54908dbe9dc35100SXY5H"
+      SourceDestCheck: true
+      InterfaceType: "interface"
+      Tags:
+      - Value: "aws-multicluster-with-hazl-2"
+        Key: "cluster.k8s.amazonaws.com/name"
+      - Value: "i-0b7e6057337933907"
+        Key: "node.k8s.amazonaws.com/instance_id"
+  EC2NetworkInterface00eni078f5af7712d9a21000xvOMD:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::NetworkInterface"
+    DeletionPolicy: "Delete"
+    Properties:
+      Description: "aws-K8S-i-0ea930a9abd9b8d18"
+      PrivateIpAddress: "10.0.2.144"
+      PrivateIpAddresses:
+      - PrivateIpAddress: "10.0.2.144"
+        Primary: true
+      - PrivateIpAddress: "10.0.2.241"
+        Primary: false
+      - PrivateIpAddress: "10.0.2.67"
+        Primary: false
+      - PrivateIpAddress: "10.0.2.199"
+        Primary: false
+      - PrivateIpAddress: "10.0.2.216"
+        Primary: false
+      - PrivateIpAddress: "10.0.2.107"
+        Primary: false
+      SecondaryPrivateIpAddressCount: 5
+      Ipv6PrefixCount: 0
+      Ipv4Prefixes: []
+      Ipv4PrefixCount: 0
+      GroupSet:
+      - "sg-00e940a1d11bc58cb"
+      Ipv6Prefixes: []
+      SubnetId:
+        Ref: "EC2Subnet00subnet0394ce2642689d2ee00FIXw1"
+      SourceDestCheck: true
+      InterfaceType: "interface"
+      Tags:
+      - Value: "i-0ea930a9abd9b8d18"
+        Key: "node.k8s.amazonaws.com/instance_id"
+      - Value: "aws-multicluster-with-hazl-1"
+        Key: "cluster.k8s.amazonaws.com/name"
+      - Value: "2024-03-26T19:46:01Z"
+        Key: "node.k8s.amazonaws.com/createdAt"
+  EC2Volume00vol02aa121919b5e6ae000S2WZb:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::Volume"
+    DeletionPolicy: "Delete"
+    Properties:
+      MultiAttachEnabled: false
+      SnapshotId: "snap-0b66bd435a5f14751"
+      VolumeType: "gp2"
+      Encrypted: false
+      Size: 20
+      AutoEnableIO: true
+      AvailabilityZone: "us-east-2b"
+      Iops: 100
+      Tags: []
+  IAMInstanceProfile00alpebdevnode00b5sDp:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::IAM::InstanceProfile"
+    DeletionPolicy: "Delete"
+    Properties:
+      Path: "/"
+      Roles:
+      - Ref: "IAMRole00alpebdevnode00k4BoI"
+      InstanceProfileName:
+        Ref: "IAMRole00alpebdevnode00k4BoI"
+  EC2Instance00i0aaff355c8ccec3fc009BG6e:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::Instance"
+    DeletionPolicy: "Delete"
+    Properties:
+      Tenancy: "default"
+      SecurityGroups:
+      - "eks-cluster-sg-aws-multicluster-with-hazl-1-2096340826"
+      PrivateIpAddress: "10.0.1.64"
+      UserData: "TUlNRS1WZXJzaW9uOiAxLjAKQ29udGVudC1UeXBlOiBtdWx0aXBhcnQvbWl4ZWQ7IGJvdW5kYXJ5PSIvLyIKCi0tLy8KQ29udGVudC1UeXBlOiB0ZXh0L3gtc2hlbGxzY3JpcHQ7IGNoYXJzZXQ9InVzLWFzY2lpIgojIS9iaW4vYmFzaApzZXQgLWV4CkI2NF9DTFVTVEVSX0NBPUxTMHRMUzFDUlVkSlRpQkRSVkpVU1VaSlEwRlVSUzB0TFMwdENrMUpTVVJDVkVORFFXVXlaMEYzU1VKQlowbEpRMnR0YlhwTE5IZFhWVkYzUkZGWlNrdHZXa2xvZG1OT1FWRkZURUpSUVhkR1ZFVlVUVUpGUjBFeFZVVUtRWGhOUzJFelZtbGFXRXAxV2xoU2JHTjZRV1ZHZHpCNVRrUkJlazFxV1hoUFZFVTFUV3BXWVVaM01IcE9SRUY2VFdwUmVFOVVTVEJOYWxaaFRVSlZlQXBGZWtGU1FtZE9Wa0pCVFZSRGJYUXhXVzFXZVdKdFZqQmFXRTEzWjJkRmFVMUJNRWREVTNGSFUwbGlNMFJSUlVKQlVWVkJRVFJKUWtSM1FYZG5aMFZMQ2tGdlNVSkJVVU14Y0hnNGNqZ3hUek5RWWpaRVRqWmliVEF5UWpoQlR6WXlZMDFoTTFOTGRUSnZaREZEU0dGeWNFWk1LMmhLVlVOR1VVdExiRFp4UkRFS2NpdDFLek5tWkZkSFQwY3laRTlWVkZWaVVYRk9TRWxTTlc1eWRFRnpUM3BXYmtab0wwbGlibFpCWm1SRlUzSXZORmczVkVOb01GTnRWWEpwY3pCbGJRcHNVQzlEWmsxTE56UllWalpXVjI5TFlsQXdNaTlYY2xsNllrOUpNbGhCUTB3eWJXVk5ZMlZ3YlhOSVJubFFWa05wVWxKVE1rdzFOMUJpU1RKelluTjFDa2hEVFVOcVZscGxSRnBWVG1Kc2N6TlNUbUZDVTA5RFYwbFJTalZEY1hkdlFVVnZUVWx1U1RVdllqRTJWVzFGY2twMU55dFFPVU5KUjFadWVqUnFjVFVLV0VKQ1JEbFNVRGhST0daVFNERXZaa1JyUWxCMWRtSXljVXhDV0hkUFZIRkJVMkUxVEdGMVMwaFhaRkZLVWpZcmQxSkZSbU5qTDFwTWFuSkZOVGRaYUFveVFsVTJSMFJFZVhsck0xWk9VbkppUW5VeVJFWk5kRXhrWW1GcVFXZE5Ra0ZCUjJwWFZFSllUVUUwUjBFeFZXUkVkMFZDTDNkUlJVRjNTVU53UkVGUUNrSm5UbFpJVWsxQ1FXWTRSVUpVUVVSQlVVZ3ZUVUl3UjBFeFZXUkVaMUZYUWtKU1UxUlZabFlyVXpoRFpGbExTVkJHWmxwT1NucGxaamxTY1RkNlFWWUtRbWRPVmtoU1JVVkVha0ZOWjJkd2NtUlhTbXhqYlRWc1pFZFdlazFCTUVkRFUzRkhVMGxpTTBSUlJVSkRkMVZCUVRSSlFrRlJRbVk0VmtGelRuTjBaZ294TUZwck9YRTNZbmRoUXpGT1JHMXFRamxFTlhSTGJVcHBOa3QzVFZodmMxcHBNVkpCU1RoQ04zUlBSbmwwYzB3ck0xazRWRmRTUzBSRFRDOXVkSGxPQ2sxNWFHWldObmd4TVZoYU56VmxhRTRyU1ZsNk16aDJNMU56UjJ0Q1lsbzJjRGR3VFhCdWRUQnpSVk15YkdWME1XRTFaakJoVkhkVGNFTXZhbVl2T0hjS1ZHRkhOMEl5UWtWd1FUSTFSbVl6WlhKbVdYVjJZV1ZrV2tSQ0swTmlaR1ZFY1VONWIzQjFkMDkyU2xodEsxRjZLM1U0UXpkQ2NHMHdWRGQzVlZaRlFncGlXbEprVVhvd2VuZFRWVlpCTmxJNWJVZzFaM0V4YkVGMlRFcHBSMnA0WVUxTlNuWXZibFpZZUdOT2FVNDJkekJtVGxCT1JucDFaRVZLTjNodFNHcGxDbFF2T0RCaFRFVlhOVU14U0VGUFIwNDVVWGt3UlRWU1JFUkhSVmRRTkZReFZXVTBZMmM0VWxBMmIwdFhTekUzY25SNlFsQnpSMUp3Y0dkWWVVWnFZMllLUjFKM2JtNVZTek5OVkRSb0NpMHRMUzB0UlU1RUlFTkZVbFJKUmtsRFFWUkZMUzB0TFMwSwpBUElfU0VSVkVSX1VSTD1odHRwczovL0VGNjg2QzE3ODZCNjFGN0RGN0ZDNUEyOUQyOTAxMDE1LmdyNy51cy1lYXN0LTIuZWtzLmFtYXpvbmF3cy5jb20KSzhTX0NMVVNURVJfRE5TX0lQPTE3Mi4yMC4wLjEwCi9ldGMvZWtzL2Jvb3RzdHJhcC5zaCBhd3MtbXVsdGljbHVzdGVyLXdpdGgtaGF6bC0xIC0ta3ViZWxldC1leHRyYS1hcmdzICctLW5vZGUtbGFiZWxzPWVrcy5hbWF6b25hd3MuY29tL25vZGVncm91cC1pbWFnZT1hbWktMGQ5ZWUwZDU5NjE0YjM3MWQsZWtzLmFtYXpvbmF3cy5jb20vY2FwYWNpdHlUeXBlPU9OX0RFTUFORCxla3MuYW1hem9uYXdzLmNvbS9ub2RlZ3JvdXA9YXdzLW11bHRpY2x1c3Rlci13aXRoLWhhemwtbmctMSAtLW1heC1wb2RzPTE3JyAtLWI2NC1jbHVzdGVyLWNhICRCNjRfQ0xVU1RFUl9DQSAtLWFwaXNlcnZlci1lbmRwb2ludCAkQVBJX1NFUlZFUl9VUkwgLS1kbnMtY2x1c3Rlci1pcCAkSzhTX0NMVVNURVJfRE5TX0lQIC0tdXNlLW1heC1wb2RzIGZhbHNlCgotLS8vLS0="
+      BlockDeviceMappings:
+      - Ebs:
+          SnapshotId: "snap-0b66bd435a5f14751"
+          VolumeType: "gp2"
+          Iops: 100
+          VolumeSize: 20
+          Encrypted: false
+          DeleteOnTermination: true
+        DeviceName: "/dev/xvda"
+      IamInstanceProfile:
+        Ref: "IAMInstanceProfile00eks68c73e257d1d60cb28b04fc40eb1bf3a00E5nKA"
+      SubnetId:
+        Ref: "EC2Subnet00subnet063fb1e3b37017e0300jRckp"
+      EbsOptimized: false
+      Volumes:
+      - VolumeId: "vol-091f2ff43885a8756"
+        Device: "/dev/xvda"
+      LaunchTemplate:
+        Version: "1"
+        LaunchTemplateName: "eks-68c73e25-7d1d-60cb-28b0-4fc40eb1bf3a"
+      NetworkInterfaces:
+      - PrivateIpAddresses:
+        - PrivateIpAddress: "10.0.1.64"
+          Primary: true
+        - PrivateIpAddress: "10.0.1.54"
+          Primary: false
+        - PrivateIpAddress: "10.0.1.40"
+          Primary: false
+        - PrivateIpAddress: "10.0.1.25"
+          Primary: false
+        - PrivateIpAddress: "10.0.1.218"
+          Primary: false
+        - PrivateIpAddress: "10.0.1.238"
+          Primary: false
+        SecondaryPrivateIpAddressCount: 5
+        DeviceIndex: "0"
+        GroupSet:
+        - Ref: "EC2SecurityGroup00sg00e940a1d11bc58cb00617k8"
+        Ipv6Addresses: []
+        SubnetId:
+          Ref: "EC2Subnet00subnet063fb1e3b37017e0300jRckp"
+        AssociatePublicIpAddress: true
+        NetworkInterfaceId:
+          Ref: "EC2NetworkInterface00eni07146f57b5f42188300bWiNK"
+        DeleteOnTermination: true
+      - Description: "aws-K8S-i-0aaff355c8ccec3fc"
+        PrivateIpAddresses:
+        - PrivateIpAddress: "10.0.1.65"
+          Primary: true
+        - PrivateIpAddress: "10.0.1.17"
+          Primary: false
+        - PrivateIpAddress: "10.0.1.53"
+          Primary: false
+        - PrivateIpAddress: "10.0.1.213"
+          Primary: false
+        - PrivateIpAddress: "10.0.1.37"
+          Primary: false
+        - PrivateIpAddress: "10.0.1.41"
+          Primary: false
+        SecondaryPrivateIpAddressCount: 5
+        DeviceIndex: "1"
+        GroupSet:
+        - Ref: "EC2SecurityGroup00sg00e940a1d11bc58cb00617k8"
+        Ipv6Addresses: []
+        SubnetId:
+          Ref: "EC2Subnet00subnet063fb1e3b37017e0300jRckp"
+        NetworkInterfaceId:
+          Ref: "EC2NetworkInterface00eni03d218edfb10cd6f500x4vMu"
+        DeleteOnTermination: true
+      ImageId: "ami-0d9ee0d59614b371d"
+      InstanceType: "t3.medium"
+      Monitoring: false
+      Tags:
+      - Value: "owned"
+        Key: "kubernetes.io/cluster/aws-multicluster-with-hazl-1"
+      - Value: "aws-multicluster-with-hazl-1"
+        Key: "eks:cluster-name"
+      - Value: "owned"
+        Key: "k8s.io/cluster-autoscaler/aws-multicluster-with-hazl-1"
+      - Value: "aws-multicluster-with-hazl-ng-1"
+        Key: "eks:nodegroup-name"
+      - Value: "true"
+        Key: "k8s.io/cluster-autoscaler/enabled"
+      InstanceInitiatedShutdownBehavior: "stop"
+      CpuOptions:
+        ThreadsPerCore: 2
+        CoreCount: 1
+      AvailabilityZone: "us-east-2a"
+      PrivateDnsNameOptions:
+        EnableResourceNameDnsARecord: false
+        HostnameType: "ip-name"
+        EnableResourceNameDnsAAAARecord: false
+      SecurityGroupIds:
+      - "sg-00e940a1d11bc58cb"
+      DisableApiTermination: false
+      SourceDestCheck: true
+      PlacementGroupName: ""
+      VpcId: "vpc-07ab00adfd6bb1f5d"
+      CreditSpecification:
+        CPUCredits: "unlimited"
+  EC2Instance00i03e16954c06f7a85500geKPe:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::Instance"
+    DeletionPolicy: "Delete"
+    Properties:
+      Tenancy: "default"
+      SecurityGroups:
+      - "eks-cluster-sg-aws-multicluster-with-hazl-2-2096340827"
+      PrivateIpAddress: "10.0.5.155"
+      UserData: "TUlNRS1WZXJzaW9uOiAxLjAKQ29udGVudC1UeXBlOiBtdWx0aXBhcnQvbWl4ZWQ7IGJvdW5kYXJ5PSIvLyIKCi0tLy8KQ29udGVudC1UeXBlOiB0ZXh0L3gtc2hlbGxzY3JpcHQ7IGNoYXJzZXQ9InVzLWFzY2lpIgojIS9iaW4vYmFzaApzZXQgLWV4CkI2NF9DTFVTVEVSX0NBPUxTMHRMUzFDUlVkSlRpQkRSVkpVU1VaSlEwRlVSUzB0TFMwdENrMUpTVVJDVkVORFFXVXlaMEYzU1VKQlowbEpRMmhUT0VwbmRtcHNNbXQzUkZGWlNrdHZXa2xvZG1OT1FWRkZURUpSUVhkR1ZFVlVUVUpGUjBFeFZVVUtRWGhOUzJFelZtbGFXRXAxV2xoU2JHTjZRV1ZHZHpCNVRrUkJlazFxV1hoUFZFbDNUWHBXWVVaM01IcE9SRUY2VFdwUmVFOVVTVEZOZWxaaFRVSlZlQXBGZWtGU1FtZE9Wa0pCVFZSRGJYUXhXVzFXZVdKdFZqQmFXRTEzWjJkRmFVMUJNRWREVTNGSFUwbGlNMFJSUlVKQlVWVkJRVFJKUWtSM1FYZG5aMFZMQ2tGdlNVSkJVVU56WnpCS01EZHVNMEZCVW5OSWVuVXpkRlZTUW1STlRYUkhjVlJZWW1ReE1GUm5VUzk1Y0ZRMlRWTmFPQ3RtUkRVdmJqWlhTemRESzA0S01raG9URVZRU0VWWlJXeEhXR05MY3k5NVVFODFUMlZSVGtObFdYVkpkMHhCVVVwUWJuTXhaMDgxZDBkRVpHNHJiRW81Ym5sb05YSlhUSGh5ZDFVeU5ncDNUMUprVWxWMlJtczRTbHBRVG1WaFdtaElNRlppUml0TlpuTTVXVFU1TjBGeFZGRkhiazB6Y0dab2NFaEhURlZzY1dkQ1prY3JiazFyVUd0SFJFMW1DamNyYlRSdFZGQTFUVEJ1YkdoV2VVTlpXakJXYUdNdlJXVnlhMUp5WlUxQ2VrbHFkRUowVGt0dlpWaHpORm8xUWtoMmVFMXNaMnBLUlZCWFlsRkliMklLY2xZNWJYbEhWalZpUkRkU09VRnFOV0Z6YzNCMmF6RnVTVlZYYTFWWVUzVllWbmRzTDBOVmVFdHVObGhTU2xOVU5XTmpVekZRWkZGSldtODJTV2MyS3dwelRHdFdhM2RHYlRSR1ZtOW5UMHBRVUVWT1kyVndOazFRTWxCS1FXZE5Ra0ZCUjJwWFZFSllUVUUwUjBFeFZXUkVkMFZDTDNkUlJVRjNTVU53UkVGUUNrSm5UbFpJVWsxQ1FXWTRSVUpVUVVSQlVVZ3ZUVUl3UjBFeFZXUkVaMUZYUWtKUlZFYzVaVmhsTVZoNE9VcFpia00xVmxBM2JUSnJPVlJqVW5KcVFWWUtRbWRPVmtoU1JVVkVha0ZOWjJkd2NtUlhTbXhqYlRWc1pFZFdlazFCTUVkRFUzRkhVMGxpTTBSUlJVSkRkMVZCUVRSSlFrRlJRbkV5ZVdodk5EZHBRZ3BIVEhobFNVbGlSV1psVHpGT2RGSkhMek5EUVc1UVZGTlZSRE5GWXprMFRUQTFaa0ZzY1dnclkwNWphbVJqYUhsRlpsUXlkR1JtVTJsVGNFSnhRbHBvQ2pNNFUwNW9UbloyYURCdWJXUlNhbEJ5VkZJeU5WZFVkR0oyU2pSbUt6VlNlVUpYUlN0WmFXMHJZM2x0ZUM4elozSmpNVFJoTVhaRWJXeGljMVZxVVVnS1EydG5WVkZ6VlROaGJGQkRNemxRVVVKeGFFZEZlR1pLZVdGQmFUSkZiRTlwYm1oTldWTmphbWwwVm1aamFXVXlXbWgwVEVneGRWcG1kSFpVVUc5UFp3cFRURm92ZUZKSVYwdGlWR2t3TWt4bFpYVm1RbVJFZEM5V0x6Y3hVblU0YTJSc2VtVm9PSE5pYVZVelFteDVSa2xrYm5KNmRGVm9RMWg0VVVnM0x6WjRDbGxhUjFObVFrTlhielpwVVZjeE1FbFZjVUYxYWt4TVZWVnBSRzlOWjJ4U1dHUlhTMjVLUlU5aFNDdDVia3RHYjNSUmRXVXhlRk4zYjB4MlVEaE9WVVVLU2pCclpHVkRjVkp5ZVdWNENpMHRMUzB0UlU1RUlFTkZVbFJKUmtsRFFWUkZMUzB0TFMwSwpBUElfU0VSVkVSX1VSTD1odHRwczovLzQzQTBFNDA4ODIyQUM4MEEzNTE0OUMwMkFCM0YyNjE3LmdyNy51cy1lYXN0LTIuZWtzLmFtYXpvbmF3cy5jb20KSzhTX0NMVVNURVJfRE5TX0lQPTE3Mi4yMC4wLjEwCi9ldGMvZWtzL2Jvb3RzdHJhcC5zaCBhd3MtbXVsdGljbHVzdGVyLXdpdGgtaGF6bC0yIC0ta3ViZWxldC1leHRyYS1hcmdzICctLW5vZGUtbGFiZWxzPWVrcy5hbWF6b25hd3MuY29tL25vZGVncm91cC1pbWFnZT1hbWktMGQ5ZWUwZDU5NjE0YjM3MWQsZWtzLmFtYXpvbmF3cy5jb20vY2FwYWNpdHlUeXBlPU9OX0RFTUFORCxla3MuYW1hem9uYXdzLmNvbS9ub2RlZ3JvdXA9YXdzLW11bHRpY2x1c3Rlci13aXRoLWhhemwtbmctMiAtLW1heC1wb2RzPTE3JyAtLWI2NC1jbHVzdGVyLWNhICRCNjRfQ0xVU1RFUl9DQSAtLWFwaXNlcnZlci1lbmRwb2ludCAkQVBJX1NFUlZFUl9VUkwgLS1kbnMtY2x1c3Rlci1pcCAkSzhTX0NMVVNURVJfRE5TX0lQIC0tdXNlLW1heC1wb2RzIGZhbHNlCgotLS8vLS0="
+      BlockDeviceMappings:
+      - Ebs:
+          SnapshotId: "snap-0b66bd435a5f14751"
+          VolumeType: "gp2"
+          Iops: 100
+          VolumeSize: 20
+          Encrypted: false
+          DeleteOnTermination: true
+        DeviceName: "/dev/xvda"
+      IamInstanceProfile:
+        Ref: "IAMInstanceProfile00eksd4c73e4044ece562ca73dee2eae21fc800gPfa6"
+      SubnetId:
+        Ref: "EC2Subnet00subnet0bd46eaf1ebfe4289002chfk"
+      EbsOptimized: false
+      Volumes:
+      - VolumeId: "vol-0d18a761a7a707e3d"
+        Device: "/dev/xvda"
+      LaunchTemplate:
+        Version: "1"
+        LaunchTemplateName: "eks-d4c73e40-44ec-e562-ca73-dee2eae21fc8"
+      NetworkInterfaces:
+      - Description: "aws-K8S-i-03e16954c06f7a855"
+        PrivateIpAddresses:
+        - PrivateIpAddress: "10.0.5.128"
+          Primary: true
+        - PrivateIpAddress: "10.0.5.19"
+          Primary: false
+        - PrivateIpAddress: "10.0.5.89"
+          Primary: false
+        - PrivateIpAddress: "10.0.5.58"
+          Primary: false
+        - PrivateIpAddress: "10.0.5.237"
+          Primary: false
+        - PrivateIpAddress: "10.0.5.46"
+          Primary: false
+        SecondaryPrivateIpAddressCount: 5
+        DeviceIndex: "1"
+        GroupSet:
+        - Ref: "EC2SecurityGroup00sg07a1d176c03abf16600HB4hv"
+        Ipv6Addresses: []
+        SubnetId:
+          Ref: "EC2Subnet00subnet0bd46eaf1ebfe4289002chfk"
+        NetworkInterfaceId:
+          Ref: "EC2NetworkInterface00eni0ea39ab741c5c04090049eGY"
+        DeleteOnTermination: true
+      - PrivateIpAddresses:
+        - PrivateIpAddress: "10.0.5.155"
+          Primary: true
+        - PrivateIpAddress: "10.0.5.146"
+          Primary: false
+        - PrivateIpAddress: "10.0.5.104"
+          Primary: false
+        - PrivateIpAddress: "10.0.5.62"
+          Primary: false
+        - PrivateIpAddress: "10.0.5.158"
+          Primary: false
+        - PrivateIpAddress: "10.0.5.111"
+          Primary: false
+        SecondaryPrivateIpAddressCount: 5
+        DeviceIndex: "0"
+        GroupSet:
+        - Ref: "EC2SecurityGroup00sg07a1d176c03abf16600HB4hv"
+        Ipv6Addresses: []
+        SubnetId:
+          Ref: "EC2Subnet00subnet0bd46eaf1ebfe4289002chfk"
+        AssociatePublicIpAddress: true
+        NetworkInterfaceId:
+          Ref: "EC2NetworkInterface00eni040b1d16d6844a36000xyHOG"
+        DeleteOnTermination: true
+      ImageId: "ami-0d9ee0d59614b371d"
+      InstanceType: "t3.medium"
+      Monitoring: false
+      Tags:
+      - Value: "owned"
+        Key: "kubernetes.io/cluster/aws-multicluster-with-hazl-2"
+      - Value: "aws-multicluster-with-hazl-2"
+        Key: "eks:cluster-name"
+      - Value: "aws-multicluster-with-hazl-ng-2"
+        Key: "eks:nodegroup-name"
+      - Value: "true"
+        Key: "k8s.io/cluster-autoscaler/enabled"
+      - Value: "owned"
+        Key: "k8s.io/cluster-autoscaler/aws-multicluster-with-hazl-2"
+      InstanceInitiatedShutdownBehavior: "stop"
+      CpuOptions:
+        ThreadsPerCore: 2
+        CoreCount: 1
+      AvailabilityZone: "us-east-2b"
+      PrivateDnsNameOptions:
+        EnableResourceNameDnsARecord: false
+        HostnameType: "ip-name"
+        EnableResourceNameDnsAAAARecord: false
+      SecurityGroupIds:
+      - "sg-07a1d176c03abf166"
+      DisableApiTermination: false
+      SourceDestCheck: true
+      PlacementGroupName: ""
+      VpcId: "vpc-07ab00adfd6bb1f5d"
+      CreditSpecification:
+        CPUCredits: "unlimited"
+  EC2Subnet00subnet0d7bf8f8e1e26e5b100EMqqZ:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::Subnet"
+    DeletionPolicy: "Delete"
+    Properties:
+      VpcId: "vpc-07ab00adfd6bb1f5d"
+      MapPublicIpOnLaunch: true
+      EnableDns64: false
+      AvailabilityZoneId: "use2-az3"
+      PrivateDnsNameOptionsOnLaunch:
+        EnableResourceNameDnsARecord: false
+        HostnameType: "ip-name"
+        EnableResourceNameDnsAAAARecord: false
+      CidrBlock: "10.0.6.0/24"
+      Ipv6Native: false
+      Tags:
+      - Value: "aws-multicluster-with-hazl-6"
+        Key: "Name"
+  EC2SecurityGroup00sg0e29dbd49c9c848ab00WpquO:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::SecurityGroup"
+    DeletionPolicy: "Delete"
+    Properties:
+      GroupDescription: "default VPC security group"
+      GroupName: "default"
+      VpcId:
+        Ref: "EC2VPC00vpc07ab00adfd6bb1f5d000W0zb"
+      SecurityGroupIngress:
+      - SourceSecurityGroupId:
+          Fn::GetAtt:
+          - "EC2VPC00vpc07ab00adfd6bb1f5d000W0zb"
+          - "DefaultSecurityGroup"
+        IpProtocol: "-1"
+        SourceSecurityGroupOwnerId: "594604573825"
+      SecurityGroupEgress:
+      - CidrIp: "0.0.0.0/0"
+        IpProtocol: "-1"
+  IAMInstanceProfile00eksd4c73e4044ece562ca73dee2eae21fc800gPfa6:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::IAM::InstanceProfile"
+    DeletionPolicy: "Delete"
+    Properties:
+      Path: "/"
+      Roles:
+      - Ref: "IAMRole00alpebdevnode00k4BoI"
+      InstanceProfileName: "eks-d4c73e40-44ec-e562-ca73-dee2eae21fc8"
+  IAMManagedPolicy00policyalpebciliumnodes00T804x:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::IAM::ManagedPolicy"
+    DeletionPolicy: "Delete"
+    Properties:
+      ManagedPolicyName: "alpeb-cilium-nodes"
+      Path: "/"
+      Description: "As per ciliums AWS ENI required-privileges"
+      Groups: []
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Resource: "*"
+          Action:
+          - "ec2:AssignPrivateIpAddresses"
+          - "ec2:AttachNetworkInterface"
+          - "ec2:CreateNetworkInterface"
+          - "ec2:CreateTags"
+          - "ec2:DeleteNetworkInterface"
+          - "ec2:DescribeInstances"
+          - "ec2:DescribeSubnets"
+          - "ec2:DescribeVpcs"
+          - "ec2:DescribeTags"
+          - "ec2:DescribeNetworkInterfaces"
+          - "ec2:DescribeInstanceTypes"
+          - "ec2:DescribeSecurityGroups"
+          - "ec2:DetachNetworkInterface"
+          - "ec2:ModifyNetworkInterfaceAttribute"
+          - "ec2:UnassignPrivateIpAddresses"
+          Effect: "Allow"
+        - Resource:
+          - "arn:aws:ec2:*:*:network-interface/*"
+          Action:
+          - "ec2:CreateTags"
+          Effect: "Allow"
+      Roles:
+      - Ref: "IAMRole00alpebdevnode00k4BoI"
+      Users: []
+  EC2Instance00i0b7e605733793390700mpMGd:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::Instance"
+    DeletionPolicy: "Delete"
+    Properties:
+      Tenancy: "default"
+      SecurityGroups:
+      - "eks-cluster-sg-aws-multicluster-with-hazl-2-2096340827"
+      PrivateIpAddress: "10.0.4.112"
+      UserData: "TUlNRS1WZXJzaW9uOiAxLjAKQ29udGVudC1UeXBlOiBtdWx0aXBhcnQvbWl4ZWQ7IGJvdW5kYXJ5PSIvLyIKCi0tLy8KQ29udGVudC1UeXBlOiB0ZXh0L3gtc2hlbGxzY3JpcHQ7IGNoYXJzZXQ9InVzLWFzY2lpIgojIS9iaW4vYmFzaApzZXQgLWV4CkI2NF9DTFVTVEVSX0NBPUxTMHRMUzFDUlVkSlRpQkRSVkpVU1VaSlEwRlVSUzB0TFMwdENrMUpTVVJDVkVORFFXVXlaMEYzU1VKQlowbEpRMmhUT0VwbmRtcHNNbXQzUkZGWlNrdHZXa2xvZG1OT1FWRkZURUpSUVhkR1ZFVlVUVUpGUjBFeFZVVUtRWGhOUzJFelZtbGFXRXAxV2xoU2JHTjZRV1ZHZHpCNVRrUkJlazFxV1hoUFZFbDNUWHBXWVVaM01IcE9SRUY2VFdwUmVFOVVTVEZOZWxaaFRVSlZlQXBGZWtGU1FtZE9Wa0pCVFZSRGJYUXhXVzFXZVdKdFZqQmFXRTEzWjJkRmFVMUJNRWREVTNGSFUwbGlNMFJSUlVKQlVWVkJRVFJKUWtSM1FYZG5aMFZMQ2tGdlNVSkJVVU56WnpCS01EZHVNMEZCVW5OSWVuVXpkRlZTUW1STlRYUkhjVlJZWW1ReE1GUm5VUzk1Y0ZRMlRWTmFPQ3RtUkRVdmJqWlhTemRESzA0S01raG9URVZRU0VWWlJXeEhXR05MY3k5NVVFODFUMlZSVGtObFdYVkpkMHhCVVVwUWJuTXhaMDgxZDBkRVpHNHJiRW81Ym5sb05YSlhUSGh5ZDFVeU5ncDNUMUprVWxWMlJtczRTbHBRVG1WaFdtaElNRlppUml0TlpuTTVXVFU1TjBGeFZGRkhiazB6Y0dab2NFaEhURlZzY1dkQ1prY3JiazFyVUd0SFJFMW1DamNyYlRSdFZGQTFUVEJ1YkdoV2VVTlpXakJXYUdNdlJXVnlhMUp5WlUxQ2VrbHFkRUowVGt0dlpWaHpORm8xUWtoMmVFMXNaMnBLUlZCWFlsRkliMklLY2xZNWJYbEhWalZpUkRkU09VRnFOV0Z6YzNCMmF6RnVTVlZYYTFWWVUzVllWbmRzTDBOVmVFdHVObGhTU2xOVU5XTmpVekZRWkZGSldtODJTV2MyS3dwelRHdFdhM2RHYlRSR1ZtOW5UMHBRVUVWT1kyVndOazFRTWxCS1FXZE5Ra0ZCUjJwWFZFSllUVUUwUjBFeFZXUkVkMFZDTDNkUlJVRjNTVU53UkVGUUNrSm5UbFpJVWsxQ1FXWTRSVUpVUVVSQlVVZ3ZUVUl3UjBFeFZXUkVaMUZYUWtKUlZFYzVaVmhsTVZoNE9VcFpia00xVmxBM2JUSnJPVlJqVW5KcVFWWUtRbWRPVmtoU1JVVkVha0ZOWjJkd2NtUlhTbXhqYlRWc1pFZFdlazFCTUVkRFUzRkhVMGxpTTBSUlJVSkRkMVZCUVRSSlFrRlJRbkV5ZVdodk5EZHBRZ3BIVEhobFNVbGlSV1psVHpGT2RGSkhMek5EUVc1UVZGTlZSRE5GWXprMFRUQTFaa0ZzY1dnclkwNWphbVJqYUhsRlpsUXlkR1JtVTJsVGNFSnhRbHBvQ2pNNFUwNW9UbloyYURCdWJXUlNhbEJ5VkZJeU5WZFVkR0oyU2pSbUt6VlNlVUpYUlN0WmFXMHJZM2x0ZUM4elozSmpNVFJoTVhaRWJXeGljMVZxVVVnS1EydG5WVkZ6VlROaGJGQkRNemxRVVVKeGFFZEZlR1pLZVdGQmFUSkZiRTlwYm1oTldWTmphbWwwVm1aamFXVXlXbWgwVEVneGRWcG1kSFpVVUc5UFp3cFRURm92ZUZKSVYwdGlWR2t3TWt4bFpYVm1RbVJFZEM5V0x6Y3hVblU0YTJSc2VtVm9PSE5pYVZVelFteDVSa2xrYm5KNmRGVm9RMWg0VVVnM0x6WjRDbGxhUjFObVFrTlhielpwVVZjeE1FbFZjVUYxYWt4TVZWVnBSRzlOWjJ4U1dHUlhTMjVLUlU5aFNDdDVia3RHYjNSUmRXVXhlRk4zYjB4MlVEaE9WVVVLU2pCclpHVkRjVkp5ZVdWNENpMHRMUzB0UlU1RUlFTkZVbFJKUmtsRFFWUkZMUzB0TFMwSwpBUElfU0VSVkVSX1VSTD1odHRwczovLzQzQTBFNDA4ODIyQUM4MEEzNTE0OUMwMkFCM0YyNjE3LmdyNy51cy1lYXN0LTIuZWtzLmFtYXpvbmF3cy5jb20KSzhTX0NMVVNURVJfRE5TX0lQPTE3Mi4yMC4wLjEwCi9ldGMvZWtzL2Jvb3RzdHJhcC5zaCBhd3MtbXVsdGljbHVzdGVyLXdpdGgtaGF6bC0yIC0ta3ViZWxldC1leHRyYS1hcmdzICctLW5vZGUtbGFiZWxzPWVrcy5hbWF6b25hd3MuY29tL25vZGVncm91cC1pbWFnZT1hbWktMGQ5ZWUwZDU5NjE0YjM3MWQsZWtzLmFtYXpvbmF3cy5jb20vY2FwYWNpdHlUeXBlPU9OX0RFTUFORCxla3MuYW1hem9uYXdzLmNvbS9ub2RlZ3JvdXA9YXdzLW11bHRpY2x1c3Rlci13aXRoLWhhemwtbmctMiAtLW1heC1wb2RzPTE3JyAtLWI2NC1jbHVzdGVyLWNhICRCNjRfQ0xVU1RFUl9DQSAtLWFwaXNlcnZlci1lbmRwb2ludCAkQVBJX1NFUlZFUl9VUkwgLS1kbnMtY2x1c3Rlci1pcCAkSzhTX0NMVVNURVJfRE5TX0lQIC0tdXNlLW1heC1wb2RzIGZhbHNlCgotLS8vLS0="
+      BlockDeviceMappings:
+      - Ebs:
+          SnapshotId: "snap-0b66bd435a5f14751"
+          VolumeType: "gp2"
+          Iops: 100
+          VolumeSize: 20
+          Encrypted: false
+          DeleteOnTermination: true
+        DeviceName: "/dev/xvda"
+      IamInstanceProfile:
+        Ref: "IAMInstanceProfile00eksd4c73e4044ece562ca73dee2eae21fc800gPfa6"
+      SubnetId:
+        Ref: "EC2Subnet00subnet0ec54908dbe9dc35100SXY5H"
+      EbsOptimized: false
+      Volumes:
+      - VolumeId: "vol-04975ed00c4dff0ed"
+        Device: "/dev/xvda"
+      LaunchTemplate:
+        Version: "1"
+        LaunchTemplateName: "eks-d4c73e40-44ec-e562-ca73-dee2eae21fc8"
+      NetworkInterfaces:
+      - PrivateIpAddresses:
+        - PrivateIpAddress: "10.0.4.112"
+          Primary: true
+        - PrivateIpAddress: "10.0.4.97"
+          Primary: false
+        - PrivateIpAddress: "10.0.4.245"
+          Primary: false
+        - PrivateIpAddress: "10.0.4.121"
+          Primary: false
+        - PrivateIpAddress: "10.0.4.252"
+          Primary: false
+        - PrivateIpAddress: "10.0.4.173"
+          Primary: false
+        SecondaryPrivateIpAddressCount: 5
+        DeviceIndex: "0"
+        GroupSet:
+        - Ref: "EC2SecurityGroup00sg07a1d176c03abf16600HB4hv"
+        Ipv6Addresses: []
+        SubnetId:
+          Ref: "EC2Subnet00subnet0ec54908dbe9dc35100SXY5H"
+        AssociatePublicIpAddress: true
+        NetworkInterfaceId:
+          Ref: "EC2NetworkInterface00eni0948785e40b94c57400nfa6U"
+        DeleteOnTermination: true
+      - Description: "aws-K8S-i-0b7e6057337933907"
+        PrivateIpAddresses:
+        - PrivateIpAddress: "10.0.4.164"
+          Primary: true
+        - PrivateIpAddress: "10.0.4.152"
+          Primary: false
+        - PrivateIpAddress: "10.0.4.58"
+          Primary: false
+        - PrivateIpAddress: "10.0.4.188"
+          Primary: false
+        - PrivateIpAddress: "10.0.4.124"
+          Primary: false
+        - PrivateIpAddress: "10.0.4.93"
+          Primary: false
+        SecondaryPrivateIpAddressCount: 5
+        DeviceIndex: "1"
+        GroupSet:
+        - Ref: "EC2SecurityGroup00sg07a1d176c03abf16600HB4hv"
+        Ipv6Addresses: []
+        SubnetId:
+          Ref: "EC2Subnet00subnet0ec54908dbe9dc35100SXY5H"
+        NetworkInterfaceId:
+          Ref: "EC2NetworkInterface00eni05f9bf473f410fc1400L6jsx"
+        DeleteOnTermination: true
+      ImageId: "ami-0d9ee0d59614b371d"
+      InstanceType: "t3.medium"
+      Monitoring: false
+      Tags:
+      - Value: "aws-multicluster-with-hazl-2"
+        Key: "eks:cluster-name"
+      - Value: "aws-multicluster-with-hazl-ng-2"
+        Key: "eks:nodegroup-name"
+      - Value: "true"
+        Key: "k8s.io/cluster-autoscaler/enabled"
+      - Value: "owned"
+        Key: "k8s.io/cluster-autoscaler/aws-multicluster-with-hazl-2"
+      - Value: "owned"
+        Key: "kubernetes.io/cluster/aws-multicluster-with-hazl-2"
+      InstanceInitiatedShutdownBehavior: "stop"
+      CpuOptions:
+        ThreadsPerCore: 2
+        CoreCount: 1
+      AvailabilityZone: "us-east-2a"
+      PrivateDnsNameOptions:
+        EnableResourceNameDnsARecord: false
+        HostnameType: "ip-name"
+        EnableResourceNameDnsAAAARecord: false
+      SecurityGroupIds:
+      - "sg-07a1d176c03abf166"
+      DisableApiTermination: false
+      SourceDestCheck: true
+      PlacementGroupName: ""
+      VpcId: "vpc-07ab00adfd6bb1f5d"
+      CreditSpecification:
+        CPUCredits: "unlimited"
+  EC2Instance00i0ea930a9abd9b8d1800Z5OhU:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::Instance"
+    DeletionPolicy: "Delete"
+    Properties:
+      Tenancy: "default"
+      SecurityGroups:
+      - "eks-cluster-sg-aws-multicluster-with-hazl-1-2096340826"
+      PrivateIpAddress: "10.0.2.232"
+      UserData: "TUlNRS1WZXJzaW9uOiAxLjAKQ29udGVudC1UeXBlOiBtdWx0aXBhcnQvbWl4ZWQ7IGJvdW5kYXJ5PSIvLyIKCi0tLy8KQ29udGVudC1UeXBlOiB0ZXh0L3gtc2hlbGxzY3JpcHQ7IGNoYXJzZXQ9InVzLWFzY2lpIgojIS9iaW4vYmFzaApzZXQgLWV4CkI2NF9DTFVTVEVSX0NBPUxTMHRMUzFDUlVkSlRpQkRSVkpVU1VaSlEwRlVSUzB0TFMwdENrMUpTVVJDVkVORFFXVXlaMEYzU1VKQlowbEpRMnR0YlhwTE5IZFhWVkYzUkZGWlNrdHZXa2xvZG1OT1FWRkZURUpSUVhkR1ZFVlVUVUpGUjBFeFZVVUtRWGhOUzJFelZtbGFXRXAxV2xoU2JHTjZRV1ZHZHpCNVRrUkJlazFxV1hoUFZFVTFUV3BXWVVaM01IcE9SRUY2VFdwUmVFOVVTVEJOYWxaaFRVSlZlQXBGZWtGU1FtZE9Wa0pCVFZSRGJYUXhXVzFXZVdKdFZqQmFXRTEzWjJkRmFVMUJNRWREVTNGSFUwbGlNMFJSUlVKQlVWVkJRVFJKUWtSM1FYZG5aMFZMQ2tGdlNVSkJVVU14Y0hnNGNqZ3hUek5RWWpaRVRqWmliVEF5UWpoQlR6WXlZMDFoTTFOTGRUSnZaREZEU0dGeWNFWk1LMmhLVlVOR1VVdExiRFp4UkRFS2NpdDFLek5tWkZkSFQwY3laRTlWVkZWaVVYRk9TRWxTTlc1eWRFRnpUM3BXYmtab0wwbGlibFpCWm1SRlUzSXZORmczVkVOb01GTnRWWEpwY3pCbGJRcHNVQzlEWmsxTE56UllWalpXVjI5TFlsQXdNaTlYY2xsNllrOUpNbGhCUTB3eWJXVk5ZMlZ3YlhOSVJubFFWa05wVWxKVE1rdzFOMUJpU1RKelluTjFDa2hEVFVOcVZscGxSRnBWVG1Kc2N6TlNUbUZDVTA5RFYwbFJTalZEY1hkdlFVVnZUVWx1U1RVdllqRTJWVzFGY2twMU55dFFPVU5KUjFadWVqUnFjVFVLV0VKQ1JEbFNVRGhST0daVFNERXZaa1JyUWxCMWRtSXljVXhDV0hkUFZIRkJVMkUxVEdGMVMwaFhaRkZLVWpZcmQxSkZSbU5qTDFwTWFuSkZOVGRaYUFveVFsVTJSMFJFZVhsck0xWk9VbkppUW5VeVJFWk5kRXhrWW1GcVFXZE5Ra0ZCUjJwWFZFSllUVUUwUjBFeFZXUkVkMFZDTDNkUlJVRjNTVU53UkVGUUNrSm5UbFpJVWsxQ1FXWTRSVUpVUVVSQlVVZ3ZUVUl3UjBFeFZXUkVaMUZYUWtKU1UxUlZabFlyVXpoRFpGbExTVkJHWmxwT1NucGxaamxTY1RkNlFWWUtRbWRPVmtoU1JVVkVha0ZOWjJkd2NtUlhTbXhqYlRWc1pFZFdlazFCTUVkRFUzRkhVMGxpTTBSUlJVSkRkMVZCUVRSSlFrRlJRbVk0VmtGelRuTjBaZ294TUZwck9YRTNZbmRoUXpGT1JHMXFRamxFTlhSTGJVcHBOa3QzVFZodmMxcHBNVkpCU1RoQ04zUlBSbmwwYzB3ck0xazRWRmRTUzBSRFRDOXVkSGxPQ2sxNWFHWldObmd4TVZoYU56VmxhRTRyU1ZsNk16aDJNMU56UjJ0Q1lsbzJjRGR3VFhCdWRUQnpSVk15YkdWME1XRTFaakJoVkhkVGNFTXZhbVl2T0hjS1ZHRkhOMEl5UWtWd1FUSTFSbVl6WlhKbVdYVjJZV1ZrV2tSQ0swTmlaR1ZFY1VONWIzQjFkMDkyU2xodEsxRjZLM1U0UXpkQ2NHMHdWRGQzVlZaRlFncGlXbEprVVhvd2VuZFRWVlpCTmxJNWJVZzFaM0V4YkVGMlRFcHBSMnA0WVUxTlNuWXZibFpZZUdOT2FVNDJkekJtVGxCT1JucDFaRVZLTjNodFNHcGxDbFF2T0RCaFRFVlhOVU14U0VGUFIwNDVVWGt3UlRWU1JFUkhSVmRRTkZReFZXVTBZMmM0VWxBMmIwdFhTekUzY25SNlFsQnpSMUp3Y0dkWWVVWnFZMllLUjFKM2JtNVZTek5OVkRSb0NpMHRMUzB0UlU1RUlFTkZVbFJKUmtsRFFWUkZMUzB0TFMwSwpBUElfU0VSVkVSX1VSTD1odHRwczovL0VGNjg2QzE3ODZCNjFGN0RGN0ZDNUEyOUQyOTAxMDE1LmdyNy51cy1lYXN0LTIuZWtzLmFtYXpvbmF3cy5jb20KSzhTX0NMVVNURVJfRE5TX0lQPTE3Mi4yMC4wLjEwCi9ldGMvZWtzL2Jvb3RzdHJhcC5zaCBhd3MtbXVsdGljbHVzdGVyLXdpdGgtaGF6bC0xIC0ta3ViZWxldC1leHRyYS1hcmdzICctLW5vZGUtbGFiZWxzPWVrcy5hbWF6b25hd3MuY29tL25vZGVncm91cC1pbWFnZT1hbWktMGQ5ZWUwZDU5NjE0YjM3MWQsZWtzLmFtYXpvbmF3cy5jb20vY2FwYWNpdHlUeXBlPU9OX0RFTUFORCxla3MuYW1hem9uYXdzLmNvbS9ub2RlZ3JvdXA9YXdzLW11bHRpY2x1c3Rlci13aXRoLWhhemwtbmctMSAtLW1heC1wb2RzPTE3JyAtLWI2NC1jbHVzdGVyLWNhICRCNjRfQ0xVU1RFUl9DQSAtLWFwaXNlcnZlci1lbmRwb2ludCAkQVBJX1NFUlZFUl9VUkwgLS1kbnMtY2x1c3Rlci1pcCAkSzhTX0NMVVNURVJfRE5TX0lQIC0tdXNlLW1heC1wb2RzIGZhbHNlCgotLS8vLS0="
+      BlockDeviceMappings:
+      - Ebs:
+          SnapshotId: "snap-0b66bd435a5f14751"
+          VolumeType: "gp2"
+          Iops: 100
+          VolumeSize: 20
+          Encrypted: false
+          DeleteOnTermination: true
+        DeviceName: "/dev/xvda"
+      IamInstanceProfile:
+        Ref: "IAMInstanceProfile00eks68c73e257d1d60cb28b04fc40eb1bf3a00E5nKA"
+      SubnetId:
+        Ref: "EC2Subnet00subnet0394ce2642689d2ee00FIXw1"
+      EbsOptimized: false
+      Volumes:
+      - VolumeId: "vol-02aa121919b5e6ae0"
+        Device: "/dev/xvda"
+      LaunchTemplate:
+        Version: "1"
+        LaunchTemplateName: "eks-68c73e25-7d1d-60cb-28b0-4fc40eb1bf3a"
+      NetworkInterfaces:
+      - Description: "aws-K8S-i-0ea930a9abd9b8d18"
+        PrivateIpAddresses:
+        - PrivateIpAddress: "10.0.2.144"
+          Primary: true
+        - PrivateIpAddress: "10.0.2.241"
+          Primary: false
+        - PrivateIpAddress: "10.0.2.67"
+          Primary: false
+        - PrivateIpAddress: "10.0.2.199"
+          Primary: false
+        - PrivateIpAddress: "10.0.2.216"
+          Primary: false
+        - PrivateIpAddress: "10.0.2.107"
+          Primary: false
+        SecondaryPrivateIpAddressCount: 5
+        DeviceIndex: "1"
+        GroupSet:
+        - Ref: "EC2SecurityGroup00sg00e940a1d11bc58cb00617k8"
+        Ipv6Addresses: []
+        SubnetId:
+          Ref: "EC2Subnet00subnet0394ce2642689d2ee00FIXw1"
+        NetworkInterfaceId:
+          Ref: "EC2NetworkInterface00eni078f5af7712d9a21000xvOMD"
+        DeleteOnTermination: true
+      - PrivateIpAddresses:
+        - PrivateIpAddress: "10.0.2.232"
+          Primary: true
+        - PrivateIpAddress: "10.0.2.192"
+          Primary: false
+        - PrivateIpAddress: "10.0.2.120"
+          Primary: false
+        - PrivateIpAddress: "10.0.2.200"
+          Primary: false
+        - PrivateIpAddress: "10.0.2.126"
+          Primary: false
+        - PrivateIpAddress: "10.0.2.95"
+          Primary: false
+        SecondaryPrivateIpAddressCount: 5
+        DeviceIndex: "0"
+        GroupSet:
+        - Ref: "EC2SecurityGroup00sg00e940a1d11bc58cb00617k8"
+        Ipv6Addresses: []
+        SubnetId:
+          Ref: "EC2Subnet00subnet0394ce2642689d2ee00FIXw1"
+        AssociatePublicIpAddress: true
+        NetworkInterfaceId:
+          Ref: "EC2NetworkInterface00eni0d75115f8e24cde5300Pr0JP"
+        DeleteOnTermination: true
+      ImageId: "ami-0d9ee0d59614b371d"
+      InstanceType: "t3.medium"
+      Monitoring: false
+      Tags:
+      - Value: "owned"
+        Key: "k8s.io/cluster-autoscaler/aws-multicluster-with-hazl-1"
+      - Value: "true"
+        Key: "k8s.io/cluster-autoscaler/enabled"
+      - Value: "aws-multicluster-with-hazl-ng-1"
+        Key: "eks:nodegroup-name"
+      - Value: "aws-multicluster-with-hazl-1"
+        Key: "eks:cluster-name"
+      - Value: "owned"
+        Key: "kubernetes.io/cluster/aws-multicluster-with-hazl-1"
+      InstanceInitiatedShutdownBehavior: "stop"
+      CpuOptions:
+        ThreadsPerCore: 2
+        CoreCount: 1
+      AvailabilityZone: "us-east-2b"
+      PrivateDnsNameOptions:
+        EnableResourceNameDnsARecord: false
+        HostnameType: "ip-name"
+        EnableResourceNameDnsAAAARecord: false
+      SecurityGroupIds:
+      - "sg-00e940a1d11bc58cb"
+      DisableApiTermination: false
+      SourceDestCheck: true
+      PlacementGroupName: ""
+      VpcId: "vpc-07ab00adfd6bb1f5d"
+      CreditSpecification:
+        CPUCredits: "unlimited"
+  EC2VolumeAttachment00vol0973c8765b77f981300fn8AU:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::VolumeAttachment"
+    DeletionPolicy: "Delete"
+    Properties:
+      InstanceId: "i-09f7e27ec8aacd811"
+      VolumeId: "vol-0973c8765b77f9813"
+      Device: "/dev/xvda"
+  EC2NetworkInterface00eni03d218edfb10cd6f500x4vMu:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::NetworkInterface"
+    DeletionPolicy: "Delete"
+    Properties:
+      Description: "aws-K8S-i-0aaff355c8ccec3fc"
+      PrivateIpAddress: "10.0.1.65"
+      PrivateIpAddresses:
+      - PrivateIpAddress: "10.0.1.65"
+        Primary: true
+      - PrivateIpAddress: "10.0.1.17"
+        Primary: false
+      - PrivateIpAddress: "10.0.1.53"
+        Primary: false
+      - PrivateIpAddress: "10.0.1.213"
+        Primary: false
+      - PrivateIpAddress: "10.0.1.37"
+        Primary: false
+      - PrivateIpAddress: "10.0.1.41"
+        Primary: false
+      SecondaryPrivateIpAddressCount: 5
+      Ipv6PrefixCount: 0
+      Ipv4Prefixes: []
+      Ipv4PrefixCount: 0
+      GroupSet:
+      - "sg-00e940a1d11bc58cb"
+      Ipv6Prefixes: []
+      SubnetId:
+        Ref: "EC2Subnet00subnet063fb1e3b37017e0300jRckp"
+      SourceDestCheck: true
+      InterfaceType: "interface"
+      Tags:
+      - Value: "2024-03-26T19:46:02Z"
+        Key: "node.k8s.amazonaws.com/createdAt"
+      - Value: "aws-multicluster-with-hazl-1"
+        Key: "cluster.k8s.amazonaws.com/name"
+      - Value: "i-0aaff355c8ccec3fc"
+        Key: "node.k8s.amazonaws.com/instance_id"
+  EC2Subnet00subnet0bd46eaf1ebfe4289002chfk:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::Subnet"
+    DeletionPolicy: "Delete"
+    Properties:
+      VpcId: "vpc-07ab00adfd6bb1f5d"
+      MapPublicIpOnLaunch: true
+      EnableDns64: false
+      AvailabilityZoneId: "use2-az2"
+      PrivateDnsNameOptionsOnLaunch:
+        EnableResourceNameDnsARecord: false
+        HostnameType: "ip-name"
+        EnableResourceNameDnsAAAARecord: false
+      CidrBlock: "10.0.5.0/24"
+      Ipv6Native: false
+      Tags:
+      - Value: "aws-multicluster-with-hazl-5"
+        Key: "Name"
+  IAMInstanceProfile00eks68c73e257d1d60cb28b04fc40eb1bf3a00E5nKA:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::IAM::InstanceProfile"
+    DeletionPolicy: "Delete"
+    Properties:
+      Path: "/"
+      Roles:
+      - Ref: "IAMRole00alpebdevnode00k4BoI"
+      InstanceProfileName: "eks-68c73e25-7d1d-60cb-28b0-4fc40eb1bf3a"
+  EC2SubnetNetworkAclAssociation00aclassoc06ce4b1be5a64e9f2005xabr:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::SubnetNetworkAclAssociation"
+    DeletionPolicy: "Delete"
+    Properties:
+      NetworkAclId:
+        Ref: "EC2NetworkAcl00acl0601d92353fd805c300YZlOO"
+      SubnetId:
+        Ref: "EC2Subnet00subnet029eb0854caa6538a00soFoY"
+  EC2VolumeAttachment00vol07897c30b222bda5f00ZAxHl:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::VolumeAttachment"
+    DeletionPolicy: "Delete"
+    Properties:
+      InstanceId: "i-001c340a02d5af205"
+      VolumeId: "vol-07897c30b222bda5f"
+      Device: "/dev/xvda"
+  IAMUser00tombuoyantio00YREFs:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::IAM::User"
+    DeletionPolicy: "Delete"
+    Properties:
+      Path: "/"
+      ManagedPolicyArns:
+      - "arn:aws:iam::aws:policy/IAMUserChangePassword"
+      UserName: "tom@buoyant.io"
+      LoginProfile:
+        PasswordResetRequired: false
+      Groups:
+      - "cncf-linkerd-aws-account"
+      Tags:
+      - Value: "CLI key"
+        Key: "AKIAYU4JRYSATWPUVY73"
+  EC2NetworkInterface00eni0ea39ab741c5c04090049eGY:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::NetworkInterface"
+    DeletionPolicy: "Delete"
+    Properties:
+      Description: "aws-K8S-i-03e16954c06f7a855"
+      PrivateIpAddress: "10.0.5.128"
+      PrivateIpAddresses:
+      - PrivateIpAddress: "10.0.5.128"
+        Primary: true
+      - PrivateIpAddress: "10.0.5.19"
+        Primary: false
+      - PrivateIpAddress: "10.0.5.89"
+        Primary: false
+      - PrivateIpAddress: "10.0.5.58"
+        Primary: false
+      - PrivateIpAddress: "10.0.5.237"
+        Primary: false
+      - PrivateIpAddress: "10.0.5.46"
+        Primary: false
+      SecondaryPrivateIpAddressCount: 5
+      Ipv6PrefixCount: 0
+      Ipv4Prefixes: []
+      Ipv4PrefixCount: 0
+      GroupSet:
+      - "sg-07a1d176c03abf166"
+      Ipv6Prefixes: []
+      SubnetId:
+        Ref: "EC2Subnet00subnet0bd46eaf1ebfe4289002chfk"
+      SourceDestCheck: true
+      InterfaceType: "interface"
+      Tags:
+      - Value: "2024-03-26T20:44:38Z"
+        Key: "node.k8s.amazonaws.com/createdAt"
+      - Value: "aws-multicluster-with-hazl-2"
+        Key: "cluster.k8s.amazonaws.com/name"
+      - Value: "i-03e16954c06f7a855"
+        Key: "node.k8s.amazonaws.com/instance_id"
+  EC2VolumeAttachment00vol04975ed00c4dff0ed005FM5r:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::VolumeAttachment"
+    DeletionPolicy: "Delete"
+    Properties:
+      InstanceId: "i-0b7e6057337933907"
+      VolumeId: "vol-04975ed00c4dff0ed"
+      Device: "/dev/xvda"
+  EC2SubnetNetworkAclAssociation00aclassoc0e288e9a55f0a7ba70019ZrK:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::SubnetNetworkAclAssociation"
+    DeletionPolicy: "Delete"
+    Properties:
+      NetworkAclId:
+        Ref: "EC2NetworkAcl00acl0601d92353fd805c300YZlOO"
+      SubnetId:
+        Ref: "EC2Subnet00subnet0bd46eaf1ebfe4289002chfk"
+  EC2Subnet00subnet063fb1e3b37017e0300jRckp:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::Subnet"
+    DeletionPolicy: "Delete"
+    Properties:
+      VpcId: "vpc-07ab00adfd6bb1f5d"
+      MapPublicIpOnLaunch: true
+      EnableDns64: false
+      AvailabilityZoneId: "use2-az1"
+      PrivateDnsNameOptionsOnLaunch:
+        EnableResourceNameDnsARecord: false
+        HostnameType: "ip-name"
+        EnableResourceNameDnsAAAARecord: false
+      CidrBlock: "10.0.1.0/24"
+      Ipv6Native: false
+      Tags:
+      - Value: "aws-multicluster-with-hazl-1"
+        Key: "Name"
+  IAMRole00alpebdevclusterservice00MbBzx:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::IAM::Role"
+    DeletionPolicy: "Delete"
+    Properties:
+      Path: "/"
+      ManagedPolicyArns:
+      - "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
+      MaxSessionDuration: 3600
+      RoleName: "alpeb-dev-cluster-service"
+      Description: "Allows access to other AWS service resources that are required\
+        \ to operate clusters managed by EKS."
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Action: "sts:AssumeRole"
+          Effect: "Allow"
+          Principal:
+            Service: "eks.amazonaws.com"
+  EKSCluster00awsmulticlusterwithhazl200VjV7G:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EKS::Cluster"
+    DeletionPolicy: "Delete"
+    Properties:
+      Logging:
+        ClusterLogging:
+          EnabledTypes: []
+      Version: "1.29"
+      AccessConfig:
+        AuthenticationMode: "API_AND_CONFIG_MAP"
+      EncryptionConfig: []
+      KubernetesNetworkConfig:
+        ServiceIpv4Cidr: "172.20.0.0/16"
+        IpFamily: "ipv4"
+      RoleArn:
+        Fn::GetAtt:
+        - "IAMRole00alpebdevclusterservice00MbBzx"
+        - "Arn"
+      ResourcesVpcConfig:
+        EndpointPublicAccess: false
+        PublicAccessCidrs: []
+        SecurityGroupIds:
+        - Ref: "EC2SecurityGroup00sg0e29dbd49c9c848ab00WpquO"
+        SubnetIds:
+        - Ref: "EC2Subnet00subnet0ec54908dbe9dc35100SXY5H"
+        - Ref: "EC2Subnet00subnet0bd46eaf1ebfe4289002chfk"
+        - Ref: "EC2Subnet00subnet0d7bf8f8e1e26e5b100EMqqZ"
+        EndpointPrivateAccess: true
+      Tags:
+      - Value: "aws-multicluster-with-hazl-2"
+        Key: "cluster-name"
+      Name: "aws-multicluster-with-hazl-2"
+  EC2SecurityGroup00sg00e940a1d11bc58cb00617k8:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::SecurityGroup"
+    DeletionPolicy: "Delete"
+    Properties:
+      GroupDescription: "EKS created security group applied to ENI that is attached\
+        \ to EKS Control Plane master nodes, as well as any managed workloads."
+      GroupName: "eks-cluster-sg-aws-multicluster-with-hazl-1-2096340826"
+      VpcId:
+        Ref: "EC2VPC00vpc07ab00adfd6bb1f5d000W0zb"
+      SecurityGroupIngress:
+      - SourceSecurityGroupId: "sg-00e940a1d11bc58cb"
+        IpProtocol: "-1"
+        SourceSecurityGroupOwnerId: "594604573825"
+      SecurityGroupEgress:
+      - CidrIp: "0.0.0.0/0"
+        IpProtocol: "-1"
+      Tags:
+      - Value: "owned"
+        Key: "kubernetes.io/cluster/aws-multicluster-with-hazl-1"
+      - Value: "eks-cluster-sg-aws-multicluster-with-hazl-1-2096340826"
+        Key: "Name"
+  EC2InternetGateway00igw08fbf2e194e6c204200hWa9S:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::InternetGateway"
+    DeletionPolicy: "Delete"
+    Properties:
+      Tags:
+      - Value: "aws-multicluster-with-hazl-igw"
+        Key: "Name"
+  EC2Subnet00subnet0ec54908dbe9dc35100SXY5H:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::Subnet"
+    DeletionPolicy: "Delete"
+    Properties:
+      VpcId: "vpc-07ab00adfd6bb1f5d"
+      MapPublicIpOnLaunch: true
+      EnableDns64: false
+      AvailabilityZoneId: "use2-az1"
+      PrivateDnsNameOptionsOnLaunch:
+        EnableResourceNameDnsARecord: false
+        HostnameType: "ip-name"
+        EnableResourceNameDnsAAAARecord: false
+      CidrBlock: "10.0.4.0/24"
+      Ipv6Native: false
+      Tags:
+      - Value: "aws-multicluster-with-hazl-4"
+        Key: "Name"
+  EC2Instance00i09f7e27ec8aacd81100uCARA:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::Instance"
+    DeletionPolicy: "Delete"
+    Properties:
+      Tenancy: "default"
+      SecurityGroups:
+      - "eks-cluster-sg-aws-multicluster-with-hazl-1-2096340826"
+      PrivateIpAddress: "10.0.3.116"
+      UserData: "TUlNRS1WZXJzaW9uOiAxLjAKQ29udGVudC1UeXBlOiBtdWx0aXBhcnQvbWl4ZWQ7IGJvdW5kYXJ5PSIvLyIKCi0tLy8KQ29udGVudC1UeXBlOiB0ZXh0L3gtc2hlbGxzY3JpcHQ7IGNoYXJzZXQ9InVzLWFzY2lpIgojIS9iaW4vYmFzaApzZXQgLWV4CkI2NF9DTFVTVEVSX0NBPUxTMHRMUzFDUlVkSlRpQkRSVkpVU1VaSlEwRlVSUzB0TFMwdENrMUpTVVJDVkVORFFXVXlaMEYzU1VKQlowbEpRMnR0YlhwTE5IZFhWVkYzUkZGWlNrdHZXa2xvZG1OT1FWRkZURUpSUVhkR1ZFVlVUVUpGUjBFeFZVVUtRWGhOUzJFelZtbGFXRXAxV2xoU2JHTjZRV1ZHZHpCNVRrUkJlazFxV1hoUFZFVTFUV3BXWVVaM01IcE9SRUY2VFdwUmVFOVVTVEJOYWxaaFRVSlZlQXBGZWtGU1FtZE9Wa0pCVFZSRGJYUXhXVzFXZVdKdFZqQmFXRTEzWjJkRmFVMUJNRWREVTNGSFUwbGlNMFJSUlVKQlVWVkJRVFJKUWtSM1FYZG5aMFZMQ2tGdlNVSkJVVU14Y0hnNGNqZ3hUek5RWWpaRVRqWmliVEF5UWpoQlR6WXlZMDFoTTFOTGRUSnZaREZEU0dGeWNFWk1LMmhLVlVOR1VVdExiRFp4UkRFS2NpdDFLek5tWkZkSFQwY3laRTlWVkZWaVVYRk9TRWxTTlc1eWRFRnpUM3BXYmtab0wwbGlibFpCWm1SRlUzSXZORmczVkVOb01GTnRWWEpwY3pCbGJRcHNVQzlEWmsxTE56UllWalpXVjI5TFlsQXdNaTlYY2xsNllrOUpNbGhCUTB3eWJXVk5ZMlZ3YlhOSVJubFFWa05wVWxKVE1rdzFOMUJpU1RKelluTjFDa2hEVFVOcVZscGxSRnBWVG1Kc2N6TlNUbUZDVTA5RFYwbFJTalZEY1hkdlFVVnZUVWx1U1RVdllqRTJWVzFGY2twMU55dFFPVU5KUjFadWVqUnFjVFVLV0VKQ1JEbFNVRGhST0daVFNERXZaa1JyUWxCMWRtSXljVXhDV0hkUFZIRkJVMkUxVEdGMVMwaFhaRkZLVWpZcmQxSkZSbU5qTDFwTWFuSkZOVGRaYUFveVFsVTJSMFJFZVhsck0xWk9VbkppUW5VeVJFWk5kRXhrWW1GcVFXZE5Ra0ZCUjJwWFZFSllUVUUwUjBFeFZXUkVkMFZDTDNkUlJVRjNTVU53UkVGUUNrSm5UbFpJVWsxQ1FXWTRSVUpVUVVSQlVVZ3ZUVUl3UjBFeFZXUkVaMUZYUWtKU1UxUlZabFlyVXpoRFpGbExTVkJHWmxwT1NucGxaamxTY1RkNlFWWUtRbWRPVmtoU1JVVkVha0ZOWjJkd2NtUlhTbXhqYlRWc1pFZFdlazFCTUVkRFUzRkhVMGxpTTBSUlJVSkRkMVZCUVRSSlFrRlJRbVk0VmtGelRuTjBaZ294TUZwck9YRTNZbmRoUXpGT1JHMXFRamxFTlhSTGJVcHBOa3QzVFZodmMxcHBNVkpCU1RoQ04zUlBSbmwwYzB3ck0xazRWRmRTUzBSRFRDOXVkSGxPQ2sxNWFHWldObmd4TVZoYU56VmxhRTRyU1ZsNk16aDJNMU56UjJ0Q1lsbzJjRGR3VFhCdWRUQnpSVk15YkdWME1XRTFaakJoVkhkVGNFTXZhbVl2T0hjS1ZHRkhOMEl5UWtWd1FUSTFSbVl6WlhKbVdYVjJZV1ZrV2tSQ0swTmlaR1ZFY1VONWIzQjFkMDkyU2xodEsxRjZLM1U0UXpkQ2NHMHdWRGQzVlZaRlFncGlXbEprVVhvd2VuZFRWVlpCTmxJNWJVZzFaM0V4YkVGMlRFcHBSMnA0WVUxTlNuWXZibFpZZUdOT2FVNDJkekJtVGxCT1JucDFaRVZLTjNodFNHcGxDbFF2T0RCaFRFVlhOVU14U0VGUFIwNDVVWGt3UlRWU1JFUkhSVmRRTkZReFZXVTBZMmM0VWxBMmIwdFhTekUzY25SNlFsQnpSMUp3Y0dkWWVVWnFZMllLUjFKM2JtNVZTek5OVkRSb0NpMHRMUzB0UlU1RUlFTkZVbFJKUmtsRFFWUkZMUzB0TFMwSwpBUElfU0VSVkVSX1VSTD1odHRwczovL0VGNjg2QzE3ODZCNjFGN0RGN0ZDNUEyOUQyOTAxMDE1LmdyNy51cy1lYXN0LTIuZWtzLmFtYXpvbmF3cy5jb20KSzhTX0NMVVNURVJfRE5TX0lQPTE3Mi4yMC4wLjEwCi9ldGMvZWtzL2Jvb3RzdHJhcC5zaCBhd3MtbXVsdGljbHVzdGVyLXdpdGgtaGF6bC0xIC0ta3ViZWxldC1leHRyYS1hcmdzICctLW5vZGUtbGFiZWxzPWVrcy5hbWF6b25hd3MuY29tL25vZGVncm91cC1pbWFnZT1hbWktMGQ5ZWUwZDU5NjE0YjM3MWQsZWtzLmFtYXpvbmF3cy5jb20vY2FwYWNpdHlUeXBlPU9OX0RFTUFORCxla3MuYW1hem9uYXdzLmNvbS9ub2RlZ3JvdXA9YXdzLW11bHRpY2x1c3Rlci13aXRoLWhhemwtbmctMSAtLW1heC1wb2RzPTE3JyAtLWI2NC1jbHVzdGVyLWNhICRCNjRfQ0xVU1RFUl9DQSAtLWFwaXNlcnZlci1lbmRwb2ludCAkQVBJX1NFUlZFUl9VUkwgLS1kbnMtY2x1c3Rlci1pcCAkSzhTX0NMVVNURVJfRE5TX0lQIC0tdXNlLW1heC1wb2RzIGZhbHNlCgotLS8vLS0="
+      BlockDeviceMappings:
+      - Ebs:
+          SnapshotId: "snap-0b66bd435a5f14751"
+          VolumeType: "gp2"
+          Iops: 100
+          VolumeSize: 20
+          Encrypted: false
+          DeleteOnTermination: true
+        DeviceName: "/dev/xvda"
+      IamInstanceProfile:
+        Ref: "IAMInstanceProfile00eks68c73e257d1d60cb28b04fc40eb1bf3a00E5nKA"
+      SubnetId:
+        Ref: "EC2Subnet00subnet029eb0854caa6538a00soFoY"
+      EbsOptimized: false
+      Volumes:
+      - VolumeId: "vol-0973c8765b77f9813"
+        Device: "/dev/xvda"
+      LaunchTemplate:
+        Version: "1"
+        LaunchTemplateName: "eks-68c73e25-7d1d-60cb-28b0-4fc40eb1bf3a"
+      NetworkInterfaces:
+      - PrivateIpAddresses:
+        - PrivateIpAddress: "10.0.3.116"
+          Primary: true
+        - PrivateIpAddress: "10.0.3.97"
+          Primary: false
+        - PrivateIpAddress: "10.0.3.18"
+          Primary: false
+        - PrivateIpAddress: "10.0.3.71"
+          Primary: false
+        - PrivateIpAddress: "10.0.3.58"
+          Primary: false
+        - PrivateIpAddress: "10.0.3.186"
+          Primary: false
+        SecondaryPrivateIpAddressCount: 5
+        DeviceIndex: "0"
+        GroupSet:
+        - Ref: "EC2SecurityGroup00sg00e940a1d11bc58cb00617k8"
+        Ipv6Addresses: []
+        SubnetId:
+          Ref: "EC2Subnet00subnet029eb0854caa6538a00soFoY"
+        AssociatePublicIpAddress: true
+        NetworkInterfaceId:
+          Ref: "EC2NetworkInterface00eni0a1a1f5d045fff8ba00h9S34"
+        DeleteOnTermination: true
+      ImageId: "ami-0d9ee0d59614b371d"
+      InstanceType: "t3.medium"
+      Monitoring: false
+      Tags:
+      - Value: "aws-multicluster-with-hazl-ng-1"
+        Key: "eks:nodegroup-name"
+      - Value: "owned"
+        Key: "kubernetes.io/cluster/aws-multicluster-with-hazl-1"
+      - Value: "aws-multicluster-with-hazl-1"
+        Key: "eks:cluster-name"
+      - Value: "owned"
+        Key: "k8s.io/cluster-autoscaler/aws-multicluster-with-hazl-1"
+      - Value: "true"
+        Key: "k8s.io/cluster-autoscaler/enabled"
+      InstanceInitiatedShutdownBehavior: "stop"
+      CpuOptions:
+        ThreadsPerCore: 2
+        CoreCount: 1
+      AvailabilityZone: "us-east-2c"
+      PrivateDnsNameOptions:
+        EnableResourceNameDnsARecord: false
+        HostnameType: "ip-name"
+        EnableResourceNameDnsAAAARecord: false
+      SecurityGroupIds:
+      - "sg-00e940a1d11bc58cb"
+      DisableApiTermination: false
+      SourceDestCheck: true
+      PlacementGroupName: ""
+      VpcId: "vpc-07ab00adfd6bb1f5d"
+      CreditSpecification:
+        CPUCredits: "unlimited"
+  EC2SubnetNetworkAclAssociation00aclassoc0b1dbc864758b7ff800qnCNO:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::SubnetNetworkAclAssociation"
+    DeletionPolicy: "Delete"
+    Properties:
+      NetworkAclId:
+        Ref: "EC2NetworkAcl00acl0601d92353fd805c300YZlOO"
+      SubnetId:
+        Ref: "EC2Subnet00subnet0d7bf8f8e1e26e5b100EMqqZ"
+  EC2Subnet00subnet0394ce2642689d2ee00FIXw1:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::Subnet"
+    DeletionPolicy: "Delete"
+    Properties:
+      VpcId: "vpc-07ab00adfd6bb1f5d"
+      MapPublicIpOnLaunch: true
+      EnableDns64: false
+      AvailabilityZoneId: "use2-az2"
+      PrivateDnsNameOptionsOnLaunch:
+        EnableResourceNameDnsARecord: false
+        HostnameType: "ip-name"
+        EnableResourceNameDnsAAAARecord: false
+      CidrBlock: "10.0.2.0/24"
+      Ipv6Native: false
+      Tags:
+      - Value: "aws-multicluster-with-hazl-2"
+        Key: "Name"
