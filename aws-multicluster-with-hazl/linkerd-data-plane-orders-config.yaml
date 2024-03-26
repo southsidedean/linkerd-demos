@@ -1,9 +1,0 @@
----
-apiVersion: linkerd.buoyant.io/v1alpha1
-kind: DataPlane
-metadata:
-  name: linkerd-orders
-  namespace: orders
-spec:
-  workloadSelector:
-    matchLabels: {}
