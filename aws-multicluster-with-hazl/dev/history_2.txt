@@ -1,0 +1,392 @@
+ 1022  kubectl rollout status daemonset/buoyant-cloud-metrics -n linkerd-buoyant --context=careem-cluster-1\nlinkerd buoyant check --context careem-cluster-1
+ 1023  source settings.sh
+ 1024  kubectl rollout status daemonset/buoyant-cloud-metrics -n linkerd-buoyant --context=careem-cluster-1\nlinkerd buoyant check --context careem-cluster-1
+ 1025  kubectl rollout status daemonset/buoyant-cloud-metrics -n linkerd-buoyant --context=careem-cluster-2\nlinkerd buoyant check --context careem-cluster-2
+ 1026  kubectl apply -f linkerd-identity-secret.yaml --context=careem-cluster-1
+ 1027  kubectl apply -f linkerd-identity-secret.yaml --context=careem-cluster-2
+ 1028  cat linkerd-control-plane-config-hazl.yaml
+ 1029  vi linkerd-control-plane-config-hazl.yaml
+ 1030  kubectl apply -f linkerd-control-plane-config-hazl.yaml --context=careem-cluster-1
+ 1031  kubectl apply -f linkerd-control-plane-config-hazl.yaml --context=careem-cluster-2
+ 1032  linkerd check --context careem-cluster-1
+ 1033  linkerd check --context careem-cluster-2
+ 1034  kubectl apply -f linkerd-data-plane-config.yaml --context=careem-cluster-1
+ 1035  kubectl apply -f linkerd-data-plane-config.yaml --context=careem-cluster-2
+ 1036  kubectl rollout status daemonset/buoyant-cloud-metrics -n linkerd-buoyant --context=careem-cluster-1
+ 1037  kubectl rollout status daemonset/buoyant-cloud-metrics -n linkerd-buoyant --context=careem-cluster-2
+ 1038  linkerd check --proxy -n linkerd-buoyant --context careem-cluster-1
+ 1039  linkerd check --proxy -n linkerd-buoyant --context careem-cluster-2
+ 1040  watch -n 1 kubectl get nodes --context=careem-cluster-1
+ 1041  watch -n 1 kubectl get pod -A --context=careem-cluster-1
+ 1042  watch -n 1 kubectl get pod -A --context=careem-cluster-2
+ 1043  cd orders
+ 1044  ls -al
+ 1045  more orders-central.yaml
+ 1046  kubectl apply -k orders --context=careem-cluster-1
+ 1047  cd ..
+ 1048  kubectl apply -k orders --context=careem-cluster-1
+ 1049  kubectl apply -k orders --context=careem-cluster-2
+ 1050  helm install linkerd-multicluster \\n  --create-namespace \\n  --namespace linkerd-multicluster \\n  --set license=$BUOYANT_LICENSE \\n  linkerd-buoyant/linkerd-enterprise-multicluster
+ 1051  helm install linkerd-multicluster \\n  --create-namespace \\n  --namespace linkerd-multicluster \\n  --set license=$BUOYANT_LICENSE \\n  linkerd-buoyant/linkerd-enterprise-multicluster
+ 1052  helm install linkerd-multicluster \\n  --create-namespace --context careem-cluster-1 \\n  --namespace linkerd-multicluster \\n  --set license=$BUOYANT_LICENSE \\n  linkerd-buoyant/linkerd-enterprise-multicluster
+ 1053  helm install linkerd-multicluster \\n  --create-namespace --kube-context careem-cluster-1 \\n  --namespace linkerd-multicluster \\n  --set license=$BUOYANT_LICENSE \\n  linkerd-buoyant/linkerd-enterprise-multicluster
+ 1054  linkerd helm ls -A --kube-context careem-cluster-1
+ 1055  helm ls -A --kube-context careem-cluster-1
+ 1056  helm ls -A --kube-context careem-cluster-2
+ 1057  helm delete linkerd-multicluster -n linkerd-multicluster --kube-context careem-cluster-1
+ 1058  helm install linkerd-multicluster \\n  --create-namespace --kube-context careem-cluster-1 \\n  --namespace linkerd-multicluster \\n  --set license=$BUOYANT_LICENSE \\n  linkerd-buoyant/linkerd-enterprise-multicluster
+ 1059  helm install linkerd-multicluster \\n  --create-namespace --kube-context careem-cluster-2 \\n  --namespace linkerd-multicluster \\n  --set license=$BUOYANT_LICENSE \\n  linkerd-buoyant/linkerd-enterprise-multicluster
+ 1060  history
+ 1061  history 1 | grep watch
+ 1062  watch -n 1 kubectl get pod -A --context=careem-cluster-1
+ 1063  helm delete linkerd-multicluster -n linkerd-multicluster --kube-context careem-cluster-1
+ 1064  helm delete linkerd-multicluster -n linkerd-multicluster --kube-context careem-cluster-2
+ 1065  helm install linkerd-multicluster \\n  --create-namespace --kube-context careem-cluster-1 \\n  --namespace linkerd-multicluster --gateway.enabled=false \\n  --set license=$BUOYANT_LICENSE \\n  linkerd-buoyant/linkerd-enterprise-multicluster
+ 1066  helm install linkerd-multicluster \\n  --create-namespace --kube-context careem-cluster-1 \\n  --namespace linkerd-multicluster --gateway-enabled=false \\n  --set license=$BUOYANT_LICENSE \\n  linkerd-buoyant/linkerd-enterprise-multicluster
+ 1067  helm install linkerd-multicluster \\n  --create-namespace --kube-context careem-cluster-1 \\n  --namespace linkerd-multicluster --set gateway.enabled=false \\n  --set license=$BUOYANT_LICENSE \\n  linkerd-buoyant/linkerd-enterprise-multicluster
+ 1068  helm install linkerd-multicluster \\n  --create-namespace --kube-context careem-cluster-2 \\n  --namespace linkerd-multicluster --set gateway.enabled=false \\n  --set license=$BUOYANT_LICENSE \\n  linkerd-buoyant/linkerd-enterprise-multicluster
+ 1069  watch -n 1 kubectl get pod -A --context=careem-cluster-1
+ 1070  helm get values linkerd-multicluster -n linkerd-multicluster --kube-context careem-cluster-1
+ 1071  helm get values linkerd-multicluster -n linkerd-multicluster --kube-context careem-cluster-2
+ 1072  helm delete linkerd-multicluster -n linkerd-multicluster --kube-context careem-cluster-1
+ 1073  helm delete linkerd-multicluster -n linkerd-multicluster --kube-context careem-cluster-2
+ 1074  helm install linkerd-multicluster \\n  --create-namespace --kube-context careem-cluster-1 \\n  --namespace linkerd-multicluster --set gateway.enabled=false \\n  --set license=$BUOYANT_LICENSE \\n  linkerd-buoyant/linkerd-multicluster
+ 1075  helm install linkerd-multicluster \\n  --create-namespace --kube-context careem-cluster-1 \\n  --namespace linkerd-multicluster --set gateway.enabled=false \\n  --set license=$BUOYANT_LICENSE \\n  linkerd/linkerd-multicluster
+ 1076  helm install linkerd-multicluster \\n  --create-namespace --kube-context careem-cluster-2 \\n  --namespace linkerd-multicluster --set gateway.enabled=false \\n  --set license=$BUOYANT_LICENSE \\n  linkerd/linkerd-multicluster
+ 1077  watch -n 1 kubectl get pod -A --context=careem-cluster-1
+ 1078  watch -n 1 kubectl get pod -A --context=careem-cluster-2
+ 1079  watch -n 1 kubectl get all -A --context=careem-cluster-1
+ 1080  watch -n 1 kubectl get all -n linkerd-multicluster --context=careem-cluster-1
+ 1081  kubectl get pod -n orders --context=careem-cluster-1
+ 1082  kubectl get pod -n orders --context=careem-cluster-2
+ 1083  kubectl describe pod orders-central-b9945bd97-w2kwt -n orders --context=careem-cluster-1
+ 1084  cd orders
+ 1085  grep affin *
+ 1086  vi orders-central.yaml
+ 1087  kubectl get nodes -o wide --show-labels --context=careem-cluster-1
+ 1088  cd ..
+ 1089  history
+ 1090  history 800 | grep orders
+ 1091  kubectl delete  -k orders --context=careem-cluster-1
+ 1092  kubectl delete  -k orders --context=careem-cluster-2
+ 1093  kubectl get nodes -o wide --show-labels --context=careem-cluster-1
+ 1094  cd orders
+ 1095  vi orders-central.yaml
+ 1096  vi orders-east.yaml
+ 1097  vi orders-west.yaml
+ 1098  vi warehouse-boston.yaml
+ 1099  vi warehouse-chicago.yaml
+ 1100  vi warehouse-oakland.yaml
+ 1101  ls al
+ 1102  ls -al
+ 1103  more server.yaml
+ 1104  kubectl apply -f ns.yaml --context=careem-cluster-1
+ 1105  kubectl apply -f ns.yaml --context=careem-cluster-2
+ 1106  ls -al
+ 1107  kubectl apply -f orders* --context=careem-cluster-1
+ 1108  for i in `ls orders*` ; do kubectl apply -f $i --context=careem-cluster-1 ; done
+ 1109  for i in `ls warehouse*` ; do kubectl apply -f $i --context=careem-cluster-2 ; done
+ 1110  kubectl apply -f server.yaml --context=careem-cluster-2
+ 1111  history | grep watch
+ 1112  history 800 | grep watch
+ 1113  watch -n 1 kubectl get pod -A --context=careem-cluster-1
+ 1114  watch -n 1 kubectl get pod -A --context=careem-cluster-2
+ 1115  watch -n 1 kubectl get service -A --context=careem-cluster-2
+ 1116  kubectl get rs -n orders --context careem-cluster-1
+ 1117  kubectl get rs -n orders --context careem-cluster-2
+ 1118  kubectl get rs,hpa -n orders --context careem-cluster-1
+ 1119  kubectl get rs,hpa -n orders --context careem-cluster-2
+ 1120  linkerd --context=careem-cluster-2 multicluster link --cluster-name careem-cluster-2 --gateway=false | kubectl --context=careem-cluster-1 apply -f -
+ 1121  linkerd --context=careem-cluster-1 multicluster check
+ 1122  helm install linkerd-multicluster \\n  --create-namespace --kube-context careem-cluster-1 \\n  --namespace linkerd-multicluster --set linkerd-multicluster.gateway.enabled=false \\n  --set license=$BUOYANT_LICENSE \\n  linkerd-buoyant/linkerd-multicluster
+ 1123  helm install linkerd-multicluster \\n  --create-namespace --kube-context careem-cluster-1 \\n  --namespace linkerd-multicluster --set linkerd-multicluster.gateway.enabled=false \\n  --set license=$BUOYANT_LICENSE \\n  linkerd-buoyant/linkerd-enterprise-multicluster
+ 1124  helm install linkerd-multicluster \\n  --create-namespace --kube-context careem-cluster-2 \\n  --namespace linkerd-multicluster --set linkerd-multicluster.gateway.enabled=false \\n  --set license=$BUOYANT_LICENSE \\n  linkerd-buoyant/linkerd-enterprise-multicluster
+ 1125  helm install linkerd-multicluster \\n  --create-namespace --kube-context careem-cluster-2 \\n  --namespace linkerd-multicluster --set linkerd-multicluster.gateway.enabled=false \\n  --set license=$BUOYANT_LICENSE \\n  linkerd-buoyant/linkerd-enterprise-multicluster
+ 1126  watch -n 1 kubectl get pod -A --context=careem-cluster-1
+ 1127  watch -n 1 kubectl get pod -A --context=careem-cluster-2
+ 1128  watch -n 1 kubectl get pod -A --context=careem-cluster-1
+ 1129  kubectl get secret -n linkerd --context=careem-cluster-2
+ 1130  kubectl get secret -n linkerd --context=careem-cluster-1
+ 1131  kubectl delete secret cluster-credentials-careem-cluster-2 --context=careem-cluster-1 -n linkerd
+ 1132  watch -n 1 kubectl get pod -A --context=careem-cluster-1
+ 1133  kubectl get pod -A --context=careem-cluster-1
+ 1134  kubectl delete pod -n linkerd-multicluster linkerd-service-mirror-careem-cluster-2-76688bff58-8j6vf
+ 1135  kubectl get pod -A --context=careem-cluster-2
+ 1136  linkerd --context=careem-cluster-2 multicluster link --cluster-name careem-cluster-2 --gateway=false | kubectl --context=careem-cluster-1 apply -f -
+ 1137  kubectl get pod -A --context=careem-cluster-2
+ 1138  kubectl get pod -A --context=careem-cluster-1
+ 1139  linkerd --context=careem-cluster-1 multicluster check
+ 1140  linkerd --context=careem-cluster-1 multicluster gateways
+ 1141  kuebctl get svc -n orders --context=careem-cluster-2
+ 1142  kubectl get svc -n orders --context=careem-cluster-2
+ 1143  kubectl label svc fulfillment -n orders --context=careem-cluster-2
+ 1144  kubectl label svc fulfillment -n orders --context=careem-cluster-2 mirror.linkerd.io/exported=remote-discovery
+ 1145  kubectl label svc fulfillment -n orders --context=careem-cluster-2 "mirror.linkerd.io/exported=remote-discovery"
+ 1146  kubectl edit svc fulfillment -n orders --context=careem-cluster-2
+ 1147  kubectl get svc -n orders --context=careem-cluster-1
+ 1148  kubectl get pod -A -context=careem-cluster-1
+ 1149  kubectl get pod -A --context=careem-cluster-1
+ 1150  kubectl describe pod -n orders orders-central-78454bd7fb-q6z9p --context=careem-cluster-1
+ 1151  kubectl logs -n orders orders-central-78454bd7fb-q6z9p --context=careem-cluster-1
+ 1152  kubectl logs -n orders orders-central-78454bd7fb-q6z9p --context=careem-cluster-1 -c colorz
+ 1153  kubectl edit cm -n orders orders-central-config --context=careem-cluster-1
+ 1154  kubectl rollout restart -n orders deploy --context=careem-cluster-1
+ 1155  kubectl get pod -A --context=careem-cluster-1
+ 1156  kubectl logs -n orders orders-central-orders-central-56cdbfbd6d-8ffxc --context=careem-cluster-1 -c colorz
+ 1157  kubectl logs -n orders orders-central-56cdbfbd6d-8ffxc --context=careem-cluster-1 -c colorz
+ 1158  kubectl get pods -n linkerd-buoyant --context=careem-cluster-1
+ 1159  kubectl get pods -n linkerd-buoyant --context=careem-cluster-2
+ 1160  kubectl rollout restart -n linkerd-buoyant --context=careem-cluster-1
+ 1161  kubectl rollout restart -n linkerd-buoyant ds --context=careem-cluster-1
+ 1162  kubectl rollout restart -n linkerd-buoyant ds --context=careem-cluster-2
+ 1163  cd .
+ 1164  cat e
+ 1165  ls a-l
+ 1166  ls -al
+ 1167  cd ..
+ 1168  cat enable-outbound-metrics.md
+ 1169  kubectl -n linkerd-buoyant edit cm/buoyant-cloud-metrics
+ 1170  kubectl -n linkerd-buoyant rollout restart ds buoyant-cloud-metrics --context=careem-cluster-1
+ 1171  cat orders/orders-central.yaml
+ 1172  grep fulfillment orders/*
+ 1173  cd orders
+ 1174  vi orders-central.yaml
+ 1175  vi orders-east.yaml
+ 1176  vi orders-west.yaml
+ 1177  for i in `ls orders*` ; do kubectl apply -f $i --context=careem-cluster-1 ; done
+ 1178  kubectl rollout restart -n orders deploy --context=careem-cluster-1
+ 1179  kubectl get rs,hpa -n orders --context careem-cluster-2
+ 1180  kubectl get rs,hpa -n orders --context careem-cluster-1
+ 1181  kubectl get rs,hpa -n orders --context careem-cluster-1
+ 1182  kubectl get rs -n orders --context careem-cluster-1
+ 1183  kubectl get rs -n orders --context careem-cluster-1 -o wide
+ 1184  kubectl get rs -n orders --context careem-cluster-1
+ 1185  kubectl get deploy,rs -n orders --context careem-cluster-1
+ 1186  more kustomization.yaml
+ 1187  ls al
+ 1188  ls -la
+ 1189  grep us-east *
+ 1190  kubectl get svc -A
+ 1191  kubectl get svc -A --context=careem-cluster-1
+ 1192  kubectl get svc -A --context=careem-cluster-1
+ 1193  kubectl get svc -A --context=careem-cluster-2
+ 1194  more server.yaml
+ 1195  kubectl get svc -A --context=careem-cluster-1
+ 1196  kubectl get svc -A --context=careem-cluster-2
+ 1197  grep fulfillment-careem-cluster-2 *
+ 1198  kubectl get cm -n orders orders-central-config --context=careem-cluster-1
+ 1199  kubectl get cm -n orders orders-central-config --context=careem-cluster-1 -o yaml
+ 1200  kubectl rollout restart -n orders deploy --context=careem-cluster-1
+ 1201  linkerd --context=careem-cluster-1 multicluster check
+ 1202  linkerd --context=careem-cluster-2 multicluster check
+ 1203  kubectl apply -f ../linkerd-data-plane-orders-config.yaml
+ 1204  kubectl apply -f ../linkerd-data-plane-orders-config.yaml --context=careem-cluster-1
+ 1205  kubectl apply -f ../linkerd-data-plane-orders-config.yaml --context=careem-cluster-2
+ 1206  kubectl get svc -A --context=careem-cluster-1
+ 1207  kubectl get svc -A --context=careem-cluster-2
+ 1208  kubectl get nodes --context=careem-cluster-1
+ 1209  kubectl get nodes --context=careem-cluster-2
+ 1210  kubectl get pods -n orders --context=careem-cluster-1
+ 1211  kubectl get pods -n orders --context=careem-cluster-1
+ 1212  kubectl get pods -n orders --context=careem-cluster-1
+ 1213  kubectl get pods -n orders --context=careem-cluster-1
+ 1214  kubectl get pods -n orders --context=careem-cluster-2
+ 1215  kubectl get pods -n orders --context=careem-cluster-1
+ 1216  kubectl get logs orders-central-64bf44858-rrdlh -n orders --context=careem-cluster-1
+ 1217  kubectl logs orders-central-64bf44858-rrdlh -n orders --context=careem-cluster-1
+ 1218  kubectl get svc -n orders --context=careem-cluster-1
+ 1219  kubectl logs orders-central-64bf44858-rrdlh -n orders --context=careem-cluster-1
+ 1220  kubectl logs -f orders-central-64bf44858-rrdlh -n orders --context=careem-cluster-1
+ 1221  linkerd diagnostics endpoints fulfillment-careem-cluster-2.orders.svc.cluster.local --context careem-cluster-1
+ 1222  linkerd diagnostics endpoints fulfillment-careem-cluster-2.orders.svc.cluster.local:8080 --context careem-cluster-1
+ 1223  linkerd diagnostics endpoints fulfillment-careem-cluster-2.orders.svc.cluster.local:80 --context careem-cluster-1
+ 1224  linkerd diagnostics endpoints fulfillment-careem-cluster-2.orders.svc.cluster.local --context careem-cluster-1
+ 1225  linkerd diagnostics endpoints fulfillment.orders.svc.cluster.local --context careem-cluster-2
+ 1226  linkerd diagnostics endpoints fulfillment.orders.svc.cluster.local --context careem-cluster-1
+ 1227  linkerd check --context careem-cluster-1
+ 1228  linkerd check --context careem-cluster-2
+ 1229  kubectl logs -f orders-central-64bf44858-rrdlh -n orders --context=careem-cluster-1
+ 1230  linkerd diagnostics endpoints fulfillment-careem-cluster-2.orders.svc.cluster.local --context careem-cluster-1
+ 1231  linkerd diagnostics endpoints fulfillment.orders.svc.cluster.local --context careem-cluster-2
+ 1232  linkerd diagnostics endpoints fulfillment.orders.svc.cluster.local --context careem-cluster-1
+ 1233  kubectl get pods -n orders --context=careem-cluster-1
+ 1234  kubectl logs -f orders-east-6b6dbfc695-blcqb -n orders --context=careem-cluster-1
+ 1235  kubectl get pods -n orders --context=careem-cluster-1
+ 1236  kubectl logs -f orders-west-85c6ccb5b7-q8sft -n orders --context=careem-cluster-1
+ 1237  kubectl get nodes -o json -o wide
+ 1238  kubectx careem-cluster-1
+ 1239  kubectl get nodes -o json -o wide
+ 1240  kubectx careem-cluter-1
+ 1241  kubectx careem-cluster-1
+ 1242  kubectl describe node
+ 1243  eksctl get node --cluster=careem-cluster-2
+ 1244  brew install eksctl
+ 1245  eksctl get node --cluster=careem-cluster-2
+ 1246  curl -s http://169.254.169.254/latest/meta-data/placement/availability-zone-id
+ 1247  kubectl get pods -A
+ 1248  kubectl exec --help
+ 1249  kubectl get pods -A
+ 1250  kubectl exec -it orders-central-64bf44858-rrdlh -n orders -- bash
+ 1251  kubectl exec -it orders-central-64bf44858-rrdlh -n orders -- sh
+ 1252  kubectl exec -it orders-central-64bf44858-rrdlh -n orders -- /bin/bash
+ 1253  kubectl run bastion -i curl:latest
+ 1254  kubectl run --help
+ 1255   kubectl run -i -t busybox --image=busybox --restart=Never
+ 1256   kubectl run -i -t busybox --image=curl --restart=Never
+ 1257   kubectl run -i -t testpod --image=curl --restart=Never
+ 1258  vi testpod.yaml
+ 1259  kubectl apply -f testpod.yaml
+ 1260  mv testpod.yaml ..
+ 1261  kubectl get pods -A
+ 1262  kubectl get pods -A
+ 1263  vi ../testpod.yaml
+ 1264  kubectl get pods -A
+ 1265  kubectl exec -it client-945b9886c-qnm5k -- /bin/bash
+ 1266  kubectl exec -it client-945b9886c-qnm5k -- sh
+ 1267  history 1 | grep link
+ 1268  linkerd --context=careem-cluster-2 multicluster unlink --cluster-name careem-cluster-2 --gateway=false | kubectl --context=careem-cluster-1 apply -f -
+ 1269  linkerd --context=careem-cluster-2 multicluster unlink --cluster-name careem-cluster-2 | kubectl --context=careem-cluster-1 apply -f -
+ 1270  linkerd multicluster unlink --cluster-name careem-cluster-2 --context=careem-cluster-2 | kubectl --context=careem-cluster-1 apply -f -
+ 1271  linkerd multicluster unlink --cluster-name careem-cluster-2 --context=careem-cluster-2
+ 1272  kubectl get links -A
+ 1273  linkerd multicluster unlink --cluster-name careem-cluster-2 --context=careem-cluster-2 --namespace linkerd-multicluster | kubectl --context=careem-cluster-1 apply -f -
+ 1274  linkerd multicluster unlink --cluster-name careem-cluster-2 --context=careem-cluster-2 --namespace linkerd-multicluster
+ 1275  linkerd multicluster unlink --cluster-name careem-cluster-2 --context=careem-cluster-1 --namespace linkerd-multicluster
+ 1276  linkerd multicluster unlink --cluster-name careem-cluster-2 --context=careem-cluster-1 --namespace linkerd-multicluster | kuebctl delete -f -
+ 1277  linkerd multicluster unlink --cluster-name careem-cluster-2 --context=careem-cluster-1 --namespace linkerd-multicluster | kubectl delete -f -
+ 1278  kubectl get links -A
+ 1279  history 1 | grep link
+ 1280  linkerd --context=careem-cluster-2 multicluster link --cluster-name careem-cluster-2 --gateway=false | kubectl --context=careem-cluster-1 apply -f -
+ 1281  kubectl get links -A
+ 1282  kubectl get pods -A
+ 1283  kubectl logs -f orders-west-68748bffbb-7l2ws -n orders --context=careem-cluster-1
+ 1284  kubectl get pods -A
+ 1285  kubectl logs -f orders-west-6447b9dd9f-cq4tc -n orders --context=careem-cluster-1
+ 1286  linkerd diagnostics endpoints fulfillment-careem-cluster-2.orders.svc.cluster.local --context careem-cluster-1
+ 1287  linkerd diagnostics endpoints fulfillment.orders.svc.cluster.local --context careem-cluster-2
+ 1288  kubectl get svc -n orders
+ 1289  kubectl get pods -n orders -o wide --context=careem-cluster-1
+ 1290  kubectl get pods -n orders -o wide --context=careem-cluster-2
+ 1291  kubectl exec -it client-945b9886c-qnm5k -- sh
+ 1292  kubectl apply -f testpod.yaml --context=careem-cluster-2
+ 1293  kubectl apply -f ../testpod.yaml --context=careem-cluster-2
+ 1294  kubectl exec -it client-945b9886c-qnm5k -- sh --context=careem-cluster-2
+ 1295  cd ..
+ 1296  cp testpod.yaml testpod-bb.yaml
+ 1297  vi testpod-bb.yaml
+ 1298  kubectl apply -f ../testpod-bb.yaml --context=careem-cluster-2
+ 1299  kubectl apply -f testpod-bb.yaml --context=careem-cluster-2
+ 1300  kubectl apply -f testpod-bb.yaml --context=careem-cluster-1
+ 1301  kubectl get pod --context=careem-cluster-1
+ 1302  kubectl get pod --context=careem-cluster-2
+ 1303  kubectl exec -it client-66f4976cd7-pnss7 -- sh --context=careem-cluster-1
+ 1304  kubectl get pod --context=careem-cluster-2
+ 1305  kubectl exec -it client-66f4976cd7-68g85 -- sh --context=careem-cluster-2
+ 1306  kubectl exec -it client-66f4976cd7-68g85 -- sh --context=careem-cluster-2
+ 1307  kubectl get pod --context=careem-cluster-2
+ 1308  kubectl exec -it client-66f4976cd7-68g85 -- sh --context=careem-cluster-2
+ 1309  kubectl exec -it client-66f4976cd7-pnss7 -- sh --context=careem-cluster-1
+ 1310  kubectl get pod --context=careem-cluster-2
+ 1311  kubectl exec -it client-66f4976cd7-68g85 -- sh --context=careem-cluster-2
+ 1312  kubectl exec -it client-66f4976cd7-68g85 -- sh --context=careem-cluster-2 -n default
+ 1313  kubectx
+ 1314  kubectl get nodes --context=careem-cluster-2
+ 1315  kubectl get pod --context=careem-cluster-2
+ 1316  kubectx careem-cluster-2
+ 1317  kubectl exec -it client-66f4976cd7-68g85 -- sh
+ 1318  kubectl rollout restart deploy --context=careem-cluster-1
+ 1319  kubectl rollout restart deploy --context=careem-cluster-2
+ 1320  kubectl get pods -A --context=careem-cluster-1
+ 1321  kubectl get pods -A --context=careem-cluster-2
+ 1322  kubectl get pods -A --context=careem-cluster-1
+ 1323  kubectl logs orders-east-5f879c7479-59x2n -n orders --context=careem-cluster-1
+ 1324  kubectl logs orders-east-5f879c7479-59x2n -n orders --context=careem-cluster-1 -c colorz
+ 1325  kubectl get pods -A --context=careem-cluster-1
+ 1326  kubectl exec -it --context=careem-cluster-1 client-556448d588-tszw2 -- sh
+ 1327  kubectl exec -it --context=careem-cluster-1 client-556448d588-tszw2 -- sh
+ 1328  kubectl exec -it --context=careem-cluster-1 client-556448d588-tszw2 -- sh
+ 1329  kubectl get pods -n orders --context=careem-cluster-1
+ 1330  kubectl logs orders-west-6447b9dd9f-cq4tc -n orders --context=careem-cluster-1
+ 1331  kubectl logs -f orders-west-6447b9dd9f-cq4tc -n orders --context=careem-cluster-1
+ 1332  ls -la
+ 1333  cd orders-hpa
+ 1334  ls -al
+ 1335  mkdir cluster1
+ 1336  mkdir cluster2
+ 1337  mv orders-* cluster1
+ 1338  cp ns.yaml cluster1
+ 1339  mv warehouse-* cluster2
+ 1340  mv ns.yaml cluster2
+ 1341  ls -la
+ 1342  mv server.yaml cluster2
+ 1343  ls al
+ 1344  ls -la
+ 1345  more kustomization.yaml
+ 1346  rm kustomization.yaml
+ 1347  ls al
+ 1348  ls -la
+ 1349  ls al
+ 1350  ls -al
+ 1351  ls al
+ 1352  ls -al
+ 1353  ls -la
+ 1354  kubectl apply -k cluster --context cc1
+ 1355  kubectl apply -k cluster1 --context cc1
+ 1356  cp ../orders-nohpa/kustomization.yaml cluster1
+ 1357  cp ../orders-nohpa/kustomization.yaml cluster2
+ 1358  vi cluster1/kustomization.yaml
+ 1359  vi cluster2/kustomization.yaml
+ 1360  kubectl apply -k cluster1 --context cc1
+ 1361  kubectl apply -k cluster2 --context cc2
+ 1362  kubectl delete -k cluster1 --context cc1
+ 1363  kubectl delete -k cluster2 --context cc2
+ 1364  vi cluster1/orders-central.yaml
+ 1365  vi cluster1/orders-east.yaml
+ 1366  vi cluster1/orders-west.yaml
+ 1367  kubectl apply -k cluster1 --context cc1
+ 1368  kubectl apply -k cluster2 --context cc2
+ 1369  history 1 | grep multi
+ 1370  helm install linkerd-multicluster --create-namespace --kube-context cc1 --namespace linkerd-multicluster --set linkerd-multicluster.gateway.enabled=false --set license=$BUOYANT_LICENSE linkerd-buoyant/linkerd-enterprise-multicluster
+ 1371  helm install linkerd-multicluster --create-namespace --kube-context cc2 --namespace linkerd-multicluster --set linkerd-multicluster.gateway.enabled=false --set license=$BUOYANT_LICENSE linkerd-buoyant/linkerd-enterprise-multicluster
+ 1372  history 1 | grep multicluster
+ 1373  history 1 | grep multicluster | grep link
+ 1374  linkerd --context=careem-cluster-2 multicluster link --cluster-name careem-cluster-2 --gateway=false | kubectl --context=careem-cluster-1 apply -f -
+ 1375  linkerd --context=cc2 multicluster link --cluster-name careem-cluster-2 --gateway=false | kubectl --context=cc1 apply -f -
+ 1376  history 1 | grep multicluster | grep link
+ 1377  linkerd --context=careem-cluster-1 multicluster check
+ 1378  linkerd --context=cc1 multicluster check
+ 1379  kubectl get svc -n orders --context cc1
+ 1380  grep ful cluster1/*
+ 1381  kubectl get pods -n orders --context cc1
+ 1382  kubectl logs orders-central-f56959984-xzr5s --context cc1
+ 1383  kubectl logs orders-central-f56959984-xzr5s -n orders --context cc1
+ 1384  kubectl get pods -n orders --context cc1 -o wide
+ 1385  kubectl get nodes --context cc1
+ 1386  kubectl get nodes --context cc2
+ 1387  kubectl get nodes -o wide --context cc1
+ 1388  kubectl get nodes -o wide --context cc2
+ 1389  ls -al
+ 1390  history 1 | grep exec
+ 1391  kubectl get pods -n orders --context cc1
+ 1392  kubectl get pods -n orders --context cc2
+ 1393  kubectl exec -it -n orders client-66f4976cd7-hllq2 --context cc2
+ 1394  kubectl exec -it -n orders client-66f4976cd7-hllq2 --context cc2 -- sh
+ 1395  kubectl exec -it -n orders client-66f4976cd7-hllq2 --context cc2 -- bash
+ 1396  kubectl exec -it -n orders client-66f4976cd7-hllq2 --context cc2 -c busybox -- bash
+ 1397  kubectl exec -it -n orders client-66f4976cd7-hllq2 --context cc2 -c busybox -- sh
+ 1398  kubectl logs orders-central-f56959984-xzr5s -n orders --context cc1
+ 1399  kubectl logs -f orders-central-f56959984-xzr5s -n orders --context cc1
+ 1400  watch -n 1 kubectl get deploy,hpa -n orders --context cc1
+ 1401  kubectl apply -k cluster2 --context cc2
+ 1402  watch -n 1 kubectl get deploy,hpa -n orders --context cc1
+ 1403  kubectl apply -k cluster2 --context cc2
+ 1404  mv cluster2/metrics-server.yaml .
+ 1405  ls -al
+ 1406  kubectl apply -f metrics-server.yaml --context cc2
+ 1407  vi cluster2/kustomization.yaml
+ 1408  ls -al
+ 1409  watch -n 1 kubectl get deploy,hpa -n orders --context cc1
+ 1410  kubectl apply -k cluster1 --context cc1
+ 1411  kubectl apply -k cluster2 --context cc2
+ 1412  watch -n 1 kubectl get deploy,hpa -n orders --context cc1
+ 1413  history 1 | more
