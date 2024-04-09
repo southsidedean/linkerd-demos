@@ -5,8 +5,4 @@ resources:
   - orders-central.yaml
   - orders-east.yaml
   - orders-west.yaml
-  - server.yaml
-  - warehouse-boston.yaml
-  - warehouse-chicago.yaml
-  - warehouse-oakland.yaml
 namespace: orders

@@ -1,11 +1,11 @@
-apiVersion: k3d.io/v1alpha5
+apiVersion: k3d.io/v1alpha4
 kind: Simple
 metadata:
-  name: demo-cluster-orders-hazl
+  name: source
 servers: 1
-agents: 6
-network: multiaz-orders-hazl
-image: rancher/k3s:v1.29.2-k3s1
+agents: 3
+image: rancher/k3s:v1.29.3-k3s1
+network: multiaz
 options:
   k3d:
     disableLoadbalancer: true
@@ -13,18 +13,16 @@ options:
     extraArgs:
       - arg: --disable=servicelb,traefik
         nodeFilters: [server:*]
+      - arg: --cluster-cidr=10.22.0.0/16
+        nodeFilters: [server:*]
+      - arg: --service-cidr=10.246.0.0/16
+        nodeFilters: [server:*]
       - arg: --debug
         nodeFilters: [server:*]
     nodeLabels:
-      - label: topology.kubernetes.io/zone=zone-central
+      - label: topology.kubernetes.io/zone=zone-east
         nodeFilters: [agent:0]
       - label: topology.kubernetes.io/zone=zone-central
         nodeFilters: [agent:1]
       - label: topology.kubernetes.io/zone=zone-west
         nodeFilters: [agent:2]
-      - label: topology.kubernetes.io/zone=zone-west
-        nodeFilters: [agent:3]
-      - label: topology.kubernetes.io/zone=zone-east
-        nodeFilters: [agent:4]
-      - label: topology.kubernetes.io/zone=zone-east
-        nodeFilters: [agent:5]
