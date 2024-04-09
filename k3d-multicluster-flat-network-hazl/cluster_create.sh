@@ -217,10 +217,8 @@ linkerd check --proxy -n linkerd-buoyant --context warehouse
 kubectl apply -k orders/orders --context=orders
 kubectl apply -k orders/warehouse --context=warehouse
 
-#watch -n 1 kubectl get pods -n orders -o wide --sort-by .spec.nodeName --context=orders
-#watch -n 1 kubectl get pods -n orders -o wide --sort-by .spec.nodeName --context=warehouse
-watch -n 1 kubectl get pods -n orders -o wide --context=orders
-watch -n 1 kubectl get pods -n orders -o wide --context=warehouse
+watch -n 1 kubectl get pods -n orders -o wide --sort-by .spec.nodeName --context=orders
+watch -n 1 kubectl get pods -n orders -o wide --sort-by .spec.nodeName --context=warehouse
 
 # Deploy the Data Plane for the orders namespace
 
