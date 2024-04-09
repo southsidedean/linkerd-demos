@@ -2,19 +2,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: orders-east
+  name: orders-central
   namespace: orders
   labels:
-    app: orders-east
+    app: orders-central
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: orders-east
+      app: orders-central
   template:
     metadata:
       labels:
-        app: orders-east
+        app: orders-central
       annotations:
         linkerd.io/inject: enabled
     spec:
@@ -34,7 +34,7 @@ spec:
       volumes:
       - name: config-volume
         configMap:
-          name: orders-east-config
+          name: orders-central-config
           optional: false
       affinity:
         nodeAffinity:
@@ -43,17 +43,17 @@ spec:
             - matchExpressions:
               - key: topology.kubernetes.io/zone
                 operator: In
-                values: [zone-east]
+                values: [zone-central]
 ---
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: orders-east-config
+  name: orders-central-config
   namespace: orders
   labels:
-    app: orders-east
+    app: orders-central
 data:
   config.yml: |
     requestsPerSecond: 50
     reportIntervalSeconds: 10
-    uri: http://fulfillment-careem-cluster-2.orders.svc.cluster.local
+    uri: http://fulfillment-warehouse.orders.svc.cluster.local

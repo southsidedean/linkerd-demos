@@ -8,13 +8,13 @@
 
 # Remove the k3d clusters
 
-k3d cluster delete source target
+k3d cluster delete orders warehouse
 k3d cluster list
 
 # Remove the kubectl contexts: hazl
 
-kubectx -d source
-kubectx -d target
+kubectx -d orders
+kubectx -d warehouse
 kubectx
 
 exit 0

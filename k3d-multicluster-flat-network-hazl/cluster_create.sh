@@ -9,7 +9,7 @@
 
 # Create the k3d cluster
 
-k3d cluster delete source target
+k3d cluster delete orders warehouse
 
 k3d_api_ready() {
     name=$1
@@ -35,14 +35,14 @@ create_cluster() {
     k3d_dns_ready "$name"
 }
 
-create_cluster source
-create_cluster target
+create_cluster orders
+create_cluster warehouse
 
-# add routes for each node in source to each node in target
-kubectl --context=k3d-source get node -o json | \
+# add routes for each node in orders to each node in warehouse
+kubectl --context=k3d-orders get node -o json | \
 jq -r '.items[] | .metadata.name + "\t" + .spec.podCIDR + "\t" + (.status.addresses[] | select(.type == "InternalIP") | .address)' | \
 while IFS=$'\t' read -r sname scidr sip; do
-    kubectl --context=k3d-target get node -o json | \
+    kubectl --context=k3d-warehouse get node -o json | \
     jq -r '.items[] | .metadata.name + "\t" + .spec.podCIDR + "\t" + (.status.addresses[] | select(.type == "InternalIP") | .address)' | \
     while IFS=$'\t' read -r tname tcidr tip; do
         docker exec "${sname}" ip route add "${tcidr}" via "${tip}"
@@ -54,11 +54,11 @@ k3d cluster list
 
 # Configure the kubectl context
 
-kubectx -d source
-kubectx -d target
-kubectx source=k3d-source
-kubectx target=k3d-target
-kubectx source
+kubectx -d orders
+kubectx -d warehouse
+kubectx orders=k3d-orders
+kubectx warehouse=k3d-warehouse
+kubectx orders
 kubectx
 
 # Create fresh root certificates for mTLS
@@ -85,8 +85,8 @@ linkerd version
 
 # Perform pre-installation checks
 
-linkerd check --pre --context=source
-linkerd check --pre --context=target
+linkerd check --pre --context=orders
+linkerd check --pre --context=warehouse
 
 # Install Buoyant Enterprise Linkerd Operator and Buoyant Cloud Agents using Helm
 # Debug metrics are enabled to use the Buoyant Cloud Grafana instance
@@ -97,7 +97,7 @@ helm repo update
 helm install linkerd-buoyant \
   --create-namespace \
   --namespace linkerd-buoyant \
-  --kube-context source \
+  --kube-context orders \
   --set metadata.agentName=$CLUSTER1_NAME \
   --set api.clientID=$API_CLIENT_ID \
   --set api.clientSecret=$API_CLIENT_SECRET \
@@ -109,7 +109,7 @@ linkerd-buoyant/linkerd-buoyant
 helm install linkerd-buoyant \
   --create-namespace \
   --namespace linkerd-buoyant \
-  --kube-context target \
+  --kube-context warehouse \
   --set metadata.agentName=$CLUSTER2_NAME \
   --set api.clientID=$API_CLIENT_ID \
   --set api.clientSecret=$API_CLIENT_SECRET \
@@ -118,10 +118,10 @@ helm install linkerd-buoyant \
   --set metrics.logLevel=debug \
 linkerd-buoyant/linkerd-buoyant
 
-kubectl rollout status daemonset/buoyant-cloud-metrics -n linkerd-buoyant --context=source
-kubectl rollout status daemonset/buoyant-cloud-metrics -n linkerd-buoyant --context=target
-linkerd buoyant check --context source
-linkerd buoyant check --context target
+kubectl rollout status daemonset/buoyant-cloud-metrics -n linkerd-buoyant --context=orders
+kubectl rollout status daemonset/buoyant-cloud-metrics -n linkerd-buoyant --context=warehouse
+linkerd buoyant check --context orders
+linkerd buoyant check --context warehouse
 
 # Create linkerd-identity-issuer secret using root certificates
 
@@ -138,11 +138,11 @@ metadata:
 type: kubernetes.io/tls
 EOF
 
-kubectl apply -f linkerd-identity-secret.yaml --context=source
-kubectl apply -f linkerd-identity-secret.yaml --context=target
+kubectl apply -f linkerd-identity-secret.yaml --context=orders
+kubectl apply -f linkerd-identity-secret.yaml --context=warehouse
 
-kubectl get secrets  -n linkerd --context=source
-kubectl get secrets  -n linkerd --context=target
+kubectl get secrets  -n linkerd --context=orders
+kubectl get secrets  -n linkerd --context=warehouse
 
 # Create and apply Control Plane CRDs to trigger BEL Operator
 # This will create the Control Plane on the cluster
@@ -172,16 +172,16 @@ $(sed 's/^/          /' < certs/ca.crt )
            # - -ext-endpoint-zone-weights
 EOF
 
-kubectl apply -f linkerd-control-plane-config-hazl.yaml --context=source
-kubectl apply -f linkerd-control-plane-config-hazl.yaml --context=target
+kubectl apply -f linkerd-control-plane-config-hazl.yaml --context=orders
+kubectl apply -f linkerd-control-plane-config-hazl.yaml --context=warehouse
 
-watch -n 1 kubectl get pods -A -o wide --sort-by .metadata.namespace --context=source
-watch -n 1 kubectl get pods -A -o wide --sort-by .metadata.namespace --context=target
+watch -n 1 kubectl get pods -A -o wide --sort-by .metadata.namespace --context=orders
+watch -n 1 kubectl get pods -A -o wide --sort-by .metadata.namespace --context=warehouse
 
 # Run a Linkerd check after creating Control Planes
 
-linkerd check --context source
-linkerd check --context target
+linkerd check --context orders
+linkerd check --context warehouse
 
 # Create the Data Plane for the linkerd-buoyant namespace
 
@@ -197,30 +197,30 @@ spec:
     matchLabels: {}
 EOF
 
-kubectl apply -f linkerd-data-plane-config.yaml --context=source
-kubectl apply -f linkerd-data-plane-config.yaml --context=target
+kubectl apply -f linkerd-data-plane-config.yaml --context=orders
+kubectl apply -f linkerd-data-plane-config.yaml --context=warehouse
 
 # Monitor the status of the rollout of the Buoyant Cloud Metrics Daemonset
 
-kubectl rollout status daemonset/buoyant-cloud-metrics -n linkerd-buoyant --context=source
-kubectl rollout status daemonset/buoyant-cloud-metrics -n linkerd-buoyant --context=target
+kubectl rollout status daemonset/buoyant-cloud-metrics -n linkerd-buoyant --context=orders
+kubectl rollout status daemonset/buoyant-cloud-metrics -n linkerd-buoyant --context=warehouse
 
 # Run a proxy check
 
 sleep 30
-linkerd check --proxy -n linkerd-buoyant --context source
-linkerd check --proxy -n linkerd-buoyant --context target
+linkerd check --proxy -n linkerd-buoyant --context orders
+linkerd check --proxy -n linkerd-buoyant --context warehouse
 
 # Deploy the Orders application to both clusters
 # Press CTRL-C to exit each watch command
 
-kubectl apply -k orders/source --context=source
-kubectl apply -k orders/target --context=target
+kubectl apply -k orders/orders --context=orders
+kubectl apply -k orders/warehouse --context=warehouse
 
-#watch -n 1 kubectl get pods -n orders -o wide --sort-by .spec.nodeName --context=source
-#watch -n 1 kubectl get pods -n orders -o wide --sort-by .spec.nodeName --context=target
-watch -n 1 kubectl get pods -n orders -o wide --context=source
-watch -n 1 kubectl get pods -n orders -o wide --context=target
+#watch -n 1 kubectl get pods -n orders -o wide --sort-by .spec.nodeName --context=orders
+#watch -n 1 kubectl get pods -n orders -o wide --sort-by .spec.nodeName --context=warehouse
+watch -n 1 kubectl get pods -n orders -o wide --context=orders
+watch -n 1 kubectl get pods -n orders -o wide --context=warehouse
 
 # Deploy the Data Plane for the orders namespace
 
@@ -236,7 +236,7 @@ spec:
     matchLabels: {}
 EOF
 
-kubectl apply -f linkerd-data-plane-orders-config.yaml --context=source
-kubectl apply -f linkerd-data-plane-orders-config.yaml --context=target
+kubectl apply -f linkerd-data-plane-orders-config.yaml --context=orders
+kubectl apply -f linkerd-data-plane-orders-config.yaml --context=warehouse
 
 exit 0
