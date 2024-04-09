@@ -64,7 +64,7 @@ spec:
             - matchExpressions:
               - key: topology.kubernetes.io/zone
                 operator: In
-                values: [us-east-2b]
+                values: [zone-central]
 ---
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler

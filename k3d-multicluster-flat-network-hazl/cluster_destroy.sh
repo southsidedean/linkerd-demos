@@ -1,7 +1,7 @@
 #!/bin/bash
 # cluster_destroy.sh
 # Demo script for the k3d-multicluster-flat-network-hazl GitHub repository
-
+# https://github.com/southsidedean/linkerd-demos/tree/main/k3d-multicluster-flat-network-hazl
 # Automates cluster deletion and cleans up the kubectl contexts
 # Tom Dean | Buoyant
 # Last edit: 4/9/2024
@@ -13,8 +13,8 @@ k3d cluster list
 
 # Remove the kubectl contexts: hazl
 
-kubectx -d k3d-source
-kubectx -d k3d-target
+kubectx -d source
+kubectx -d target
 kubectx
 
 exit 0
