@@ -1,7 +1,7 @@
 apiVersion: k3d.io/v1alpha5
 kind: Simple
 metadata:
-  name: source
+  name: orders
 servers: 1
 agents: 3
 image: rancher/k3s:v1.29.3-k3s1
