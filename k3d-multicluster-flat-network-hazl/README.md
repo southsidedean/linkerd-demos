@@ -314,7 +314,7 @@ kubectl apply -f policy.yaml --context orders
 ```
 
 
-### Step 2: Link the Clusters
+### Step 3: Link the Clusters
 
 
 ```bash
@@ -341,7 +341,7 @@ kubectl get links -A --context=orders
 
 ```
 
-### Step 3: Export the `fulfillment` Service to the `orders` Cluster
+### Step 4: Export the `fulfillment` Service to the `orders` Cluster
 
 
 
