@@ -238,7 +238,32 @@ _Let's see how we deploy the **Buoyant Enterprise for Linkerd Multi-Cluster Exte
 
 
 
-### Step 1: Install the Multi-Cluster Extension
+### Step 1: Add a Hosts Entry to CoreDNS
+
+Explain
+
+```bash
+kubectl get cm coredns -n kube-system -o yaml --context orders -o yaml | grep -Ev "creationTimestamp|resourceVersion|uid" > coredns.yaml
+```
+
+```bash
+sed -i .orig 's/host.k3d.internal/host.k3d.internal\ kubernetes/g' coredns.yaml
+```
+
+```bash
+kubectl get cm coredns -n kube-system -o yaml --context orders -o yaml
+```
+
+```bash
+kubectl apply -f coredns.yaml -n kube-system --context orders
+```
+
+```bash
+kubectl rollout restart deploy coredns -n kube-system --context orders
+```
+
+
+### Step 2: Install the Multi-Cluster Extension
 
 
 
@@ -280,12 +305,28 @@ linkerd --context=orders multicluster check
 linkerd --context=warehouse multicluster check
 ```
 
+```bash
+kubectl apply -f policy.yaml --context orders
+```
+
+```bash
+
+```
+
+
 ### Step 2: Link the Clusters
 
 
+```bash
+linkerd --context=warehouse multicluster link --cluster-name warehouse --gateway=false > multicluster-link-orig.yaml
+```
 
 ```bash
-linkerd --context=warehouse multicluster link --cluster-name warehouse --gateway=false | kubectl --context=orders apply -f -
+KC1=`linkerd --context=warehouse multicluster link --cluster-name warehouse --gateway=false | grep kubeconfig: | uniq | awk {'print $2'}` ; KC2=`echo $KC1 | base64 -d | sed 's/0\.0\.0\.0/kubernetes/g' | base64` ; awk -f mc.awk "$KC1" "$KC2" multicluster-link-orig.yaml > multicluster-link.yaml
+```
+
+```bash
+kubectl apply -f multicluster-link.yaml --context orders
 ```
 
 ```bash
@@ -293,11 +334,11 @@ kubectl get links -A --context=orders
 ```
 
 ```bash
-linkerd --context=orders multicluster link --cluster-name orders --gateway=false | kubectl --context=warehouse apply -f -
+
 ```
 
 ```bash
-kubectl get links -A --context=warehouse
+
 ```
 
 ### Step 3: Export the `fulfillment` Service to the `orders` Cluster
