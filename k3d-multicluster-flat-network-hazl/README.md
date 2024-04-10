@@ -1,14 +1,14 @@
-# Eliminating Cross-Zone Kubernetes Traffic With High Availability Zonal Load Balancing (HAZL)
+# Multicluster Linkerd Using a Flat Network With High Availability Zonal Load Balancing (HAZL)
 
-## eliminate-cross-zone-traffic-hazl
+## k3d-multicluster-flat-network-hazl
 
 ### Tom Dean | Buoyant
 
-### Last edit: 3/18/2024
+### Last edit: 4/9/2024
 
 ## Introduction
 
-In this _hands-on workshop_, we will deploy **Buoyant Enterprise for Linkerd** and demonstrate how to enable **High Availability Zonal Load Balancing (HAZL)**. We'll then take a look at how **HAZL** works to keep network traffic _in-zone_ where possible by exploring some different traffic, load and availability situations.
+In this _demonstration_, we will deploy **Buoyant Enterprise for Linkerd** and the Orders application across two `k3d` clusters deployed in a flat network, and will demonstrate how to enable **High Availability Zonal Load Balancing (HAZL)**. We'll then take a look at how **HAZL** works to keep network traffic _in-zone_ where possible by exploring some different traffic, load and availability situations.
 
 ### Buoyant Enterprise for Linkerd (BEL)
 
@@ -31,7 +31,7 @@ In this _hands-on workshop_, we will deploy **Buoyant Enterprise for Linkerd** a
 - 24x7x365 Support With SLAs
 - Quarterly Outcomes and Strategy Reviews
 
-We're going to try out **High-Availability Zonal Load Balancing (HAZL)** in this workshop.
+We're going to try out **High-Availability Zonal Load Balancing (HAZL)** in this Demonstration.
 
 ### High Availability Zonal Load Balancing (HAZL)
 
@@ -80,15 +80,16 @@ Finally, **Topology Hints** has a set of well-known constraints, including:
 
 These constraints have real-world implications. As one customer put it when trying **Istio** + **Topology Hints**: "What we are seeing in _some_ applications is that they won’t scale fast enough or at all (because maybe two or three pods out of 10 are getting the majority of the traffic and is not triggering the HPA) and _can cause a cyclic loop of pods crashing and the service going down_."
 
-### Workshop: Overview
+### Demonstration: Overview
 
-In this _hands-on workshop_, we will deploy **Buoyant Enterprise for Linkerd** on a `k3d` Kubernetes cluster and will demonstrate how to quickly enable **High Availability Zonal Load Balancing (HAZL)**. We'll then take a look at how **HAZL** works to keep network traffic _in-zone_ where possible.
+In this _demonstration_, we will deploy **Buoyant Enterprise for Linkerd** and the Orders application across two `k3d` clusters deployed in a flat network, and will demonstrate how to enable **High Availability Zonal Load Balancing (HAZL)**. We'll then take a look at how **HAZL** works to keep network traffic _in-zone_ where possible by exploring some different traffic, load and availability situations.
 
 **In this demonstration, we're going to do the following:**
 
-- Deploy a `k3d` Kubernetes cluster
-- Deploy **Buoyant Enterprise for Linkerd** with **HAZL** disabled on the cluster
-- Deploy the **Orders** application to the cluster, to generate multi-zonal traffic
+- Deploy two `k3d` Kubernetes clusters that share a common network
+- Deploy **Buoyant Enterprise for Linkerd** with **HAZL** disabled on the clusters
+- Deploy the **Orders** application to the clusters, half on one cluster and half on the other, to generate multi-zonal traffic
+- Deploy and configure the Linkerd Multicluster extension
   - Monitor traffic from the **Orders** application, with **HAZL** disabled
 - Enable **High Availability Zonal Load Balancing (HAZL)**
   - Monitor traffic from the **Orders** application, with **HAZL** enabled
@@ -110,9 +111,7 @@ In this _hands-on workshop_, we will deploy **Buoyant Enterprise for Linkerd** o
   - Observe interaction with Horizontal Pod Autoscaling
 - Restore **Orders** application to initial state
 
-Feel free to follow along with _your own instance_ if you'd like, using the resources and instructions provided in this repository.
-
-### Workshop: Prerequisites
+### Demonstration: Prerequisites
 
 **If you'd like to follow along, you're going to need the following:**
 
@@ -124,11 +123,11 @@ Feel free to follow along with _your own instance_ if you'd like, using the reso
 - The `watch` command must be installed and working, if you want to use it
 - The `kubectx` command must be installed and working, if you want to use it
 - [Buoyant Enterprise for Linkerd License](https://enterprise.buoyant.io/start_trial)
-- [The Demo Assets, from GitHub](https://github.com/BuoyantIO/service-mesh-academy/tree/main/eliminate-cross-zone-traffic-hazl)
+- [The Demo Assets, from GitHub](https://github.com/southsidedean/linkerd-demos/tree/main/k3d-multicluster-flat-network-hazl)
 
 All prerequisites must be _installed_ and _working properly_ before proceeding. The instructions in the provided links will get you there. A trial license for Buoyant Enterprise for Linkerd can be obtained from the link above. Instructions on obtaining the demo assets from GitHub are below.
 
-### Workshop: Included Assets
+### Demonstration: Included Assets
 
 The top-level contents of the repository look like this:
 
@@ -145,59 +144,67 @@ The top-level contents of the repository look like this:
 └── orders-nohpa        <-- The Orders application, without Horizontal Pod Autoscaling
 ```
 
-#### Workshop: Automation
+#### Demonstration: Automation
 
 The repository contains the following automation:
 
 - `cluster_setup.sh`
-  - Script to stand up the cluster, install Linkerd and Orders
+  - Script to stand up the clusters, install Linkerd and Orders
 - `cluster_destroy.sh`
-  - Script to destroy the cluster environment
+  - Script to destroy the cluster environments and clean up contexts
 
 If you choose to use the `cluster_setup.sh` script, make sure you've created the `settings.sh` file and run `source settings.sh` to set your environment variables. For more information, see the **Obtain Buoyant Enterprise for Linkerd (BEL) Trial Credentials and Log In to Buoyant Cloud** instructions.
 
 #### Cluster Configurations
 
-This repository contains three `k3d` cluster configuration files:
+This repository contains two `k3d` cluster configuration files:
 
 ```bash
 .
 ├── cluster
-│   ├── demo-cluster-orders-hazl-large.yaml
-│   ├── demo-cluster-orders-hazl-medium.yaml
-│   ├── demo-cluster-orders-hazl-small.yaml
-│   └── demo-cluster-orders-hazl.yaml -> demo-cluster-orders-hazl-small.yaml
+│   ├── orders.yaml
+│   └── warehouse.yaml
 ```
 
-By default, `demo-cluster-orders-hazl-small.yaml` is linked to `demo-cluster-orders-hazl.yaml`, so you can just use `demo-cluster-orders-hazl.yaml` if you want a small cluster. We will be using the small cluster in this workshop.
+These will be used to deploy our two clusters.
 
 #### The Orders Application
 
 This repository includes the **Orders** application, which generates traffic across multiple availability zones in our Kubernetes cluster, allowing us to observe the effect that **High Availability Zonal Load Balancing (HAZL)** has on traffic.
 
+We're going to deploy the `orders-*` applications on the `orders` cluster and the `warehouse-*` applications on the `warehosuse` cluster.
+
 ```bash
 .
-├── orders -> orders-nohpa
+├── orders -> orders-hpa
 ├── orders-hpa
-│   ├── kustomization.yaml
-│   ├── ns.yaml
-│   ├── orders-central.yaml
-│   ├── orders-east.yaml
-│   ├── orders-west.yaml
-│   ├── server.yaml
-│   ├── warehouse-boston.yaml
-│   ├── warehouse-chicago.yaml
-│   └── warehouse-oakland.yaml
-└── orders-nohpa
-    ├── kustomization.yaml
-    ├── ns.yaml
-    ├── orders-central.yaml
-    ├── orders-east.yaml
-    ├── orders-west.yaml
-    ├── server.yaml
-    ├── warehouse-boston.yaml
-    ├── warehouse-chicago.yaml
-    └── warehouse-oakland.yaml
+│   ├── orders
+│   │   ├── kustomization.yaml
+│   │   ├── ns.yaml
+│   │   ├── orders-central.yaml
+│   │   ├── orders-east.yaml
+│   │   └── orders-west.yaml
+│   └── warehouse
+│       ├── kustomization.yaml
+│       ├── ns.yaml
+│       ├── server.yaml
+│       ├── warehouse-boston.yaml
+│       ├── warehouse-chicago.yaml
+│       └── warehouse-oakland.yaml
+├── orders-nohpa
+│   ├── orders
+│   │   ├── kustomization.yaml
+│   │   ├── ns.yaml
+│   │   ├── orders-central.yaml
+│   │   ├── orders-east.yaml
+│   │   └── orders-west.yaml
+│   └── warehouse
+│       ├── kustomization.yaml
+│       ├── ns.yaml
+│       ├── server.yaml
+│       ├── warehouse-boston.yaml
+│       ├── warehouse-chicago.yaml
+│       └── warehouse-oakland.yaml
 ```
 
 The repository contains two copies of the Orders application:
@@ -528,12 +535,12 @@ metadata:
 spec:
   components:
     linkerd:
-      version: enterprise-2.15.1-1
+      version: enterprise-2.15.2
       license: $BUOYANT_LICENSE
       controlPlaneConfig:
         proxy:
           image:
-            version: enterprise-2.15.1-1-hazl
+            version: enterprise-2.15.2
         identityTrustAnchorsPEM: |
 $(sed 's/^/          /' < certs/ca.crt )
         identity:
@@ -625,7 +632,83 @@ Again, we may see a few warnings (!!), _but we're good to proceed as long as the
 
 We've successfully installed **Buoyant Enterprise for Linkerd**, and can now use **BEL** to manage and secure our Kubernetes applications.
 
-## Hands-On Exercise 2: Observe the Effects of High Availability Zonal Load Balancing (HAZL)
+## Demonstration 2: Deploy the Buoyant Enterprise for Linkerd Multi-Cluster Extension
+
+
+
+### Step 1: Install the Multi-Cluster Extension
+
+
+
+```bash
+helm repo add linkerd-buoyant https://helm.buoyant.cloud
+helm repo update
+```
+
+```bash
+helm install linkerd-multicluster \
+  --create-namespace \
+  --namespace linkerd-multicluster \
+  --kube-context orders \
+  --set linkerd-multicluster.gateway.enabled=false \
+  --set license=$BUOYANT_LICENSE \
+  linkerd-buoyant/linkerd-enterprise-multicluster
+```
+
+```bash
+helm install linkerd-multicluster \
+  --create-namespace \
+  --namespace linkerd-multicluster \
+  --kube-context warehouse \
+  --set linkerd-multicluster.gateway.enabled=false \
+  --set license=$BUOYANT_LICENSE \
+  linkerd-buoyant/linkerd-enterprise-multicluster
+```
+
+```bash
+linkerd --context=orders multicluster check
+```
+
+```bash
+linkerd --context=warehouse multicluster check
+```
+
+### Step 2: Link the Clusters
+
+
+
+```bash
+linkerd --context=warehouse multicluster link --cluster-name warehouse --gateway=false | kubectl --context=orders apply -f -
+```
+
+```bash
+kubectl get links -A --context=orders
+```
+
+
+
+### Step 3: Export the `fulfillment` Service to the `orders` Cluster
+
+
+
+```bash
+kubectl get svc -A --context=orders
+```
+
+```bash
+kubectl get svc -A --context=warehouse
+```
+
+
+```bash
+kubectl --context=warehouse label svc -n orders fulfillment mirror.linkerd.io/exported=true --overwrite
+```
+
+```bash
+kubectl get svc -A --context=orders
+```
+
+## Demonstration 3: Observe the Effects of High Availability Zonal Load Balancing (HAZL)
 
 Now that **BEL** is fully deployed, we're going to need some traffic to observe.
 
@@ -977,9 +1060,9 @@ If we give things a minute to settle back down, we should see all traffic back i
 
 Everything has returned to the initial state with HAZL enabled. All deployments are a single replica, all traffic remains in-zone, and success rates are 100%.  Looking good!
 
-### Workshop: Cleanup
+### Demonstration: Cleanup
 
-You can clean up the workshop environment by running the included script:
+You can clean up the Demonstration environment by running the included script:
 
 ```bash
 ./cluster_destroy.sh
@@ -995,6 +1078,6 @@ We shouldn't see our `demo-cluster-orders-hazl` cluster.
 
 ## Summary: Deploying the Orders Application With High Availability Zonal Load Balancing (HAZL)
 
-In this hands-on workshop, we deployed Buoyant Enterprise for Linkerd and demonstrated how to enable High Availability Zonal Load Balancing (HAZL). We also took a look at how HAZL works to keep network traffic in-zone where possible by exploring some different traffic, load and availability situations.
+In this hands-on Demonstration, we deployed Buoyant Enterprise for Linkerd and demonstrated how to enable High Availability Zonal Load Balancing (HAZL). We also took a look at how HAZL works to keep network traffic in-zone where possible by exploring some different traffic, load and availability situations.
 
 Thank you for taking a journey with HAZL and Buoyant!
