@@ -208,7 +208,7 @@ kubectl rollout status daemonset/buoyant-cloud-metrics -n linkerd-buoyant --cont
 
 # Run a proxy check
 
-sleep 30
+sleep 60
 linkerd check --proxy -n linkerd-buoyant --context orders
 linkerd check --proxy -n linkerd-buoyant --context warehouse
 
