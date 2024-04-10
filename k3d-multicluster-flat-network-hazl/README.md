@@ -355,7 +355,7 @@ kubectl get svc -A --context=warehouse
 
 
 ```bash
-kubectl --context=warehouse label svc -n orders fulfillment mirror.linkerd.io/exported=true --overwrite
+kubectl --context=warehouse label svc -n orders fulfillment mirror.linkerd.io/exported=remote-discovery
 ```
 
 ```bash

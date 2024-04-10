@@ -4,8 +4,6 @@ kind: Service
 metadata:
   name: fulfillment
   namespace: orders
-  labels:
-    mirror.linkerd.io/exported: remote-discovery
 spec:
   type: ClusterIP
   ports:
