@@ -535,12 +535,12 @@ metadata:
 spec:
   components:
     linkerd:
-      version: enterprise-2.15.1-1
+      version: enterprise-2.15.2
       license: $BUOYANT_LICENSE
       controlPlaneConfig:
         proxy:
           image:
-            version: enterprise-2.15.1-1-hazl
+            version: enterprise-2.15.2
         identityTrustAnchorsPEM: |
 $(sed 's/^/          /' < certs/ca.crt )
         identity:
@@ -632,7 +632,72 @@ Again, we may see a few warnings (!!), _but we're good to proceed as long as the
 
 We've successfully installed **Buoyant Enterprise for Linkerd**, and can now use **BEL** to manage and secure our Kubernetes applications.
 
-## Hands-On Exercise 2: Observe the Effects of High Availability Zonal Load Balancing (HAZL)
+## Demonstration 2: Deploy the Buoyant Enterprise for Linkerd Multi-Cluster Extension
+
+
+
+### Step 1: Install the Multi-Cluster Extension
+
+
+
+```bash
+helm repo add linkerd-buoyant https://helm.buoyant.cloud
+helm repo update
+```
+
+```bash
+helm install linkerd-multicluster \
+  --create-namespace \
+  --namespace linkerd-multicluster \
+  --kube-context orders \
+  --gateway.enabled=false \
+  --set license=$BUOYANT_LICENSE \
+  linkerd-buoyant/linkerd-enterprise-multicluster
+```
+
+```bash
+helm install linkerd-multicluster \
+  --create-namespace \
+  --namespace linkerd-multicluster \
+  --kube-context warehouse \
+  --gateway.enabled=false \
+  --set license=$BUOYANT_LICENSE \
+  linkerd-buoyant/linkerd-enterprise-multicluster
+```
+
+```bash
+linkerd --context=orders multicluster check
+```
+
+```bash
+linkerd --context=warehouse multicluster check
+```
+
+### Step 2: Link the Clusters
+
+
+
+```bash
+linkerd --context=orders multicluster link --cluster-name orders | kubectl --context=warehouse apply -f -
+```
+
+```bash
+linkerd --context=warehouse multicluster check
+```
+
+```bash
+linkerd --context=warehouse multicluster gateways
+```
+
+### Step 3: Export the `fulfillment` Service
+
+
+
+```bash
+kubectl --context=warehouse label svc -n orders fulfillment mirror.linkerd.io/exported=true
+```
+
+## Demonstration 3: Observe the Effects of High Availability Zonal Load Balancing (HAZL)
 
 Now that **BEL** is fully deployed, we're going to need some traffic to observe.
 
