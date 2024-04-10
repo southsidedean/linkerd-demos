@@ -4,7 +4,7 @@
 # https://github.com/southsidedean/linkerd-demos/tree/main/k3d-multicluster-flat-network-hazl
 # Automates cluster creation, Linkerd installation and installs the Orders application
 # Tom Dean | Buoyant
-# Last edit: 4/9/2024
+# Last edit: 4/10/2024
 
 set -xeuo pipefail
 

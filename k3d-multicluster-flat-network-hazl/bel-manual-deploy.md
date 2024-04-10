@@ -414,4 +414,4 @@ linkerd check --proxy -n linkerd-buoyant
 
 Again, we may see a few warnings (!!), _but we're good to proceed as long as the overall status is good_.
 
-We've successfully installed **Buoyant Enterprise for Linkerd**, and can now use **BEL** to manage and secure our Kubernetes applications.
+We've successfully installed **Buoyant Enterprise for Linkerd**, and can now use **BEL** to manage and secure our Kubernetes applications. You can now return to the [main document](README.md).
