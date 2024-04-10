@@ -650,7 +650,7 @@ helm install linkerd-multicluster \
   --create-namespace \
   --namespace linkerd-multicluster \
   --kube-context orders \
-  --gateway.enabled=false \
+  --set linkerd-multicluster.gateway.enabled=false \
   --set license=$BUOYANT_LICENSE \
   linkerd-buoyant/linkerd-enterprise-multicluster
 ```
@@ -660,7 +660,7 @@ helm install linkerd-multicluster \
   --create-namespace \
   --namespace linkerd-multicluster \
   --kube-context warehouse \
-  --gateway.enabled=false \
+  --set linkerd-multicluster.gateway.enabled=false \
   --set license=$BUOYANT_LICENSE \
   linkerd-buoyant/linkerd-enterprise-multicluster
 ```
@@ -678,23 +678,34 @@ linkerd --context=warehouse multicluster check
 
 
 ```bash
-linkerd --context=orders multicluster link --cluster-name orders | kubectl --context=warehouse apply -f -
+linkerd --context=warehouse multicluster link --cluster-name warehouse --gateway=false | kubectl --context=orders apply -f -
 ```
 
 ```bash
-linkerd --context=warehouse multicluster check
+kubectl get links -A --context=orders
 ```
 
-```bash
-linkerd --context=warehouse multicluster gateways
-```
 
-### Step 3: Export the `fulfillment` Service
+
+### Step 3: Export the `fulfillment` Service to the `orders` Cluster
 
 
 
 ```bash
-kubectl --context=warehouse label svc -n orders fulfillment mirror.linkerd.io/exported=true
+kubectl get svc -A --context=orders
+```
+
+```bash
+kubectl get svc -A --context=warehouse
+```
+
+
+```bash
+kubectl --context=warehouse label svc -n orders fulfillment mirror.linkerd.io/exported=true --overwrite
+```
+
+```bash
+kubectl get svc -A --context=orders
 ```
 
 ## Demonstration 3: Observe the Effects of High Availability Zonal Load Balancing (HAZL)
