@@ -292,7 +292,7 @@ linkerd --context=warehouse multicluster link --cluster-name warehouse --gateway
 kubectl get links -A --context=orders
 ```
 
-``bash
+```bash
 linkerd --context=orders multicluster link --cluster-name orders --gateway=false | kubectl --context=warehouse apply -f -
 ```
 
