@@ -5,7 +5,8 @@
 # Automates cluster creation, Linkerd installation and installs the Orders application
 # Tom Dean | Buoyant
 # Last edit: 4/9/2024
-#set -xeuo pipefail
+
+set -xeuo pipefail
 
 # Create the k3d cluster
 
@@ -54,8 +55,8 @@ k3d cluster list
 
 # Configure the kubectl context
 
-kubectx -d orders
-kubectx -d warehouse
+#kubectx -d orders
+#kubectx -d warehouse
 kubectx orders=k3d-orders
 kubectx warehouse=k3d-warehouse
 kubectx orders
