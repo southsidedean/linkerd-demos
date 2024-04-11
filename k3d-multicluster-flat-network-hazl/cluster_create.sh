@@ -6,7 +6,7 @@
 # Tom Dean | Buoyant
 # Last edit: 4/10/2024
 
-#set -xeuo pipefail
+set -xeuo pipefail
 
 # Create the k3d cluster
 
