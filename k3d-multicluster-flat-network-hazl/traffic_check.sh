@@ -1,5 +1,5 @@
 while sleep 1 ; do
-clear ; for i in east central west ; do echo "Metrics for orders-"$i": " ; echo ; linkerd dg proxy-metrics deploy/orders-$i -n orders | \
+clear ; for i in east central west ; do echo "Metrics for orders-"$i": " ; echo ; linkerd dg proxy-metrics deploy/orders-$i -n orders --context orders | \
 grep 'request_total' | \
 awk -F'[ ,}]' '{
     pod="";
