@@ -4,7 +4,7 @@
 # https://github.com/southsidedean/linkerd-demos/tree/main/k3d-multicluster-flat-network-hazl
 # Automates cluster creation, Linkerd installation and installs the Orders application
 # Tom Dean | Buoyant
-# Last edit: 4/10/2024
+# Last edit: 4/11/2024
 
 set -xeuo pipefail
 
@@ -214,7 +214,7 @@ kubectl rollout status daemonset/buoyant-cloud-metrics -n linkerd-buoyant --cont
 
 # Run a proxy check
 
-sleep 60
+sleep 75
 linkerd check --proxy -n linkerd-buoyant --context orders
 linkerd check --proxy -n linkerd-buoyant --context warehouse
 
