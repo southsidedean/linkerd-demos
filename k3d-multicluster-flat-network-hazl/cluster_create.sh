@@ -6,11 +6,17 @@
 # Tom Dean | Buoyant
 # Last edit: 4/10/2024
 
-set -xeuo pipefail
+#set -xeuo pipefail
 
 # Create the k3d cluster
 
 k3d cluster delete orders warehouse
+
+# This section creates the k3d clusters
+# From https://gist.github.com/olix0r/2f2db5bb60731b5b3fd584523f53a60c
+# olix0r/flat-network.sh
+# which is forked from alpeb/flat-network.sh
+# Minor tweaks to fit my HAZL demo
 
 k3d_api_ready() {
     name=$1
