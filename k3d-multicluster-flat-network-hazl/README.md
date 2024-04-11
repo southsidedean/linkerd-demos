@@ -117,12 +117,14 @@ The top-level contents of the repository look like this:
 
 The repository contains the following automation:
 
-- `cluster_setup.sh`
+- `deploy-clusters.sh`
   - Script to stand up the clusters, install Linkerd and Orders
-- `cluster_destroy.sh`
+- `deploy-multicluster.sh`
+  - Script to deploy the multicluster extension to the clusters
+- `destroy-clusters.sh`
   - Script to destroy the cluster environments and clean up contexts
 
-If you choose to use the `cluster_setup.sh` script, make sure you've created the `settings.sh` file and run `source settings.sh` to set your environment variables. For more information, see the **Obtain Buoyant Enterprise for Linkerd (BEL) Trial Credentials and Log In to Buoyant Cloud** instructions.
+If you choose to use the `deploy-clusters.sh` script, make sure you've created the `settings.sh` file and run `source settings.sh` to set your environment variables. For more information, see the **Obtain Buoyant Enterprise for Linkerd (BEL) Trial Credentials and Log In to Buoyant Cloud** instructions.
 
 #### Cluster Configurations
 
@@ -187,12 +189,12 @@ An  `orders` soft link points to the `hpa` version of the application (`orders -
 
 First, we'll deploy a Kubernetes cluster using `k3d` and deploy Buoyant Enterprise for Linkerd (BEL).
 
-We're going to use the provided `cluster_create.sh` script for this. If you'd like to do it by hand, the instructions are [here](bel-manual-deploy.md).
+We're going to use the provided `deploy-clusters.sh` script for this. If you'd like to do it by hand, the instructions are [here](bel-manual-deploy.md).
 
-From the `k3d-multicluster-flat-network-hazl` directory, execute the `cluster_create.sh` script:
+From the `k3d-multicluster-flat-network-hazl` directory, execute the `deploy-clusters.sh` script:
 
 ```bash
-./cluster_create.sh
+./deploy-clusters.sh
 ```
 
 This will create your `k3d` clusters and shared network, will deploy **Buoyant Enterprise for Linkerd** on both clusters, and will deploy the **Orders** application across both clusters.
@@ -387,7 +389,11 @@ vi linkerd-control-plane-config-hazl.yaml
 Apply the ControlPlane CRD config to have the Linkerd BEL operator update the Linkerd control plane configuration, and enable HAZL _on the `hazl` cluster only_:
 
 ```bash
-kubectl apply -f linkerd-control-plane-config-hazl.yaml
+kubectl apply -f linkerd-control-plane-config-hazl.yaml --context orders
+```
+
+```bash
+kubectl apply -f linkerd-control-plane-config-hazl.yaml --context warehouse
 ```
 
 Now, we can see the effect **HAZL** has on the traffic in our multi-az cluster.
@@ -413,13 +419,13 @@ Let's simulate what that looks like. The first thing we see is an uptick of orde
 We can increase traffic in `zone-east` by scaling the `orders-east` deployment.  Let's scale to 10 replicas.
 
 ```bash
-kubectl scale -n orders deploy orders-east --replicas=10
+kubectl scale -n orders deploy orders-east --replicas=10 --context orders
 ```
 
 Let's see the results of scaling `orders-east`:
 
 ```bash
-watch -n 1 kubectl get deploy,hpa -n orders
+watch -n 1 kubectl get deploy,hpa -n orders --context warehouse
 ```
 
 **_Use `CTRL-C` to exit the watch command._**
@@ -439,13 +445,13 @@ The middle of the country _really_ liked our hacky sacks! Order volume is runnin
 We can increase traffic in `zone-central` by scaling the `orders-central` deployment.  Let's scale to 25 replicas.
 
 ```bash
-kubectl scale -n orders deploy orders-central --replicas=25
+kubectl scale -n orders deploy orders-central --replicas=25 --context orders
 ```
 
 Let's see the results of scaling `orders-central`:
 
 ```bash
-watch -n 1 kubectl get deploy,hpa -n orders
+watch -n 1 kubectl get deploy,hpa -n orders --context warehouse
 ```
 
 **_Use `CTRL-C` to exit the watch command._**
@@ -467,13 +473,13 @@ By now, word of the episode is all over social media, and when the episode airs 
 We can increase traffic in `zone-west` by scaling the `orders-west` deployment.  Let's scale to 30 replicas.
 
 ```bash
-kubectl scale -n orders deploy orders-west --replicas=30
+kubectl scale -n orders deploy orders-west --replicas=30 --context orders
 ```
 
 Let's see the results of scaling `orders-west`:
 
 ```bash
-watch -n 1 kubectl get deploy,hpa -n orders
+watch -n 1 kubectl get deploy,hpa -n orders --context warehouse
 ```
 
 **_Use `CTRL-C` to exit the watch command._**
@@ -497,7 +503,7 @@ Unfortunately, we've had some network issues creep in at our Chicago warehouse!
 We can increase latency in `zone-central` by editing the `warehouse-config` configmap, which has a setting for latency.
 
 ```bash
-kubectl edit -n orders cm/warehouse-config
+kubectl edit -n orders cm/warehouse-config --context warehouse
 ```
 
 You'll see:
@@ -521,12 +527,12 @@ The colors map to the warehouses as follows:
 - Blue: This is the Boston warehouse (`warehouse-boston`)
 - Green: This is the Chicago warehouse (`warehouse-chicago`)
 
-Change the value of `averageResponseTime` under `green.yml` from `0.020` to `0.120`. Save and exit.
+Change the value of `averageResponseTime` under `green.yml` from `0.020` to `0.920`. Save and exit.
 
 We need to restart the `warehouse-chicago` deployment to pick up the changes:
 
 ```bash
-kubectl rollout restart -n orders deploy warehouse-chicago
+kubectl rollout restart -n orders deploy warehouse-chicago --context warehouse
 ```
 
 Let's take a look at what the increased latency looks like in **Buoyant Cloud**. This will give us a more visual representation of the effect of **HAZL** on our traffic in response to increased latency.
@@ -546,13 +552,13 @@ More bad news! The latency we've been experiencing is about to turn into an outa
 We can simulate this by scaling the `warehouse-chicago` deployment.  Let's scale to 0 replicas.
 
 ```bash
-kubectl scale -n orders deploy warehouse-chicago --replicas=0
+kubectl scale -n orders deploy warehouse-chicago --replicas=0 --context warehouse
 ```
 
 Let's see the results of scaling `warehouse-chicago` to 0:
 
 ```bash
-watch -n 1 kubectl get deploy,hpa -n orders
+watch -n 1 kubectl get deploy,hpa -n orders --context warehouse
 ```
 
 **_Use `CTRL-C` to exit the watch command._**
@@ -574,25 +580,25 @@ Good news! The latency and outage is about to end!
 We can simulate this by scaling the `warehouse-chicago` deployment.  Let's scale to 1 replica. The Horizontal Pod Autoscaler will take over from there.
 
 ```bash
-kubectl scale -n orders deploy warehouse-chicago --replicas=1
+kubectl scale -n orders deploy warehouse-chicago --replicas=1 --context warehouse
 ```
 
 We also need to edit the `warehouse-config` configmap, and set the latency to match the other `warehouse` deployments.
 
 ```bash
-kubectl edit -n orders cm/warehouse-config
+kubectl edit -n orders cm/warehouse-config --context warehouse
 ```
 
 We need to restart the `warehouse-chicago` deployment to pick up the changes:
 
 ```bash
-kubectl rollout restart -n orders deploy warehouse-chicago
+kubectl rollout restart -n orders deploy warehouse-chicago --context warehouse
 ```
 
 Let's see the results of scaling `warehouse-chicago` and restarting the deployment:
 
 ```bash
-watch -n 1 kubectl get deploy,hpa -n orders
+watch -n 1 kubectl get deploy,hpa -n orders --context warehouse
 ```
 
 **_Use `CTRL-C` to exit the watch command._**
@@ -612,13 +618,17 @@ We can see things have returned to 100% in-zone traffic, with latency back to ab
 Now that we're finished, let's reset the Orders application back to its initial state.
 
 ```bash
-kubectl apply -k orders
+kubectl apply -k orders/orders --context orders
+```
+
+```bash
+kubectl apply -k orders/warehouse --context warehouse
 ```
 
 Let's see the results of the reset:
 
 ```bash
-watch -n 1 kubectl get deploy,hpa -n orders
+watch -n 1 kubectl get deploy,hpa -n orders  --context warehouse
 ```
 
 **_Use `CTRL-C` to exit the watch command._**
@@ -638,7 +648,7 @@ Everything has returned to the initial state with HAZL enabled. All deployments 
 You can clean up the Demonstration environment by running the included script:
 
 ```bash
-./cluster_destroy.sh
+./destroy-clusters.sh
 ```
 
 Checking our work:
