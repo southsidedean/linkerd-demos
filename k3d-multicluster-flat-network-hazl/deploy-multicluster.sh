@@ -4,7 +4,7 @@
 # https://github.com/southsidedean/linkerd-demos/tree/main/k3d-multicluster-flat-network-hazl
 # Automates multi-cluster deployment
 # Tom Dean | Buoyant
-# Last edit: 4/10/2024
+# Last edit: 4/11/2024
 
 # Step 1: Add a Hosts Entry to CoreDNS
 
@@ -50,5 +50,6 @@ kubectl get links -A --context=orders
 kubectl get svc -A --context=orders
 kubectl get svc -A --context=warehouse
 kubectl --context=warehouse label svc -n orders fulfillment mirror.linkerd.io/exported=remote-discovery
+kubectl get svc -A --context=orders
 
 exit 0
