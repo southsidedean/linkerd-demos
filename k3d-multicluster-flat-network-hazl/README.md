@@ -96,15 +96,16 @@ The top-level contents of the repository look like this:
 
 ```bash
 .
-├── README.md           <-- This README
-├── certs               <-- Directory for the TLS root certificates
-├── cluster             <-- The k3d cluster configuration files live here
-├── cluster_destroy.sh  <-- Script to destroy the cluster environment
-├── cluster_setup.sh    <-- Script to stand up the cluster, install Linkerd and Orders
-├── images              <-- Images for the README
+├── README.md               <-- This README
+├── certs                   <-- Directory for the TLS root certificates
+├── cluster                 <-- The k3d cluster configuration files live here
+├── deploy-clusters.sh      <-- Script to stand up the clusters, install Linkerd and Orders
+├── deploy-multicluster.sh  <-- Script to deploy the Buoyant Enterprise for Linkerd Multi-Cluster Extension
+├── destroy-clusters.sh     <-- Script to destroy the cluster environment
+├── images                  <-- Images for the README
 ├── orders -> orders-hpa
-├── orders-hpa          <-- The Orders application, with Horizontal Pod Autoscaling
-└── orders-nohpa        <-- The Orders application, without Horizontal Pod Autoscaling
+├── orders-hpa              <-- The Orders application, with Horizontal Pod Autoscaling
+└── orders-nohpa            <-- The Orders application, without Horizontal Pod Autoscaling
 ```
 
 #### Demonstration: Automation
