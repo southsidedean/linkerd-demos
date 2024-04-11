@@ -50,6 +50,7 @@ kubectl get links -A --context=orders
 kubectl get svc -A --context=orders
 kubectl get svc -A --context=warehouse
 kubectl --context=warehouse label svc -n orders fulfillment mirror.linkerd.io/exported=remote-discovery
+sleep 30
 kubectl get svc -A --context=orders
 
 exit 0

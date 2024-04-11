@@ -97,15 +97,20 @@ The top-level contents of the repository look like this:
 ```bash
 .
 ├── README.md               <-- This README
+├── bel-manual-deploy.md    <-- Instructions on how to manually deploy BEL
 ├── certs                   <-- Directory for the TLS root certificates
 ├── cluster                 <-- The k3d cluster configuration files live here
 ├── deploy-clusters.sh      <-- Script to stand up the clusters, install Linkerd and Orders
 ├── deploy-multicluster.sh  <-- Script to deploy the Buoyant Enterprise for Linkerd Multi-Cluster Extension
 ├── destroy-clusters.sh     <-- Script to destroy the cluster environment
+├── hazl.md                 <-- Detailed information on HAZL
 ├── images                  <-- Images for the README
-├── orders -> orders-hpa
+├── mc.awk                  <-- Progfile for the awk command we use when setting up multi-cluster
+├── orders -> orders-hpa    <-- Soft link
 ├── orders-hpa              <-- The Orders application, with Horizontal Pod Autoscaling
-└── orders-nohpa            <-- The Orders application, without Horizontal Pod Autoscaling
+├── orders-nohpa            <-- The Orders application, without Horizontal Pod Autoscaling
+├── policy.yaml             <-- Grants service-mirror access to the core Linkerd control plane
+└── traffic_check.sh        <-- Script to monitor application traffic
 ```
 
 #### Demonstration: Automation
