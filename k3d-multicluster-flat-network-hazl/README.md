@@ -310,6 +310,18 @@ linkerd --context=orders multicluster check
 linkerd --context=warehouse multicluster check
 ```
 
+[Configure the Linkerd Multi-Cluster Policy](https://docs.buoyant.io/buoyant-cloud/tasks/configuring-linkerd-multi-cluster-policy/)
+
+"As of the Linkerd 2.11 release, the Linkerd multi-cluster extension also includes a policy configuration that prevents unauthorized access to pods running in the linkerd-multicluster namespace. This policy configuration only grants access to the core Linkerd control plane by default. If you’re using the Linkerd multi-cluster extension with Buoyant Cloud, you’ll need to add the following configuration to the linkerd-multicluster namespace."
+
+If you'd like to see the Linkerd Multi-Cluster Policy:
+
+```bash
+more policy.yaml
+```
+
+Apply the Linkerd Multi-Cluster Policy to the `orders` cluster from the included manifest:
+
 ```bash
 kubectl apply -f policy.yaml --context orders
 ```
