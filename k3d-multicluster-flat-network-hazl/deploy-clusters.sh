@@ -1,5 +1,5 @@
 #!/bin/bash
-# cluster_create.sh
+# deploy-clusters.sh
 # Demo script for the k3d-multicluster-flat-network-hazl GitHub repository
 # https://github.com/southsidedean/linkerd-demos/tree/main/k3d-multicluster-flat-network-hazl
 # Automates cluster creation, Linkerd installation and installs the Orders application

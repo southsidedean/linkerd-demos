@@ -251,7 +251,7 @@ sed -i .orig 's/host.k3d.internal/host.k3d.internal\ kubernetes/g' coredns.yaml
 ```
 
 ```bash
-kubectl get cm coredns -n kube-system -o yaml --context orders -o yaml
+more coredns.yaml
 ```
 
 ```bash
@@ -261,6 +261,11 @@ kubectl apply -f coredns.yaml -n kube-system --context orders
 ```bash
 kubectl rollout restart deploy coredns -n kube-system --context orders
 ```
+
+```bash
+kubectl get cm coredns -n kube-system -o yaml --context orders -o yaml
+```
+
 
 
 ### Step 2: Install the Multi-Cluster Extension
