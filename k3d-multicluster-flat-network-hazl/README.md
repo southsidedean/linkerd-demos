@@ -35,7 +35,7 @@ We're going to try out **Linkerd's Multi-Cluster Expansion** and **High-Availabi
 
 ### Linkerd: Multi-Cluster Expansion
 
-
+SAY SOMETHING HERE
 
 ### High Availability Zonal Load Balancing (HAZL)
 
@@ -143,7 +143,7 @@ These will be used to deploy our two clusters.
 
 This repository includes the **Orders** application, which generates traffic across multiple availability zones in our Kubernetes cluster, allowing us to observe the effect that **High Availability Zonal Load Balancing (HAZL)** has on traffic.
 
-We're going to deploy the `orders-*` applications on the `orders` cluster and the `warehouse-*` applications on the `warehosuse` cluster.
+We're going to deploy the `orders-*` applications on the `orders` cluster and the `warehouse-*` applications on the `warehouse` cluster.
 
 ```bash
 .
@@ -230,12 +230,14 @@ kubectl rollout restart deploy coredns -n kube-system --context orders
 ```
 
 ```bash
-kubectl get cm coredns -n kube-system -o yaml --context orders -o yaml
+kubectl get cm coredns -n kube-system -o yaml --context orders -o yaml | grep kubernetes
 ```
 
 
 
 ### Step 2: Install the Multi-Cluster Extension
+
+[Installing the Multi-Cluster Extension](https://docs.buoyant.io/buoyant-enterprise-linkerd/latest/tasks/installing-multicluster-extension/)
 
 
 
@@ -259,6 +261,14 @@ helm install linkerd-multicluster \
   linkerd-buoyant/linkerd-enterprise-multicluster
 ```
 
+
+
+```bash
+linkerd --context=orders multicluster check
+```
+
+
+
 ```bash
 helm install linkerd-multicluster \
   --create-namespace \
@@ -269,9 +279,7 @@ helm install linkerd-multicluster \
   linkerd-buoyant/linkerd-enterprise-multicluster
 ```
 
-```bash
-linkerd --context=orders multicluster check
-```
+
 
 ```bash
 linkerd --context=warehouse multicluster check
