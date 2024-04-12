@@ -8,7 +8,7 @@
 
 ## Introduction
 
-In this _demonstration_, we will deploy **Buoyant Enterprise for Linkerd** and the Orders application across two `k3d` clusters deployed in a flat network, and will demonstrate how to enable **High Availability Zonal Load Balancing (HAZL)**. We'll then take a look at how **HAZL** works to keep network traffic _in-zone_ where possible by exploring some different traffic, load and availability situations.
+In this _demonstration_, we will deploy **Buoyant Enterprise for Linkerd** and the Orders application across two `k3d` clusters deployed in a flat network, and will demonstrate how to deploy the **Buoyant Enterprise for Linkerd Multi-Cluster Extension** and enable **High Availability Zonal Load Balancing (HAZL)**. We'll then take a look at how **HAZL** works to keep network traffic _in-zone_ where possible by exploring some different traffic, load and availability situations.
 
 ### Buoyant Enterprise for Linkerd (BEL)
 
