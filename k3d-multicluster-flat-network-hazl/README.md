@@ -325,14 +325,6 @@ kubectl apply -f multicluster-link.yaml --context orders
 kubectl get links -A --context=orders
 ```
 
-```bash
-
-```
-
-```bash
-
-```
-
 ### Step 4: Export the `fulfillment` Service to the `orders` Cluster
 
 
