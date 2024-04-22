@@ -4,7 +4,7 @@
 # https://github.com/southsidedean/linkerd-demos/tree/main/k3d-multicluster-flat-network-hazl
 # Automates cluster creation, Linkerd installation and installs the Orders application
 # Tom Dean | Buoyant
-# Last edit: 4/11/2024
+# Last edit: 4/22/2024
 
 set -xeuo pipefail
 
@@ -217,6 +217,22 @@ kubectl rollout status daemonset/buoyant-cloud-metrics -n linkerd-buoyant --cont
 sleep 75
 linkerd check --proxy -n linkerd-buoyant --context orders
 linkerd check --proxy -n linkerd-buoyant --context warehouse
+
+# Install Linkerd Viz to Enable Success Rate Metrics
+
+linkerd viz install --set linkerdVersion=stable-2.14.10 --context hazl | kubectl apply -f - --context orders
+linkerd viz install --set linkerdVersion=stable-2.14.10 --context hazl | kubectl apply -f - --context warehouse
+
+# Enable Inbound Latency Metrics
+# These are disabled by default in the Buoyant Cloud Agent
+# Patch with the buoyant-cloud-metrics.yaml manifest
+# Restart the buoyant-cloud-metrics daemonset
+
+kubectl apply -f buoyant-cloud-metrics.yaml --context orders
+kubectl apply -f buoyant-cloud-metrics.yaml --context warehouse
+
+kubectl -n linkerd-buoyant rollout restart ds buoyant-cloud-metrics --context orders
+kubectl -n linkerd-buoyant rollout restart ds buoyant-cloud-metrics --context warehouse
 
 # Deploy the Orders application to both clusters
 # Press CTRL-C to exit each watch command

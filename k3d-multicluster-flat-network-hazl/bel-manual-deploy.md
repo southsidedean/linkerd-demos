@@ -414,4 +414,30 @@ linkerd check --proxy -n linkerd-buoyant
 
 Again, we may see a few warnings (!!), _but we're good to proceed as long as the overall status is good_.
 
+#### Step 10: Install Linkerd Viz to Enable Success Rate Metrics - OPTIONAL
+
+In order to enable Success Rate Metrics, we need to install Linkerd Viz.  This is optional.
+
+Install Linkerd Viz using the CLI:
+
+```bash
+linkerd viz install --set linkerdVersion=stable-2.14.10 --context hazl | kubectl apply -f - --context hazl
+```
+
+#### Step 11: Enable Latency Metrics in the Buoyant Cloud Agent - OPTIONAL
+
+In order to enable Latency Metrics, we need to modify the `buoyant-cloud-metrics` configMap.  This is optional.
+
+Apply the modified `buoyant-cloud-metrics.yaml` manifest:
+
+```bash
+kubectl apply -f buoyant-cloud-metrics.yaml --context hazl
+```
+
+Restart the `buoyant-cloud-metrics` daemonSet to pick up the change:
+
+```bash
+kubectl -n linkerd-buoyant rollout restart ds buoyant-cloud-metrics --context hazl
+```
+
 We've successfully installed **Buoyant Enterprise for Linkerd**, and can now use **BEL** to manage and secure our Kubernetes applications. You can now return to the [main document](README.md).
