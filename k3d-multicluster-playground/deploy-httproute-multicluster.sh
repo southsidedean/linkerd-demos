@@ -1,10 +1,10 @@
 #!/bin/bash
-# deploy-multicluster.sh
-# Demo script for the k3d-multicluster-flat-network-hazl GitHub repository
-# https://github.com/southsidedean/linkerd-demos/tree/main/k3d-multicluster-flat-network-hazl
+# deploy-httproute-multicluster.sh
+# Demo script for the k3d-multicluster-playground GitHub repository
+# https://github.com/southsidedean/linkerd-demos/tree/main/k3d-multicluster-playground
 # Automates multi-cluster deployment
 # Tom Dean | Buoyant
-# Last edit: 4/11/2024
+# Last edit: 10/7/2024
 
 # Step 1: Add a Hosts Entry to CoreDNS
 

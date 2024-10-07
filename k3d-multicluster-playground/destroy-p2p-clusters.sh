@@ -1,10 +1,10 @@
 #!/bin/bash
-# destroy-clusters.sh
-# Demo script for the k3d-multicluster-flat-network-hazl GitHub repository
-# https://github.com/southsidedean/linkerd-demos/tree/main/k3d-multicluster-flat-network-hazl
+# destroy-p2p-clusters.sh
+# Demo script for the k3d-multicluster-playground GitHub repository
+# https://github.com/southsidedean/linkerd-demos/tree/main/k3d-multicluster-playground
 # Automates cluster deletion and cleans up the kubectl contexts
 # Tom Dean | Buoyant
-# Last edit: 4/10/2024
+# Last edit: 10/7/2024
 
 # Remove the k3d clusters
 

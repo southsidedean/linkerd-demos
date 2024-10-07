@@ -1,10 +1,20 @@
 #!/bin/bash
-# deploy-clusters.sh
-# Demo script for the k3d-multicluster-flat-network-hazl GitHub repository
-# https://github.com/southsidedean/linkerd-demos/tree/main/k3d-multicluster-flat-network-hazl
+# deploy-p2p-clusters.sh
+# Cluster deployment script for the k3d-multicluster-playgorund GitHub repository
+# https://github.com/southsidedean/linkerd-demos/tree/main/k3d-multicluster-playground
 # Automates cluster creation, Linkerd installation and installs the Orders application
 # Tom Dean | Buoyant
-# Last edit: 4/22/2024
+# Last edit: 10/7/2024
+
+# Let's set some variables!
+
+# BEL: Stable
+#BEL_VERSION=enterprise-2.16.0
+#CLI_VERSION=install
+
+# BEL: Preview
+BEL_VERSION=preview-24.10.4
+CLI_VERSION=install-preview
 
 set -xeuo pipefail
 
@@ -16,7 +26,7 @@ k3d cluster delete orders warehouse
 # From https://gist.github.com/olix0r/2f2db5bb60731b5b3fd584523f53a60c
 # olix0r/flat-network.sh
 # which is forked from alpeb/flat-network.sh
-# Minor tweaks to fit my HAZL demo
+# Minor tweaks to fit this application
 
 k3d_api_ready() {
     name=$1
@@ -86,7 +96,7 @@ source settings.sh
 
 # Install the CLI
 
-curl https://enterprise.buoyant.io/install | sh
+curl https://enterprise.buoyant.io/$CLI_VERSION | sh
 export PATH=~/.linkerd2/bin:$PATH
 linkerd version
 
@@ -163,12 +173,12 @@ metadata:
 spec:
   components:
     linkerd:
-      version: enterprise-2.15.2
+      version: $BEL_VERSION
       license: $BUOYANT_LICENSE
       controlPlaneConfig:
         proxy:
           image:
-            version: enterprise-2.15.2
+            version: $BEL_VERSION
         identityTrustAnchorsPEM: |
 $(sed 's/^/          /' < certs/ca.crt )
         identity:
