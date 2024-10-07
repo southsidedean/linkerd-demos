@@ -69,12 +69,12 @@ create_cluster() {
     k3d_dns_ready "$name"
 }
 
+create_cluster $CLUSTER_B_NAME
+
 for i in `seq 1 $CLUSTER_A_COUNT`
 do
 create_cluster $CLUSTER_A_PREFIX$i
 done
-
-create_cluster $CLUSTER_B_NAME
 
 # add routes for each node in cluster-b to all cluster-a nodes
 for i in `seq 1 $CLUSTER_A_COUNT`
