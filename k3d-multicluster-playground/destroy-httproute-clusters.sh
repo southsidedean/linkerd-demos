@@ -26,11 +26,11 @@ k3d cluster list
 
 # Remove the kubectl contexts: hazl
 
-kubectx -d k3d-cluster-b
+kubectx -d k3d-$CLUSTER_B_NAME
 
 for i in `count 1 $CLUSTER_A_COUNT`
 do
-kubectx -d k3d$CLUSTER_A_PREFIX$i
+kubectx -d k3d-$CLUSTER_A_PREFIX$i
 done
 
 kubectx
