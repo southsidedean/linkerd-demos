@@ -93,40 +93,40 @@ done
 #  done
 
 # add routes for each node in orders to each node in warehouse
-kubectl --context=k3d-cluster-b get node -o json | \
-jq -r '.items[] | .metadata.name + "\t" + .spec.podCIDR + "\t" + (.status.addresses[] | select(.type == "InternalIP") | .address)' | \
-while IFS=$'\t' read -r sname scidr sip; do
-    kubectl --context=k3d-cluster-a1 get node -o json | \
-    jq -r '.items[] | .metadata.name + "\t" + .spec.podCIDR + "\t" + (.status.addresses[] | select(.type == "InternalIP") | .address)' | \
-    while IFS=$'\t' read -r tname tcidr tip; do
-        docker exec "${sname}" ip route add "${tcidr}" via "${tip}"
-        docker exec "${tname}" ip route add "${scidr}" via "${sip}"
-    done
-done
+# kubectl --context=k3d-cluster-b get node -o json | \
+# jq -r '.items[] | .metadata.name + "\t" + .spec.podCIDR + "\t" + (.status.addresses[] | select(.type == "InternalIP") | .address)' | \
+# while IFS=$'\t' read -r sname scidr sip; do
+#     kubectl --context=k3d-cluster-a1 get node -o json | \
+#     jq -r '.items[] | .metadata.name + "\t" + .spec.podCIDR + "\t" + (.status.addresses[] | select(.type == "InternalIP") | .address)' | \
+#     while IFS=$'\t' read -r tname tcidr tip; do
+#         docker exec "${sname}" ip route add "${tcidr}" via "${tip}"
+#         docker exec "${tname}" ip route add "${scidr}" via "${sip}"
+#     done
+# done
 
 # add routes for each node in orders to each node in warehouse
-kubectl --context=k3d-cluster-b get node -o json | \
-jq -r '.items[] | .metadata.name + "\t" + .spec.podCIDR + "\t" + (.status.addresses[] | select(.type == "InternalIP") | .address)' | \
-while IFS=$'\t' read -r sname scidr sip; do
-    kubectl --context=k3d-cluster-a2 get node -o json | \
-    jq -r '.items[] | .metadata.name + "\t" + .spec.podCIDR + "\t" + (.status.addresses[] | select(.type == "InternalIP") | .address)' | \
-    while IFS=$'\t' read -r tname tcidr tip; do
-        docker exec "${sname}" ip route add "${tcidr}" via "${tip}"
-        docker exec "${tname}" ip route add "${scidr}" via "${sip}"
-    done
-done
+# kubectl --context=k3d-cluster-b get node -o json | \
+# jq -r '.items[] | .metadata.name + "\t" + .spec.podCIDR + "\t" + (.status.addresses[] | select(.type == "InternalIP") | .address)' | \
+# while IFS=$'\t' read -r sname scidr sip; do
+#     kubectl --context=k3d-cluster-a2 get node -o json | \
+#     jq -r '.items[] | .metadata.name + "\t" + .spec.podCIDR + "\t" + (.status.addresses[] | select(.type == "InternalIP") | .address)' | \
+#     while IFS=$'\t' read -r tname tcidr tip; do
+#         docker exec "${sname}" ip route add "${tcidr}" via "${tip}"
+#         docker exec "${tname}" ip route add "${scidr}" via "${sip}"
+#     done
+# done
 
 # add routes for each node in orders to each node in warehouse
-kubectl --context=k3d-cluster-b get node -o json | \
-jq -r '.items[] | .metadata.name + "\t" + .spec.podCIDR + "\t" + (.status.addresses[] | select(.type == "InternalIP") | .address)' | \
-while IFS=$'\t' read -r sname scidr sip; do
-    kubectl --context=k3d-cluster-a3 get node -o json | \
-    jq -r '.items[] | .metadata.name + "\t" + .spec.podCIDR + "\t" + (.status.addresses[] | select(.type == "InternalIP") | .address)' | \
-    while IFS=$'\t' read -r tname tcidr tip; do
-        docker exec "${sname}" ip route add "${tcidr}" via "${tip}"
-        docker exec "${tname}" ip route add "${scidr}" via "${sip}"
-    done
-done
+# kubectl --context=k3d-cluster-b get node -o json | \
+# jq -r '.items[] | .metadata.name + "\t" + .spec.podCIDR + "\t" + (.status.addresses[] | select(.type == "InternalIP") | .address)' | \
+# while IFS=$'\t' read -r sname scidr sip; do
+#     kubectl --context=k3d-cluster-a3 get node -o json | \
+#     jq -r '.items[] | .metadata.name + "\t" + .spec.podCIDR + "\t" + (.status.addresses[] | select(.type == "InternalIP") | .address)' | \
+#     while IFS=$'\t' read -r tname tcidr tip; do
+#         docker exec "${sname}" ip route add "${tcidr}" via "${tip}"
+#         docker exec "${tname}" ip route add "${scidr}" via "${sip}"
+#     done
+# done
 
 k3d cluster list
 
