@@ -82,7 +82,7 @@ do
 kubectl --context=k3d-$CLUSTER_B_NAME get node -o json | \
 jq -r '.items[] | .metadata.name + "\t" + .spec.podCIDR + "\t" + (.status.addresses[] | select(.type == "InternalIP") | .address)' | \
   while IFS=$'\t' read -r sname scidr sip; do
-    kubectl --context=$CLUSTER_A_PREFIX$i get node -o json | \
+    kubectl --context=k3d-$CLUSTER_A_PREFIX$i get node -o json | \
     jq -r '.items[] | .metadata.name + "\t" + .spec.podCIDR + "\t" + (.status.addresses[] | select(.type == "InternalIP") | .address)' | \
       while IFS=$'\t' read -r tname tcidr tip; do
         docker exec "${sname}" ip route add "${tcidr}" via "${tip}"
