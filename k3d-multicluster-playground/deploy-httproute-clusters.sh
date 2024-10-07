@@ -32,7 +32,7 @@ set -xeuo pipefail
 
 # Create the k3d cluster
 
-for i in `count 1 $CLUSTER_A_COUNT`
+for i in `seq 1 $CLUSTER_A_COUNT`
 do
 k3d cluster delete $CLUSTER_A_PREFIX$i
 done

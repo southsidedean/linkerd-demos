@@ -17,7 +17,7 @@ CLUSTER_A_COUNT=3
 
 k3d cluster delete $CLUSTER_B_NAME
 
-for i in `count 1 $CLUSTER_A_COUNT`
+for i in `seq 1 $CLUSTER_A_COUNT`
 do
 k3d cluster delete $CLUSTER_A_PREFIX$i
 done
@@ -28,7 +28,7 @@ k3d cluster list
 
 kubectx -d k3d-$CLUSTER_B_NAME
 
-for i in `count 1 $CLUSTER_A_COUNT`
+for i in `seq 1 $CLUSTER_A_COUNT`
 do
 kubectx -d k3d-$CLUSTER_A_PREFIX$i
 done
