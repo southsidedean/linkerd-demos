@@ -77,16 +77,17 @@ create_cluster $CLUSTER_A_PREFIX$i
 done
 
 # add routes for each node in cluster-b to all cluster-a nodes
-for i in `seq 1 $CLUSTER_A_COUNT`
-do
+
 kubectl --context=k3d-$CLUSTER_B_NAME get node -o json | \
 jq -r '.items[] | .metadata.name + "\t" + .spec.podCIDR + "\t" + (.status.addresses[] | select(.type == "InternalIP") | .address)' | \
-  while IFS=$'\t' read -r sname scidr sip; do
-    kubectl --context=k3d-$CLUSTER_A_PREFIX$i get node -o json | \
-    jq -r '.items[] | .metadata.name + "\t" + .spec.podCIDR + "\t" + (.status.addresses[] | select(.type == "InternalIP") | .address)' | \
-      while IFS=$'\t' read -r tname tcidr tip; do
-        docker exec "${sname}" ip route add "${tcidr}" via "${tip}"
-        docker exec "${tname}" ip route add "${scidr}" via "${sip}"
+  for i in `seq 1 $CLUSTER_A_COUNT`
+  do
+    while IFS=$'\t' read -r sname scidr sip; do
+      kubectl --context=k3d-$CLUSTER_A_PREFIX$i get node -o json | \
+      jq -r '.items[] | .metadata.name + "\t" + .spec.podCIDR + "\t" + (.status.addresses[] | select(.type == "InternalIP") | .address)' | \
+        while IFS=$'\t' read -r tname tcidr tip; do
+          docker exec "${sname}" ip route add "${tcidr}" via "${tip}"
+          docker exec "${tname}" ip route add "${scidr}" via "${sip}"
     done
   done
 done
