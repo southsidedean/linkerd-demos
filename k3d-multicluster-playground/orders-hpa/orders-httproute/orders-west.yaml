@@ -41,7 +41,7 @@ spec:
           requiredDuringSchedulingIgnoredDuringExecution:
             nodeSelectorTerms:
             - matchExpressions:
-              - key: orders_node
+              - key: kubernetes.io/hostname
                 operator: In
                 values: [cluster-b]
 ---
