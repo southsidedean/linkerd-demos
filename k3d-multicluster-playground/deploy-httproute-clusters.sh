@@ -337,7 +337,7 @@ linkerd viz install --set linkerdVersion=$VIZ_VERSION --context k3d-$CLUSTER_B_N
 
 for i in `seq 1 $CLUSTER_A_COUNT`
 do
-linkerd viz install --set linkerdVersion=$VIZ_VERSION --context k3d-$CLUSTER_A_PREFIX$i | kubectl apply -f - --context $CLUSTER_A_PREFIX$i
+linkerd viz install --set linkerdVersion=$VIZ_VERSION --context k3d-$CLUSTER_A_PREFIX$i | kubectl apply -f - --context k3d-$CLUSTER_A_PREFIX$i
 done
 
 # Enable Inbound Latency Metrics
