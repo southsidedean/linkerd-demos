@@ -59,11 +59,11 @@ kubectl apply -f policy.yaml --context k3d-$CLUSTER_B_NAME
 
 # Step 3: Link the Clusters
 
-for i in `seq 1 $CLUSTER_A_COUNT`
-do
-linkerd --context=k3d-$CLUSTER_A_PREFIX$i multicluster link --cluster-name $CLUSTER_A_PREFIX$i >> multicluster-link-orig-a$i.yaml
-KC1=`linkerd --context=k3d-$CLUSTER_A_PREFIX$i multicluster link --cluster-name $CLUSTER_A_PREFIX$i | grep kubeconfig: | uniq | awk {'print $2'}` ; KC2=`echo $KC1 | base64 -d | sed 's/0\.0\.0\.0/kubernetes/g' | base64` ; awk -f mc.awk "$KC1" "$KC2" multicluster-link-orig-a$i.yaml >> multicluster-link.yaml
-done
+#for i in `seq 1 $CLUSTER_A_COUNT`
+#do
+#linkerd --context=k3d-$CLUSTER_A_PREFIX$i multicluster link --cluster-name $CLUSTER_A_PREFIX$i >> multicluster-link-orig-a$i.yaml
+#KC1=`linkerd --context=k3d-$CLUSTER_A_PREFIX$i multicluster link --cluster-name $CLUSTER_A_PREFIX$i | grep kubeconfig: | uniq | awk {'print $2'}` ; KC2=`echo $KC1 | base64 -d | sed 's/0\.0\.0\.0/kubernetes/g' | base64` ; awk -f mc.awk "$KC1" "$KC2" multicluster-link-orig-a$i.yaml >> multicluster-link.yaml
+#done
 
 #linkerd --context=k3d-cluster-a1 multicluster link --cluster-name cluster-a1 >> multicluster-link-orig-a1.yaml
 #KC1=`linkerd --context=k3d-cluster-a1 multicluster link --cluster-name cluster-a1 | grep kubeconfig: | uniq | awk {'print $2'}` ; KC2=`echo $KC1 | base64 -d | sed 's/0\.0\.0\.0/kubernetes/g' | base64` ; awk -f mc.awk "$KC1" "$KC2" multicluster-link-orig-a1.yaml >> multicluster-link.yaml
@@ -72,9 +72,9 @@ done
 #linkerd --context=k3d-cluster-a3 multicluster link --cluster-name cluster-a3 >> multicluster-link-orig-a3.yaml
 #KC1=`linkerd --context=k3d-cluster-a3 multicluster link --cluster-name cluster-a3 | grep kubeconfig: | uniq | awk {'print $2'}` ; KC2=`echo $KC1 | base64 -d | sed 's/0\.0\.0\.0/kubernetes/g' | base64` ; awk -f mc.awk "$KC1" "$KC2" multicluster-link-orig-a3.yaml >> multicluster-link.yaml
 
-#linkerd --context=k3d-cluster-a1 multicluster link --cluster-name cluster-a1 >> multicluster-link.yaml
-#linkerd --context=k3d-cluster-a2 multicluster link --cluster-name cluster-a2 >> multicluster-link.yaml
-#linkerd --context=k3d-cluster-a3 multicluster link --cluster-name cluster-a3 >> multicluster-link.yaml
+linkerd --context=k3d-cluster-a1 multicluster link --cluster-name cluster-a1 >> multicluster-link.yaml
+linkerd --context=k3d-cluster-a2 multicluster link --cluster-name cluster-a2 >> multicluster-link.yaml
+linkerd --context=k3d-cluster-a3 multicluster link --cluster-name cluster-a3 >> multicluster-link.yaml
 
 kubectl apply -f multicluster-link.yaml --context k3d-$CLUSTER_B_NAME
 kubectl get links -A --context=k3d-$CLUSTER_B_NAME
