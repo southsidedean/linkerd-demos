@@ -19,6 +19,7 @@ spec:
     - name: fulfillment
       kind: Service
       group: core
+      namespace: orders
       port: 80
   rules:
     - backendRefs:
