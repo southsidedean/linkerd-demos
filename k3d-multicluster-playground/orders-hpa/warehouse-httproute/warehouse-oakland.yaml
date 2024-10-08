@@ -62,9 +62,9 @@ spec:
           requiredDuringSchedulingIgnoredDuringExecution:
             nodeSelectorTerms:
             - matchExpressions:
-              - key: topology.kubernetes.io/zone
+              - key: orders_node
                 operator: In
-                values: [zone-west]
+                values: [cluster-s3]
 ---
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler

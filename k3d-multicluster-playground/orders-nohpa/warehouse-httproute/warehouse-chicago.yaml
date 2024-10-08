@@ -62,6 +62,6 @@ spec:
           requiredDuringSchedulingIgnoredDuringExecution:
             nodeSelectorTerms:
             - matchExpressions:
-              - key: topology.kubernetes.io/zone
+              - key: orders_node
                 operator: In
                 values: [cluster-a2]
