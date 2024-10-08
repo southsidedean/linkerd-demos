@@ -43,7 +43,7 @@ spec:
             - matchExpressions:
               - key: kubernetes.io/hostname
                 operator: In
-                values: [cluster-b]
+                values: [k3d-cluster-b-agent-0]
 ---
 apiVersion: v1
 kind: ConfigMap

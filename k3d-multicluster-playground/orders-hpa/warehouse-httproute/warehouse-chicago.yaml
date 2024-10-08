@@ -64,7 +64,7 @@ spec:
             - matchExpressions:
               - key: kubernetes.io/hostname
                 operator: In
-                values: [cluster-a2]
+                values: [k3d-cluster-a2-agent-0]
 ---
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
