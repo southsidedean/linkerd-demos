@@ -64,7 +64,10 @@ spec:
             - matchExpressions:
               - key: topology.kubernetes.io/zone
                 operator: In
-                values: [cluster-a1]
+                values:
+                - cluster-a1
+                - cluster-a2
+                - cluster-a3
 ---
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler

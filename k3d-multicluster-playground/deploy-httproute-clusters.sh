@@ -374,7 +374,7 @@ watch -n 1 kubectl get pods -n orders -o wide --sort-by .spec.nodeName --context
 
 for i in `seq 1 $CLUSTER_A_COUNT`
 do
-watch -n 1 kubectl get pods -n warehouse -o wide --sort-by .spec.nodeName --context k3d-$CLUSTER_A_PREFIX$i
+watch -n 1 kubectl get pods -n orders -o wide --sort-by .spec.nodeName --context k3d-$CLUSTER_A_PREFIX$i
 done
 
 # Deploy the Data Plane for the orders namespace to cluster-b
@@ -393,23 +393,9 @@ EOF
 
 kubectl apply -f linkerd-data-plane-orders-config.yaml --context k3d-$CLUSTER_B_NAME
 
-# Deploy the Data Planes for the warehouse namespace on all cluster-a clusters
-
-cat <<EOF > linkerd-data-plane-warehouse-config.yaml
----
-apiVersion: linkerd.buoyant.io/v1alpha1
-kind: DataPlane
-metadata:
-  name: dataplane-warehouse
-  namespace: warehouse
-spec:
-  workloadSelector:
-    matchLabels: {}
-EOF
-
 for i in `seq 1 $CLUSTER_A_COUNT`
 do
-kubectl apply -f linkerd-data-plane-warehouse-config.yaml --context k3d-$CLUSTER_A_PREFIX$i
+kubectl apply -f linkerd-data-plane-orders-config.yaml --context k3d-$CLUSTER_A_PREFIX$i
 done
 
 exit 0
