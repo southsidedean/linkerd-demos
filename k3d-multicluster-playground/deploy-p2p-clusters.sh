@@ -4,17 +4,17 @@
 # https://github.com/southsidedean/linkerd-demos/tree/main/k3d-multicluster-playground
 # Automates cluster creation, Linkerd installation and installs the Orders application
 # Tom Dean | Buoyant
-# Last edit: 10/7/2024
+# Last edit: 10/8/2024
 
 # Let's set some variables!
 
 # BEL: Stable
-#BEL_VERSION=enterprise-2.16.0
-#CLI_VERSION=install
+BEL_VERSION=enterprise-2.16.0
+CLI_VERSION=install
 
 # BEL: Preview
-BEL_VERSION=preview-24.10.4
-CLI_VERSION=install-preview
+#BEL_VERSION=preview-24.10.4
+#CLI_VERSION=install-preview
 
 set -xeuo pipefail
 
