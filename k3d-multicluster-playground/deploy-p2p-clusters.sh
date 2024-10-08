@@ -18,6 +18,9 @@ BEL_VERSION=preview-24.10.4
 CLI_VERSION=install-preview
 MC_VERSION=preview
 
+# Viz Version
+VIZ_VERSION=edge-24.10.1
+
 set -xeuo pipefail
 
 # Create the k3d cluster
@@ -232,8 +235,8 @@ linkerd check --proxy -n linkerd-buoyant --context warehouse
 
 # Install Linkerd Viz to Enable Success Rate Metrics
 
-linkerd viz install --set linkerdVersion=stable-2.14.10 --context orders | kubectl apply -f - --context orders
-linkerd viz install --set linkerdVersion=stable-2.14.10 --context warehouse | kubectl apply -f - --context warehouse
+linkerd viz install --set linkerdVersion=$VIZ_VERSION --context orders | kubectl apply -f - --context orders
+linkerd viz install --set linkerdVersion=$VIZ_VERSION --context warehouse | kubectl apply -f - --context warehouse
 
 # Enable Inbound Latency Metrics
 # These are disabled by default in the Buoyant Cloud Agent
