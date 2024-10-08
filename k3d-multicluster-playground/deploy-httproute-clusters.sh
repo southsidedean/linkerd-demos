@@ -9,12 +9,14 @@
 # Let's set some variables!
 
 # BEL: Stable
-BEL_VERSION=enterprise-2.16.0
-CLI_VERSION=install
+#BEL_VERSION=enterprise-2.16.0
+#CLI_VERSION=install
+#MC_VERSION=enterprise
 
 # BEL: Preview
-#BEL_VERSION=preview-24.10.4
-#CLI_VERSION=install-preview
+BEL_VERSION=preview-24.10.4
+CLI_VERSION=install-preview
+MC_VERSION=preview
 
 # Cluster Naming Variables
 CLUSTER_A_PREFIX=cluster-a

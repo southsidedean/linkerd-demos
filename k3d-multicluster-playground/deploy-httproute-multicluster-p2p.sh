@@ -8,6 +8,16 @@
 
 # Let's set some variables!
 
+# BEL: Stable
+#BEL_VERSION=enterprise-2.16.0
+#CLI_VERSION=install
+#MC_VERSION=enterprise
+
+# BEL: Preview
+BEL_VERSION=preview-24.10.4
+CLI_VERSION=install-preview
+MC_VERSION=preview
+
 # Cluster Naming Variables
 CLUSTER_A_PREFIX=cluster-a
 CLUSTER_B_NAME=cluster-b
@@ -41,7 +51,7 @@ helm install linkerd-multicluster \
   --kube-context k3d-$CLUSTER_B_NAME \
   --set linkerd-multicluster.gateway.enabled=true \
   --set license=$BUOYANT_LICENSE \
-  linkerd-buoyant/linkerd-enterprise-multicluster
+  linkerd-buoyant/linkerd-$MC_VERSION-multicluster
 
 for i in `seq 1 $CLUSTER_A_COUNT`
 do
@@ -51,7 +61,7 @@ helm install linkerd-multicluster \
   --kube-context k3d-$CLUSTER_A_PREFIX$i \
   --set linkerd-multicluster.gateway.enabled=true \
   --set license=$BUOYANT_LICENSE \
-  linkerd-buoyant/linkerd-enterprise-multicluster
+  linkerd-buoyant/linkerd-$MC_VERSION-multicluster
 done
 
 linkerd --context=k3d-$CLUSTER_B_NAME multicluster check
@@ -73,16 +83,16 @@ rm multicluster-*.yaml
 #KC1=`linkerd --context=k3d-$CLUSTER_A_PREFIX$i multicluster link --cluster-name $CLUSTER_A_PREFIX$i | grep kubeconfig: | uniq | awk {'print $2'}` ; KC2=`echo $KC1 | base64 -d | sed 's/0\.0\.0\.0/kubernetes/g' | base64` ; awk -f mc.awk "$KC1" "$KC2" multicluster-link-orig-a$i.yaml >> multicluster-link.yaml
 #done
 
-linkerd --context=k3d-cluster-a1 multicluster link --cluster-name cluster-a1 >> multicluster-link-orig-a1.yaml
-KC1=`linkerd --context=k3d-cluster-a1 multicluster link --cluster-name cluster-a1 | grep kubeconfig: | uniq | awk {'print $2'}` ; KC2=`echo $KC1 | base64 -d | sed 's/0\.0\.0\.0/kubernetes/g' | base64` ; awk -f mc.awk "$KC1" "$KC2" multicluster-link-orig-a1.yaml >> multicluster-link.yaml
-linkerd --context=k3d-cluster-a2 multicluster link --cluster-name cluster-a2 >> multicluster-link-orig-a2.yaml
-KC1=`linkerd --context=k3d-cluster-a2 multicluster link --cluster-name cluster-a2 | grep kubeconfig: | uniq | awk {'print $2'}` ; KC2=`echo $KC1 | base64 -d | sed 's/0\.0\.0\.0/kubernetes/g' | base64` ; awk -f mc.awk "$KC1" "$KC2" multicluster-link-orig-a2.yaml >> multicluster-link.yaml
-linkerd --context=k3d-cluster-a3 multicluster link --cluster-name cluster-a3 >> multicluster-link-orig-a3.yaml
-KC1=`linkerd --context=k3d-cluster-a3 multicluster link --cluster-name cluster-a3 | grep kubeconfig: | uniq | awk {'print $2'}` ; KC2=`echo $KC1 | base64 -d | sed 's/0\.0\.0\.0/kubernetes/g' | base64` ; awk -f mc.awk "$KC1" "$KC2" multicluster-link-orig-a3.yaml >> multicluster-link.yaml
+#linkerd --context=k3d-cluster-a1 multicluster link --cluster-name cluster-a1 >> multicluster-link-orig-a1.yaml
+#KC1=`linkerd --context=k3d-cluster-a1 multicluster link --cluster-name cluster-a1 | grep kubeconfig: | uniq | awk {'print $2'}` ; KC2=`echo $KC1 | base64 -d | sed 's/0\.0\.0\.0/kubernetes/g' | base64` ; awk -f mc.awk "$KC1" "$KC2" multicluster-link-orig-a1.yaml >> multicluster-link.yaml
+#linkerd --context=k3d-cluster-a2 multicluster link --cluster-name cluster-a2 >> multicluster-link-orig-a2.yaml
+#KC1=`linkerd --context=k3d-cluster-a2 multicluster link --cluster-name cluster-a2 | grep kubeconfig: | uniq | awk {'print $2'}` ; KC2=`echo $KC1 | base64 -d | sed 's/0\.0\.0\.0/kubernetes/g' | base64` ; awk -f mc.awk "$KC1" "$KC2" multicluster-link-orig-a2.yaml >> multicluster-link.yaml
+#linkerd --context=k3d-cluster-a3 multicluster link --cluster-name cluster-a3 >> multicluster-link-orig-a3.yaml
+#KC1=`linkerd --context=k3d-cluster-a3 multicluster link --cluster-name cluster-a3 | grep kubeconfig: | uniq | awk {'print $2'}` ; KC2=`echo $KC1 | base64 -d | sed 's/0\.0\.0\.0/kubernetes/g' | base64` ; awk -f mc.awk "$KC1" "$KC2" multicluster-link-orig-a3.yaml >> multicluster-link.yaml
 
-#linkerd --context=k3d-cluster-a1 multicluster link --cluster-name cluster-a1 --api-addr $CLUSTER_A1_API >> multicluster-link.yaml
-#linkerd --context=k3d-cluster-a2 multicluster link --cluster-name cluster-a2 --api-addr $CLUSTER_A2_API  >> multicluster-link.yaml
-#linkerd --context=k3d-cluster-a3 multicluster link --cluster-name cluster-a3 --api-addr $CLUSTER_A3_API  >> multicluster-link.yaml
+linkerd --context=k3d-cluster-a1 multicluster link --cluster-name cluster-a1 --api-addr $CLUSTER_A1_API >> multicluster-link.yaml
+linkerd --context=k3d-cluster-a2 multicluster link --cluster-name cluster-a2 --api-addr $CLUSTER_A2_API  >> multicluster-link.yaml
+linkerd --context=k3d-cluster-a3 multicluster link --cluster-name cluster-a3 --api-addr $CLUSTER_A3_API  >> multicluster-link.yaml
 
 kubectl apply -f multicluster-link.yaml --context k3d-$CLUSTER_B_NAME
 kubectl get links -A --context=k3d-$CLUSTER_B_NAME
