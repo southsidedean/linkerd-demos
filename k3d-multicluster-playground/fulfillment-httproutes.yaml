@@ -26,9 +26,15 @@ spec:
       - name: "fulfillment-cluster-a1"
         port: 80
         weight: 50
+        group: ""
+        kind: Service
       - name: "fulfillment-cluster-a2"
         port: 80
         weight: 50
+        group: ""
+        kind: Service
       - name: "fulfillment-cluster-a3"
         port: 80
         weight: 50
+        group: ""
+        kind: Service
