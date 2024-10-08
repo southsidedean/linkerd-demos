@@ -1,3 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: fulfillment
+  namespace: orders
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 80
+---
 apiVersion: policy.linkerd.io/v1beta2
 kind: HTTPRoute
 metadata:
@@ -8,15 +19,18 @@ spec:
     - name: fulfillment
       kind: Service
       group: core
-      port: 8080
+      port: 80
   rules:
     - backendRefs:
+      - name: "fulfillment"
+        port: 80
+        weight: 50
       - name: "fulfillment-cluster-a1"
-        port: 8080
+        port: 80
         weight: 50
       - name: "fulfillment-cluster-a2"
-        port: 8080
+        port: 80
         weight: 50
       - name: "fulfillment-cluster-a3"
-        port: 8080
+        port: 80
         weight: 50
