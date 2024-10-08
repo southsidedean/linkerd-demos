@@ -90,7 +90,7 @@ done
 
 for i in `seq 1 $CLUSTER_A_COUNT`
 do
-kubectl --context=k3d-$CLUSTER_A_PREFIX$i label svc -n orders fulfillment mirror.linkerd.io/exported=true
+kubectl --context=k3d-$CLUSTER_A_PREFIX$i label svc -n orders fulfillment mirror.linkerd.io/exported=remote-discovery
 done
 
 sleep 30
