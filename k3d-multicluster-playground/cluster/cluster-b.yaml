@@ -1,0 +1,19 @@
+apiVersion: k3d.io/v1alpha5
+kind: Simple
+servers: 1
+agents: 1
+image: rancher/k3s:v1.29.3-k3s1
+network: multiaz
+options:
+  k3d:
+    disableLoadbalancer: true
+  k3s:
+    extraArgs:
+      - arg: --disable=traefik
+        nodeFilters: [server:*]
+      - arg: --cluster-cidr=10.22.0.0/16
+        nodeFilters: [server:*]
+      - arg: --service-cidr=10.246.0.0/16
+        nodeFilters: [server:*]
+      - arg: --debug
+        nodeFilters: [server:*]
