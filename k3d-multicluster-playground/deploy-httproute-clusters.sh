@@ -363,11 +363,11 @@ done
 # Deploy the warehouse application to all the cluster-a clusters
 # Press CTRL-C to exit each watch commands
 
-kubectl apply -k orders/orders --context k3d-$CLUSTER_B_NAME
+kubectl apply -k orders/orders-httproute --context k3d-$CLUSTER_B_NAME
 
 for i in `seq 1 $CLUSTER_A_COUNT`
 do
-kubectl apply -k orders/warehouse --context k3d-$CLUSTER_A_PREFIX$i
+kubectl apply -k orders/warehouse-httproute --context k3d-$CLUSTER_A_PREFIX$i
 done
 
 watch -n 1 kubectl get pods -n orders -o wide --sort-by .spec.nodeName --context k3d-$CLUSTER_B_NAME
