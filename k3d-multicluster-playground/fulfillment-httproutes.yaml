@@ -22,9 +22,6 @@ spec:
       port: 80
   rules:
     - backendRefs:
-      - name: "fulfillment"
-        port: 80
-        weight: 50
       - name: "fulfillment-cluster-a1"
         port: 80
         weight: 50
