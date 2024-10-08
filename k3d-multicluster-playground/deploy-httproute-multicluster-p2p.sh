@@ -4,7 +4,7 @@
 # https://github.com/southsidedean/linkerd-demos/tree/main/k3d-multicluster-playground
 # Automates multi-cluster deployment
 # Tom Dean | Buoyant
-# Last edit: 10/7/2024
+# Last edit: 10/8/2024
 
 # Let's set some variables!
 
@@ -16,12 +16,10 @@ CLUSTER_B_NAME=cluster-b
 CLUSTER_A_COUNT=3
 
 # API Addresses
-CLUSTER_B_API=`echo “https://$(kubectl --context k3d-$CLUSTER_B_NAME get node k3d-$CLUSTER_B_NAME-server-0 -o jsonpath=‘{.status.addresses[?(.type==“InternalIP”)].address}’):6443"`
-
-for i in `seq 1 $CLUSTER_A_COUNT`
-do
-CLUSTER_A$i_API=`echo “https://$(kubectl --context k3d-$CLUSTER_A_PREFIX$i get node k3d-$CLUSTER_A_PREFIX$i-server-0 -o jsonpath=‘{.status.addresses[?(.type==“InternalIP”)].address}’):6443"`
-done
+CLUSTER_B_API=echo “https://$(kubectl --context k3d-$CLUSTER_B_NAME get node k3d-$CLUSTER_B_NAME-server-0 -o jsonpath='{.status.addresses[?(.type==“InternalIP”)].address}'):6443"
+CLUSTER_A1_API=echo “https://$(kubectl --context k3d-$CLUSTER_A_PREFIX1 get node k3d-$CLUSTER_A_PREFIX1-server-0 -o jsonpath='{.status.addresses[?(.type==“InternalIP”)].address}'):6443"
+CLUSTER_A2_API=echo “https://$(kubectl --context k3d-$CLUSTER_A_PREFIX2 get node k3d-$CLUSTER_A_PREFIX2-server-0 -o jsonpath='{.status.addresses[?(.type==“InternalIP”)].address}'):6443"
+CLUSTER_A3_API=echo “https://$(kubectl --context k3d-$CLUSTER_A_PREFIX3 get node k3d-$CLUSTER_A_PREFIX3-server-0 -o jsonpath='{.status.addresses[?(.type==“InternalIP”)].address}'):6443"
 
 # Step 1: Add a Hosts Entry to CoreDNS
 

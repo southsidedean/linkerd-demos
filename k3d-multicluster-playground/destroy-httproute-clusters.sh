@@ -4,7 +4,7 @@
 # https://github.com/southsidedean/linkerd-demos/tree/main/k3d-multicluster-flat-network-hazl
 # Automates cluster deletion and cleans up the kubectl contexts
 # Tom Dean | Buoyant
-# Last edit: 10/7/2024
+# Last edit: 10/8/2024
 
 # Cluster Naming Variables
 CLUSTER_A_PREFIX=cluster-a

@@ -4,7 +4,7 @@
 # https://github.com/southsidedean/linkerd-demos/tree/main/k3d-multicluster-playground
 # Automates cluster creation, Linkerd installation and installs the k3d-$CLUSTER_B_NAME application
 # Tom Dean | Buoyant
-# Last edit: 10/7/2024
+# Last edit: 10/8/2024
 
 # Let's set some variables!
 

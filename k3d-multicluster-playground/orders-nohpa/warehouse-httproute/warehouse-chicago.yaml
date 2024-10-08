@@ -62,6 +62,9 @@ spec:
           requiredDuringSchedulingIgnoredDuringExecution:
             nodeSelectorTerms:
             - matchExpressions:
-              - key: orders_node
+              - key: kubernetes.io/hostname
                 operator: In
-                values: [cluster-a2]
+                values:
+                - k3d-cluster-a1-agent-0
+                - k3d-cluster-a2-agent-0
+                - k3d-cluster-a3-agent-0
