@@ -64,7 +64,7 @@ k3d_dns_ready() {
 
 create_cluster() {
     name=$1
-    k3d cluster create $name -c cluster/cluster.yaml --kubeconfig-update-default
+    k3d cluster create $name -c cluster/$name.yaml --kubeconfig-update-default
     k3d_api_ready "$name"
     k3d_dns_ready "$name"
 }
