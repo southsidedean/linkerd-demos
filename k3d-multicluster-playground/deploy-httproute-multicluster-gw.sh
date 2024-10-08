@@ -15,6 +15,14 @@ CLUSTER_B_NAME=cluster-b
 # Cluster A Count
 CLUSTER_A_COUNT=3
 
+# API Addresses
+CLUSTER_B_API=`echo “https://$(kubectl --context k3d-$CLUSTER_B_NAME get node k3d-$CLUSTER_B_NAME-server-0 -o jsonpath=‘{.status.addresses[?(.type==“InternalIP”)].address}’):6443"`
+
+for i in `seq 1 $CLUSTER_A_COUNT`
+do
+CLUSTER_A$i_API=`echo “https://$(kubectl --context k3d-$CLUSTER_A_PREFIX$i get node k3d-$CLUSTER_A_PREFIX$i-server-0 -o jsonpath=‘{.status.addresses[?(.type==“InternalIP”)].address}’):6443"`
+done
+
 # Step 1: Add a Hosts Entry to CoreDNS
 
 kubectl get cm coredns -n kube-system -o yaml --context k3d-$CLUSTER_B_NAME -o yaml | grep -Ev "creationTimestamp|resourceVersion|uid" > coredns.yaml
@@ -59,6 +67,8 @@ kubectl apply -f policy.yaml --context k3d-$CLUSTER_B_NAME
 
 # Step 3: Link the Clusters
 
+rm multicluster-link.yaml
+
 #for i in `seq 1 $CLUSTER_A_COUNT`
 #do
 #linkerd --context=k3d-$CLUSTER_A_PREFIX$i multicluster link --cluster-name $CLUSTER_A_PREFIX$i >> multicluster-link-orig-a$i.yaml
@@ -72,9 +82,9 @@ kubectl apply -f policy.yaml --context k3d-$CLUSTER_B_NAME
 #linkerd --context=k3d-cluster-a3 multicluster link --cluster-name cluster-a3 >> multicluster-link-orig-a3.yaml
 #KC1=`linkerd --context=k3d-cluster-a3 multicluster link --cluster-name cluster-a3 | grep kubeconfig: | uniq | awk {'print $2'}` ; KC2=`echo $KC1 | base64 -d | sed 's/0\.0\.0\.0/kubernetes/g' | base64` ; awk -f mc.awk "$KC1" "$KC2" multicluster-link-orig-a3.yaml >> multicluster-link.yaml
 
-linkerd --context=k3d-cluster-a1 multicluster link --cluster-name cluster-a1 >> multicluster-link.yaml
-linkerd --context=k3d-cluster-a2 multicluster link --cluster-name cluster-a2 >> multicluster-link.yaml
-linkerd --context=k3d-cluster-a3 multicluster link --cluster-name cluster-a3 >> multicluster-link.yaml
+linkerd --context=k3d-cluster-a1 multicluster link --cluster-name cluster-a1 --api-addr $CLUSTER_A1_API >> multicluster-link.yaml
+linkerd --context=k3d-cluster-a2 multicluster link --cluster-name cluster-a2 --api-addr $CLUSTER_A2_API  >> multicluster-link.yaml
+linkerd --context=k3d-cluster-a3 multicluster link --cluster-name cluster-a3 --api-addr $CLUSTER_A3_API  >> multicluster-link.yaml
 
 kubectl apply -f multicluster-link.yaml --context k3d-$CLUSTER_B_NAME
 kubectl get links -A --context=k3d-$CLUSTER_B_NAME
