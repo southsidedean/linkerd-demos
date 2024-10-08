@@ -37,31 +37,52 @@ helm install linkerd-multicluster \
   --set license=$BUOYANT_LICENSE \
   linkerd-buoyant/linkerd-enterprise-multicluster
 
+for i in `seq 1 $CLUSTER_A_COUNT`
+do
 helm install linkerd-multicluster \
   --create-namespace \
   --namespace linkerd-multicluster \
-  --kube-context warehouse \
+  --kube-context k3d-$CLUSTER_A_PREFIX$i \
   --set linkerd-multicluster.gateway.enabled=true \
   --set license=$BUOYANT_LICENSE \
   linkerd-buoyant/linkerd-enterprise-multicluster
+done
 
 linkerd --context=k3d-$CLUSTER_B_NAME multicluster check
-linkerd --context=warehouse multicluster check
+
+for i in `seq 1 $CLUSTER_A_COUNT`
+do
+linkerd --context=k3d-$CLUSTER_A_PREFIX$i multicluster check
+done
+
 kubectl apply -f policy.yaml --context k3d-$CLUSTER_B_NAME
 
 # Step 3: Link the Clusters
 
-linkerd --context=warehouse multicluster link --cluster-name warehouse --gateway=true > multicluster-link-orig.yaml
-KC1=`linkerd --context=warehouse multicluster link --cluster-name warehouse --gateway=true | grep kubeconfig: | uniq | awk {'print $2'}` ; KC2=`echo $KC1 | base64 -d | sed 's/0\.0\.0\.0/kubernetes/g' | base64` ; awk -f mc.awk "$KC1" "$KC2" multicluster-link-orig.yaml > multicluster-link.yaml
-kubectl apply -f multicluster-link.yaml --context orders
-kubectl get links -A --context=orders
+for i in `seq 1 $CLUSTER_A_COUNT`
+do
+linkerd --context=k3d-$CLUSTER_A_PREFIX$i multicluster link --cluster-name $CLUSTER_A_PREFIX$i --gateway=true >> multicluster-link-orig.yaml
+KC1=`linkerd --context=k3d-$CLUSTER_A_PREFIX$i multicluster link --cluster-name $CLUSTER_A_PREFIX$i --gateway=true | grep kubeconfig: | uniq | awk {'print $2'}` ; KC2=`echo $KC1 | base64 -d | sed 's/0\.0\.0\.0/kubernetes/g' | base64` ; awk -f mc.awk "$KC1" "$KC2" multicluster-link-orig.yaml >> multicluster-link.yaml
+done
+
+kubectl apply -f multicluster-link.yaml --context k3d-$CLUSTER_B_NAME
+kubectl get links -A --context=k3d-$CLUSTER_B_NAME
 
 # Step 4: Export the 'fulfillment' Service to the 'orders' Cluster
 
-kubectl get svc -A --context=orders
-kubectl get svc -A --context=warehouse
-kubectl --context=warehouse label svc -n orders fulfillment mirror.linkerd.io/exported=true
+kubectl get svc -A --context=k3d-$CLUSTER_B_NAME
+
+for i in `seq 1 $CLUSTER_A_COUNT`
+do
+kubectl get svc -A --context=k3d-$CLUSTER_A_PREFIX$i
+done
+
+for i in `seq 1 $CLUSTER_A_COUNT`
+do
+kubectl --context=k3d-$CLUSTER_A_PREFIX$i label svc -n orders fulfillment mirror.linkerd.io/exported=true
+done
+
 sleep 30
-kubectl get svc -A --context=orders
+kubectl get svc -A --context=k3d-$CLUSTER_B_NAME
 
 exit 0
