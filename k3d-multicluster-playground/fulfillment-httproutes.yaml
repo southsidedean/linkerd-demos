@@ -1,0 +1,22 @@
+apiVersion: policy.linkerd.io/v1beta2
+kind: HTTPRoute
+metadata:
+  name: orders-traffic-split
+  namespace: orders
+spec:
+  parentRefs:
+    - name: fulfillment
+      kind: Service
+      group: core
+      port: 8080
+  rules:
+    - backendRefs:
+      - name: "fulfillment-cluster-a1"
+        port: 8080
+        weight: 50
+      - name: "fulfillment-cluster-a2"
+        port: 8080
+        weight: 50
+      - name: "fulfillment-cluster-a3"
+        port: 8080
+        weight: 50
