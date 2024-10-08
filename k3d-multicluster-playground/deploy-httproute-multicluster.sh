@@ -64,7 +64,10 @@ do
 linkerd --context=k3d-$CLUSTER_A_PREFIX$i multicluster link --cluster-name $CLUSTER_A_PREFIX$i >> multicluster-link-orig.yaml
 done
 
+for i in `seq 1 $CLUSTER_A_COUNT`
+do
 KC1=`linkerd --context=k3d-$CLUSTER_A_PREFIX$i multicluster link --cluster-name $CLUSTER_A_PREFIX$i | grep kubeconfig: | uniq | awk {'print $2'}` ; KC2=`echo $KC1 | base64 -d | sed 's/0\.0\.0\.0/kubernetes/g' | base64` ; awk -f mc.awk "$KC1" "$KC2" multicluster-link-orig.yaml >> multicluster-link.yaml
+done
 
 kubectl apply -f multicluster-link.yaml --context k3d-$CLUSTER_B_NAME
 kubectl get links -A --context=k3d-$CLUSTER_B_NAME
