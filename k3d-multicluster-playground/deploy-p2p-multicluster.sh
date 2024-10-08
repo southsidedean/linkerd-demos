@@ -70,7 +70,7 @@ kubectl apply -f policy.yaml --context orders
 
 rm multicluster-*.yaml
 
-linkerd --context=warehouse multicluster link --cluster-name warehouse --api-addr $CLUSTER_WAREHOUSE_API > multicluster-link.yaml
+linkerd --context=warehouse multicluster link --cluster-name warehouse --gateway=false --api-addr $CLUSTER_WAREHOUSE_API > multicluster-link.yaml
 
 #linkerd --context=warehouse multicluster link --cluster-name warehouse --gateway=false > multicluster-link-orig.yaml
 #KC1=`linkerd --context=warehouse multicluster link --cluster-name warehouse --gateway=false | grep kubeconfig: | uniq | awk {'print $2'}` ; KC2=`echo $KC1 | base64 -d | sed 's/0\.0\.0\.0/kubernetes/g' | base64` ; awk -f mc.awk "$KC1" "$KC2" multicluster-link-orig.yaml > multicluster-link.yaml
