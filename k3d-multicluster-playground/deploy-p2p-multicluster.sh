@@ -19,13 +19,6 @@ BEL_VERSION=preview-24.10.4
 CLI_VERSION=install-preview
 MC_VERSION=preview
 
-# Cluster Naming Variables
-CLUSTER_A_PREFIX=cluster-a
-CLUSTER_B_NAME=cluster-b
-
-# Cluster A Count
-CLUSTER_A_COUNT=3
-
 # API Addresses
 CLUSTER_WAREHOUSE_API=`echo "https://$(kubectl --context warehouse get node k3d-warehouse-server-0 -o jsonpath='{.status.addresses[?(.type=="InternalIP")].address}'):6443"`
 CLUSTER_ORDERS_API=`echo "https://$(kubectl --context orders get node k3d-orders-server-0 -o jsonpath='{.status.addresses[?(.type=="InternalIP")].address}'):6443"`
@@ -64,6 +57,7 @@ helm install linkerd-multicluster \
 
 linkerd --context=orders multicluster check
 linkerd --context=warehouse multicluster check
+
 kubectl apply -f policy.yaml --context orders
 
 # Step 3: Link the Clusters
